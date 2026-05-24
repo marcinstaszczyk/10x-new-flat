@@ -16,7 +16,7 @@ A modern, opinionated starter template for building fast, accessible web applica
 ## Prerequisites
 
 - Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+- pnpm
 
 ## Getting Started
 
@@ -30,7 +30,7 @@ cd 10x-astro-starter
 2. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
@@ -44,17 +44,17 @@ cp .env.example .dev.vars
 5. Run the development server:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ## Available Scripts
 
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
+- `pnpm run dev` - Start development server (Cloudflare workerd runtime)
+- `pnpm run build` - Build for production
+- `pnpm run preview` - Preview production build
+- `pnpm run lint` - Run ESLint with type-checked rules
+- `pnpm run lint:fix` - Auto-fix ESLint issues
+- `pnpm run format` - Run Prettier
 
 ## Project Structure
 
@@ -155,7 +155,7 @@ This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
 1. Build the project:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 2. Deploy with Wrangler:
