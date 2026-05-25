@@ -40,6 +40,12 @@ const typescriptConfig = {
     ],
     "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
     "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: { attributes: false } }],
+
+    "max-lines": ["error", { max: 220, skipBlankLines: true, skipComments: true }],
+    "max-lines-per-function": ["warn", { max: 80, skipBlankLines: true, skipComments: true }],
+    complexity: ["warn", 10],
+    "max-depth": ["warn", 3],
+    "max-params": ["warn", 4],
   },
 };
 
@@ -52,22 +58,10 @@ const astroConfig = {
   },
 };
 
-const structureConfig = {
-  files: ["src/**/*.{ts,tsx}"],
-  rules: {
-    "max-lines": ["error", { max: 220, skipBlankLines: true, skipComments: true }],
-    "max-lines-per-function": ["warn", { max: 80, skipBlankLines: true, skipComments: true }],
-    complexity: ["warn", 10],
-    "max-depth": ["warn", 3],
-    "max-params": ["warn", 4],
-  },
-};
-
 export default defineConfig(
   includeIgnoreFile(gitignorePath),
   javascriptConfig,
   typescriptConfig,
-  structureConfig,
   eslintPluginAstro.configs["flat/recommended"],
   ...eslintPluginAstro.configs["flat/jsx-a11y-recommended"],
   astroConfig,
