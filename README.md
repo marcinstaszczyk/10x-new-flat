@@ -15,7 +15,7 @@ A modern, opinionated starter template for building fast, accessible web applica
 
 ## Prerequisites
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
+- Node.js v24.15.0 (as specified in `.nvmrc`)
 - pnpm
 
 ## Getting Started
