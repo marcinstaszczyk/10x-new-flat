@@ -301,39 +301,39 @@ Add executable database tests for schema behavior and RLS isolation, then docume
 
 #### Automated
 
-- [x] 1.1 The schema migration applies cleanly from an empty local database with `.\node_modules\.bin\supabase.CMD db reset`. — 35edc0e
-- [x] 1.2 `pnpm.cmd run lint` passes. — 35edc0e
-- [x] 1.3 `pnpm.cmd run build` passes. — 35edc0e
+- [x] 1.1 The schema migration applies cleanly from an empty local database with `.\node_modules\.bin\supabase.CMD db reset`. — 0522b8c
+- [x] 1.2 `pnpm.cmd run lint` passes. — 0522b8c
+- [x] 1.3 `pnpm.cmd run build` passes. — 0522b8c
 
 #### Manual
 
-- [x] 1.4 Review the migration and confirm every product table has RLS enabled and explicit policies for each permitted authenticated operation. — 35edc0e
-- [x] 1.5 Confirm the schema can represent a list with category headers, a list with no category headers, and copied rows with preserved template provenance. — 35edc0e
+- [x] 1.4 Review the migration and confirm every product table has RLS enabled and explicit policies for each permitted authenticated operation. — 0522b8c
+- [x] 1.5 Confirm the schema can represent a list with category headers, a list with no category headers, and copied rows with preserved template provenance. — 0522b8c
 
 ### Phase 2: Ship the Full Polish Base-Question List
 
 #### Automated
 
-- [x] 2.1 A clean `.\node_modules\.bin\supabase.CMD db reset` loads the complete Polish list without migration errors. — 10b6f54
-- [x] 2.2 `.\node_modules\.bin\supabase.CMD test db supabase/tests/database/question_templates_content.test.sql` passes the deterministic template-content checks. — 10b6f54
-- [x] 2.3 `pnpm.cmd run lint` passes. — 10b6f54
-- [x] 2.4 `pnpm.cmd run build` passes. — 10b6f54
+- [x] 2.1 A clean `.\node_modules\.bin\supabase.CMD db reset` loads the complete Polish list without migration errors. — 7fe64cc
+- [x] 2.2 `.\node_modules\.bin\supabase.CMD test db supabase/tests/database/question_templates_content.test.sql` passes the deterministic template-content checks. — 7fe64cc
+- [x] 2.3 `pnpm.cmd run lint` passes. — 7fe64cc
+- [x] 2.4 `pnpm.cmd run build` passes. — 7fe64cc
 
 #### Manual
 
-- [x] 2.5 Review the full Polish list for practical coverage, duplicates, wording quality, and suitability during a flat viewing. — 10b6f54
-- [x] 2.6 Inspect the ordered list and confirm category headers improve navigation while removing all category rows would still leave a coherent flat question list. — 10b6f54
+- [x] 2.5 Review the full Polish list for practical coverage, duplicates, wording quality, and suitability during a flat viewing. — 7fe64cc
+- [x] 2.6 Inspect the ordered list and confirm category headers improve navigation while removing all category rows would still leave a coherent flat question list. — 7fe64cc
 
 ### Phase 3: Prove and Document the Contract
 
 #### Automated
 
-- [x] 3.1 `.\node_modules\.bin\supabase.CMD db reset` succeeds from a clean local database.
-- [x] 3.2 `.\node_modules\.bin\supabase.CMD test db` passes the ownership and visibility test suite.
-- [x] 3.3 `pnpm.cmd run lint` passes.
-- [x] 3.4 `pnpm.cmd run build` passes.
+- [x] 3.1 `.\node_modules\.bin\supabase.CMD db reset` succeeds from a clean local database. — 29ed65c
+- [x] 3.2 `.\node_modules\.bin\supabase.CMD test db` passes the ownership and visibility test suite. — 29ed65c
+- [x] 3.3 `pnpm.cmd run lint` passes. — 29ed65c
+- [x] 3.4 `pnpm.cmd run build` passes. — 29ed65c
 
 #### Manual
 
-- [x] 3.5 Review the negative RLS cases and confirm the suite proves anonymous denial and cross-buyer isolation rather than only successful owner operations.
-- [x] 3.6 Follow the README database setup and test steps from a clean local state and confirm they are sufficient and unambiguous.
+- [x] 3.5 Review the negative RLS cases and confirm the suite proves anonymous denial and cross-buyer isolation rather than only successful owner operations. — 809f9e6
+- [x] 3.6 Follow the README database setup and test steps from a clean local state and confirm they are sufficient and unambiguous. — 809f9e6
