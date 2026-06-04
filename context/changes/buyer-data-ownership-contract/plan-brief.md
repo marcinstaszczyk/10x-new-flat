@@ -66,6 +66,7 @@ Authenticated buyers can read the active fixed question templates and fully mana
 - The initial full Polish list is authored during implementation and requires human product-content approval.
 - The initial type set is only `category` and `open_question`; closed questions require a future migration.
 - Supabase migrations require a separate human-approved hosted deployment and cannot be rolled back by Cloudflare.
+- Accepted risk: database reset and pgTAP checks remain required local/manual gates in F-01; GitHub Actions database-test integration is deferred to a later change.
 
 ## Success Criteria (Summary)
 

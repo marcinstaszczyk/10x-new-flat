@@ -44,7 +44,7 @@ Executable pgTAP tests prove the schema and access-control contract. The existin
 
 ## Implementation Approach
 
-Use two versioned migrations and one pgTAP test suite. The first migration establishes the stable schema and RLS contract. The second migration contains the complete Polish product content so content revisions remain reviewable independently from schema changes. Database tests authenticate as anonymous and multiple buyer identities to verify positive and negative policy behavior. Documentation replaces the starter's claim that no database migrations are required with the actual local reset and test workflow.
+Use two versioned migrations and focused pgTAP test files. The first migration establishes the stable schema and RLS contract. The second migration contains the complete Polish product content so content revisions remain reviewable independently from schema changes. Database tests authenticate as anonymous and multiple buyer identities to verify positive and negative policy behavior. Documentation replaces the starter's claim that no database migrations are required with the actual local reset and test workflow.
 
 ## Critical Implementation Details
 
@@ -71,7 +71,7 @@ Create the minimal two-table persistence contract, constraints, indexes, grants,
 - Define a stable database type or equivalent check constraint whose initial allowed values are exactly `category` and `open_question`.
 - `question_templates` contains a stable ID, `question_type`, Polish `text`, deterministic `position`, active status, and creation timestamp.
 - `buyer_questions` contains a stable ID, non-null `buyer_id` referencing `auth.users(id)` with `ON DELETE CASCADE`, nullable `source_template_id`, `question_type`, `text`, deterministic buyer-level `position`, and creation/update timestamps.
-- `source_template_id` identifies provenance only; deleting or retiring a template must not delete a buyer's independent copy.
+- `source_template_id` references `question_templates(id)` with `ON DELETE RESTRICT`; referenced templates are retired through active status rather than deleted, preserving provenance and every buyer's independent copy.
 - Text cannot be blank, positions cannot be negative, and each table has a uniqueness rule preventing ambiguous ordering within its own list.
 - Index ownership and ordering columns used by expected buyer-list queries.
 
@@ -97,11 +97,24 @@ Create the minimal two-table persistence contract, constraints, indexes, grants,
 
 **Contract**: Disable database seeding or clear its SQL paths so `db reset` applies the versioned schema/content history without a second, divergent content source.
 
+#### 4. Supabase CLI preflight and sandbox workaround
+
+**File**: Local shell environment only
+
+**Intent**: Make database verification executable from Phase 1 rather than deferring a known Windows sandbox failure until Phase 3.
+
+**Contract**:
+
+- Before the first database command, verify the pinned local Supabase CLI runs.
+- In the Windows sandbox, set `USERPROFILE` to the repository root for Supabase CLI invocations when the CLI cannot write telemetry under the normal profile.
+- Do not commit workspace-local `.supabase/` telemetry or trace artifacts created by the workaround.
+- Keep normal contributor commands portable; do not add a wrapper or dependency solely for the sandbox workaround.
+
 ### Success Criteria:
 
 #### Automated Verification:
 
-- The schema migration applies cleanly from an empty local database with `.\\node_modules\\.bin\\supabase.CMD db reset`.
+- The schema migration applies cleanly from an empty local database with `.\node_modules\.bin\supabase.CMD db reset`.
 - `pnpm.cmd run lint` passes.
 - `pnpm.cmd run build` passes.
 
@@ -146,12 +159,20 @@ Research, author, review, and migrate the canonical Polish question list that fu
 
 **Contract**: Update the Supabase database setup section to identify the template migration as the canonical source and state that changes to template content require a new migration rather than editing already-applied history.
 
+#### 3. Template-content pgTAP check
+
+**File**: `supabase/tests/database/question_templates_content.test.sql`
+
+**Intent**: Make the Phase 2 content verification persistent and runnable before the broader ownership suite lands.
+
+**Contract**: Assert that template rows have nonblank text, allowed type values, unique positions, active status, both required row types, and coverage of every required content section.
+
 ### Success Criteria:
 
 #### Automated Verification:
 
-- A clean `.\\node_modules\\.bin\\supabase.CMD db reset` loads the complete Polish list without migration errors.
-- A deterministic SQL check confirms all template rows have nonblank Polish text, valid type values, unique positions, and active status.
+- A clean `.\node_modules\.bin\supabase.CMD db reset` loads the complete Polish list without migration errors.
+- `.\node_modules\.bin\supabase.CMD test db supabase/tests/database/question_templates_content.test.sql` passes the deterministic template-content checks.
 - `pnpm.cmd run lint` passes.
 - `pnpm.cmd run build` passes.
 
@@ -186,6 +207,7 @@ Add executable database tests for schema behavior and RLS isolation, then docume
 - Verify a buyer can SELECT, INSERT, UPDATE, and DELETE only their own `buyer_questions`.
 - Verify cross-buyer SELECT, INSERT, UPDATE, and DELETE attempts cannot expose or modify another buyer's rows.
 - Verify a buyer cannot change a row's `buyer_id` to another buyer.
+- Verify deleting a referenced template is rejected while retiring it preserves buyer rows and provenance.
 - Verify deleting a category row removes only that row and preserves following question rows and their positions.
 - Verify deleting an `auth.users` record cascades to that buyer's question rows without affecting another buyer.
 
@@ -201,21 +223,14 @@ Add executable database tests for schema behavior and RLS isolation, then docume
 - Document local prerequisites, migration/reset command, database test command, and the fact that reset is destructive to local data.
 - Identify `supabase/migrations/` as production schema/content history and `supabase/tests/database/` as the RLS contract.
 - Keep hosted-project guidance accurate: schema migrations must be applied separately from Worker deployment and require human approval.
-
-#### 3. Supabase CLI runtime workaround, if required
-
-**File**: `package.json` or documented local environment setup only if needed during implementation
-
-**Intent**: Make the agreed database verification commands reproducible in this Windows sandbox and normal contributor environments without inventing a test runner.
-
-**Contract**: Prefer the existing pinned Supabase CLI and its native `supabase test db` command. Add a package script only if it removes a demonstrated command portability problem; do not add a wrapper or dependency speculatively.
+- Document the manual rollback and compatibility procedure for both initial migrations.
 
 ### Success Criteria:
 
 #### Automated Verification:
 
-- `.\\node_modules\\.bin\\supabase.CMD db reset` succeeds from a clean local database.
-- `.\\node_modules\\.bin\\supabase.CMD test db` passes the ownership and visibility test suite.
+- `.\node_modules\.bin\supabase.CMD db reset` succeeds from a clean local database.
+- `.\node_modules\.bin\supabase.CMD test db` passes the ownership and visibility test suite.
 - `pnpm.cmd run lint` passes.
 - `pnpm.cmd run build` passes.
 
@@ -240,6 +255,7 @@ Add executable database tests for schema behavior and RLS isolation, then docume
 - Reset the complete local Supabase stack to prove schema migration order and canonical content loading.
 - Execute Data API-equivalent role/JWT contexts for anonymous, buyer A, and buyer B to prove actual RLS outcomes.
 - Run the existing application lint and production build to catch repository-level regressions.
+- Accepted risk: database reset and pgTAP checks remain required local/manual gates in F-01; GitHub Actions database-test integration is deferred to a later change.
 
 ### Manual Testing Steps:
 
@@ -260,6 +276,8 @@ Add executable database tests for schema behavior and RLS isolation, then docume
 - The initial migrations target an empty product schema. No product-data backfill is required because only `auth.users` exists today.
 - Applying the schema/content migrations to hosted Supabase requires human approval and is separate from Cloudflare Worker deployment.
 - Cloudflare rollback does not roll back Supabase. If a migration fails after deployment, use a reviewed forward-fix migration; do not rely on Worker rollback.
+- Before applying migrations to hosted Supabase, document and review both rollback paths: drop the unused schema only while no consumer or buyer data exists; otherwise preserve compatibility and ship a forward-fix migration.
+- Roll back erroneous template content through a new migration that retires affected templates; do not delete referenced templates or edit applied migration history.
 
 ## References
 
@@ -297,7 +315,7 @@ Add executable database tests for schema behavior and RLS isolation, then docume
 #### Automated
 
 - [ ] 2.1 A clean `.\node_modules\.bin\supabase.CMD db reset` loads the complete Polish list without migration errors.
-- [ ] 2.2 A deterministic SQL check confirms all template rows have nonblank Polish text, valid type values, unique positions, and active status.
+- [ ] 2.2 `.\node_modules\.bin\supabase.CMD test db supabase/tests/database/question_templates_content.test.sql` passes the deterministic template-content checks.
 - [ ] 2.3 `pnpm.cmd run lint` passes.
 - [ ] 2.4 `pnpm.cmd run build` passes.
 
