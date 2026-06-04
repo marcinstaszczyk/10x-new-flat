@@ -301,14 +301,14 @@ Add executable database tests for schema behavior and RLS isolation, then docume
 
 #### Automated
 
-- [ ] 1.1 The schema migration applies cleanly from an empty local database with `.\node_modules\.bin\supabase.CMD db reset`.
-- [ ] 1.2 `pnpm.cmd run lint` passes.
-- [ ] 1.3 `pnpm.cmd run build` passes.
+- [x] 1.1 The schema migration applies cleanly from an empty local database with `.\node_modules\.bin\supabase.CMD db reset`.
+- [x] 1.2 `pnpm.cmd run lint` passes.
+- [x] 1.3 `pnpm.cmd run build` passes.
 
 #### Manual
 
-- [ ] 1.4 Review the migration and confirm every product table has RLS enabled and explicit policies for each permitted authenticated operation.
-- [ ] 1.5 Confirm the schema can represent a list with category headers, a list with no category headers, and copied rows with preserved template provenance.
+- [x] 1.4 Review the migration and confirm every product table has RLS enabled and explicit policies for each permitted authenticated operation.
+- [x] 1.5 Confirm the schema can represent a list with category headers, a list with no category headers, and copied rows with preserved template provenance.
 
 ### Phase 2: Ship the Full Polish Base-Question List
 
