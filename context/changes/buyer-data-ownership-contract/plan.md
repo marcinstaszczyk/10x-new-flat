@@ -314,26 +314,26 @@ Add executable database tests for schema behavior and RLS isolation, then docume
 
 #### Automated
 
-- [x] 2.1 A clean `.\node_modules\.bin\supabase.CMD db reset` loads the complete Polish list without migration errors.
-- [x] 2.2 `.\node_modules\.bin\supabase.CMD test db supabase/tests/database/question_templates_content.test.sql` passes the deterministic template-content checks.
-- [x] 2.3 `pnpm.cmd run lint` passes.
-- [x] 2.4 `pnpm.cmd run build` passes.
+- [x] 2.1 A clean `.\node_modules\.bin\supabase.CMD db reset` loads the complete Polish list without migration errors. — 10b6f54
+- [x] 2.2 `.\node_modules\.bin\supabase.CMD test db supabase/tests/database/question_templates_content.test.sql` passes the deterministic template-content checks. — 10b6f54
+- [x] 2.3 `pnpm.cmd run lint` passes. — 10b6f54
+- [x] 2.4 `pnpm.cmd run build` passes. — 10b6f54
 
 #### Manual
 
-- [x] 2.5 Review the full Polish list for practical coverage, duplicates, wording quality, and suitability during a flat viewing.
-- [x] 2.6 Inspect the ordered list and confirm category headers improve navigation while removing all category rows would still leave a coherent flat question list.
+- [x] 2.5 Review the full Polish list for practical coverage, duplicates, wording quality, and suitability during a flat viewing. — 10b6f54
+- [x] 2.6 Inspect the ordered list and confirm category headers improve navigation while removing all category rows would still leave a coherent flat question list. — 10b6f54
 
 ### Phase 3: Prove and Document the Contract
 
 #### Automated
 
-- [ ] 3.1 `.\node_modules\.bin\supabase.CMD db reset` succeeds from a clean local database.
-- [ ] 3.2 `.\node_modules\.bin\supabase.CMD test db` passes the ownership and visibility test suite.
-- [ ] 3.3 `pnpm.cmd run lint` passes.
-- [ ] 3.4 `pnpm.cmd run build` passes.
+- [x] 3.1 `.\node_modules\.bin\supabase.CMD db reset` succeeds from a clean local database.
+- [x] 3.2 `.\node_modules\.bin\supabase.CMD test db` passes the ownership and visibility test suite.
+- [x] 3.3 `pnpm.cmd run lint` passes.
+- [x] 3.4 `pnpm.cmd run build` passes.
 
 #### Manual
 
-- [ ] 3.5 Review the negative RLS cases and confirm the suite proves anonymous denial and cross-buyer isolation rather than only successful owner operations.
-- [ ] 3.6 Follow the README database setup and test steps from a clean local state and confirm they are sufficient and unambiguous.
+- [x] 3.5 Review the negative RLS cases and confirm the suite proves anonymous denial and cross-buyer isolation rather than only successful owner operations.
+- [x] 3.6 Follow the README database setup and test steps from a clean local state and confirm they are sufficient and unambiguous.

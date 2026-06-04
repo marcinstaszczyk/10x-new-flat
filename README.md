@@ -72,7 +72,7 @@ pnpm run dev
 
 ## Supabase Configuration
 
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
+This project uses [Supabase](https://supabase.com/) for authentication and product persistence. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
 
 ### First-time setup (local, no cloud project needed)
 
@@ -117,6 +117,30 @@ The local Studio UI is available at `http://localhost:54323`.
 
 Never edit a migration that has already been applied to a shared environment. Change template wording, ordering, or active status through a new migration so existing buyer copies remain independent and migration history stays reproducible.
 
+### Reset and test the local database
+
+Install dependencies and start Docker before running the pinned Supabase CLI:
+
+```bash
+pnpm exec supabase start
+```
+
+Apply all migrations from a clean local database:
+
+```bash
+pnpm exec supabase db reset
+```
+
+`db reset` is destructive: it deletes all local database data before replaying `supabase/migrations/`. Those migrations are the production schema and product-content history; `supabase/tests/database/` contains the executable schema and RLS contract.
+
+Run the complete database test suite:
+
+```bash
+pnpm exec supabase test db
+```
+
+The tests run in transactions and verify template content, anonymous denial, buyer isolation, ownership mutations, provenance, and account-deletion cleanup.
+
 ### Using a cloud Supabase project instead
 
 If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
@@ -130,6 +154,15 @@ If you prefer to use a hosted Supabase project, add these variables to your `.en
 SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_KEY=<anon-key>
 ```
+
+Worker deployment does not apply or roll back Supabase migrations. Applying `supabase/migrations/` to a hosted project is a separate, human-approved operation. Review the migration diff and compatibility impact before running the approved hosted database deployment.
+
+For the initial question-contract migrations:
+
+- If the schema has no consumers and contains no buyer data, a reviewed manual rollback may remove the unused question tables, trigger function, and enum in dependency order.
+- Once any consumer or buyer data exists, preserve the current contract and ship a forward-fix migration instead of dropping columns, tables, policies, or rewriting applied history.
+- Correct erroneous template content with a new migration that retires or supersedes affected templates. Do not delete referenced templates.
+- Before rolling back Worker code, confirm the older application remains compatible with the currently applied database schema.
 
 ### Email confirmation in local development
 
