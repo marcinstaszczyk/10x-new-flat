@@ -12,6 +12,12 @@ This is an Astro 6 server-rendered app with SolidJS islands, Tailwind CSS v4, Su
 - Do not write under @context/archive/; archived changes are immutable.
 - Do not invent a test command: no test runner or test config exists. For UI/auth changes, run `pnpm run dev` and manually verify the affected route or auth flow; otherwise state why no manual check was needed.
 
+## Communication Language
+
+- Communicate with the user and write project documentation in English unless the user explicitly requests another language.
+- Preserve another language only when quoting or editing existing localized content.
+- Never infer the preferred language from source-document language, locale, timezone, file names, or repository contents.
+
 ## Commands
 
 - Use scripts from @package.json; Node version is fixed in @.nvmrc.
