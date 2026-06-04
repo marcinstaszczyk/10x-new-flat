@@ -1,7 +1,7 @@
 ---
 change_id: buyer-account-question-base
 title: Buyer account receives its question base
-status: new
+status: planned
 created: 2026-06-04
 updated: 2026-06-04
 archived_at: null
