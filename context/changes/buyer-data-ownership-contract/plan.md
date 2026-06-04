@@ -301,28 +301,28 @@ Add executable database tests for schema behavior and RLS isolation, then docume
 
 #### Automated
 
-- [x] 1.1 The schema migration applies cleanly from an empty local database with `.\node_modules\.bin\supabase.CMD db reset`.
-- [x] 1.2 `pnpm.cmd run lint` passes.
-- [x] 1.3 `pnpm.cmd run build` passes.
+- [x] 1.1 The schema migration applies cleanly from an empty local database with `.\node_modules\.bin\supabase.CMD db reset`. — 35edc0e
+- [x] 1.2 `pnpm.cmd run lint` passes. — 35edc0e
+- [x] 1.3 `pnpm.cmd run build` passes. — 35edc0e
 
 #### Manual
 
-- [x] 1.4 Review the migration and confirm every product table has RLS enabled and explicit policies for each permitted authenticated operation.
-- [x] 1.5 Confirm the schema can represent a list with category headers, a list with no category headers, and copied rows with preserved template provenance.
+- [x] 1.4 Review the migration and confirm every product table has RLS enabled and explicit policies for each permitted authenticated operation. — 35edc0e
+- [x] 1.5 Confirm the schema can represent a list with category headers, a list with no category headers, and copied rows with preserved template provenance. — 35edc0e
 
 ### Phase 2: Ship the Full Polish Base-Question List
 
 #### Automated
 
-- [ ] 2.1 A clean `.\node_modules\.bin\supabase.CMD db reset` loads the complete Polish list without migration errors.
-- [ ] 2.2 `.\node_modules\.bin\supabase.CMD test db supabase/tests/database/question_templates_content.test.sql` passes the deterministic template-content checks.
-- [ ] 2.3 `pnpm.cmd run lint` passes.
-- [ ] 2.4 `pnpm.cmd run build` passes.
+- [x] 2.1 A clean `.\node_modules\.bin\supabase.CMD db reset` loads the complete Polish list without migration errors.
+- [x] 2.2 `.\node_modules\.bin\supabase.CMD test db supabase/tests/database/question_templates_content.test.sql` passes the deterministic template-content checks.
+- [x] 2.3 `pnpm.cmd run lint` passes.
+- [x] 2.4 `pnpm.cmd run build` passes.
 
 #### Manual
 
-- [ ] 2.5 Review the full Polish list for practical coverage, duplicates, wording quality, and suitability during a flat viewing.
-- [ ] 2.6 Inspect the ordered list and confirm category headers improve navigation while removing all category rows would still leave a coherent flat question list.
+- [x] 2.5 Review the full Polish list for practical coverage, duplicates, wording quality, and suitability during a flat viewing.
+- [x] 2.6 Inspect the ordered list and confirm category headers improve navigation while removing all category rows would still leave a coherent flat question list.
 
 ### Phase 3: Prove and Document the Contract
 

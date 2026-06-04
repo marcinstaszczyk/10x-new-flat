@@ -111,7 +111,11 @@ npx supabase stop
 
 The local Studio UI is available at `http://localhost:54323`.
 
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
+### Database content migrations
+
+`supabase/migrations/` is the canonical source for database schema and product content. The fixed Polish buyer-question list is delivered by the question-template migration so local, preview, and production environments receive the same ordered document.
+
+Never edit a migration that has already been applied to a shared environment. Change template wording, ordering, or active status through a new migration so existing buyer copies remain independent and migration history stays reproducible.
 
 ### Using a cloud Supabase project instead
 
