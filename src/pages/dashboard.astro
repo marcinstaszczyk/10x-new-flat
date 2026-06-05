@@ -1,5 +1,6 @@
 ---
 import QuestionBaseList from "@/components/questions/QuestionBaseList.astro";
+import ResetQuestionBaseForm from "@/components/questions/ResetQuestionBaseForm";
 import Layout from "@/layouts/Layout.astro";
 import { loadBuyerQuestionBase } from "@/lib/services/questions";
 import { createClient } from "@/lib/supabase";
@@ -9,6 +10,9 @@ const supabase = createClient(Astro.request.headers, Astro.cookies);
 const questionBase = supabase ? await loadBuyerQuestionBase(supabase) : { ok: false };
 const questions = questionBase.ok ? questionBase.questions : [];
 const hasQuestionBaseError = !questionBase.ok;
+const resetState = Astro.url.searchParams.get("reset");
+const hasResetSuccess = resetState === "success";
+const hasResetError = resetState === "error";
 ---
 
 <Layout title="Question Base">
@@ -32,6 +36,28 @@ const hasQuestionBaseError = !questionBase.ok;
 
     <div class="mx-auto max-w-5xl px-4 py-8">
       {
+        hasResetSuccess && (
+          <section
+            aria-live="polite"
+            class="mb-5 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"
+            role="status"
+          >
+            Your question base was reset to the active template list.
+          </section>
+        )
+      }
+      {
+        hasResetError && (
+          <section
+            aria-live="polite"
+            class="mb-5 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-900"
+            role="alert"
+          >
+            We couldn't reset your question base. Try again in a moment.
+          </section>
+        )
+      }
+      {
         hasQuestionBaseError ? (
           <section
             aria-live="polite"
@@ -47,7 +73,10 @@ const hasQuestionBaseError = !questionBase.ok;
                 <p class="text-sm text-slate-500">Personal copy</p>
                 <h2 class="text-lg font-semibold text-slate-950">{questions.length} ordered rows</h2>
               </div>
-              <p class="text-sm text-slate-500">Categories stay in the same sequence as the source document.</p>
+              <div class="flex flex-col items-start gap-3 sm:items-end">
+                <p class="text-sm text-slate-500">Categories stay in the same sequence as the source document.</p>
+                <ResetQuestionBaseForm client:load />
+              </div>
             </div>
             <QuestionBaseList questions={questions} />
           </section>

@@ -111,6 +111,14 @@ npx supabase stop
 
 The local Studio UI is available at `http://localhost:54323`.
 
+### Buyer question base
+
+Authenticated buyers receive a personal question base lazily. The first `/dashboard` visit initializes the buyer-owned copy from active `question_templates`; repeat visits preserve that copy and do not synchronize later template changes automatically.
+
+The dashboard includes a confirmed reset action. Reset is destructive: it deletes every current buyer question, including future personal rows, and recreates the list from the active template document.
+
+Manual dashboard verification uses local Supabase plus `pnpm run dev`: sign in, open `/dashboard`, confirm the ordered list is created, reload to verify the row set is stable, cancel reset to verify no mutation, then confirm reset and verify the success feedback plus complete ordered list.
+
 ### Database content migrations
 
 `supabase/migrations/` is the canonical source for database schema and product content. The fixed Polish buyer-question list is delivered by the question-template migration so local, preview, and production environments receive the same ordered document.

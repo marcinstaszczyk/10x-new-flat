@@ -348,30 +348,30 @@ Expose the chosen destructive reset behavior through a confirmed UI action and p
 
 #### Automated
 
-- [x] 2.1 `pnpm run lint` passes.
-- [x] 2.2 `pnpm run build` passes.
-- [x] 2.3 `pnpm exec supabase test db` passes the full database suite.
+- [x] 2.1 `pnpm run lint` passes. — 8dcf130
+- [x] 2.2 `pnpm run build` passes. — 8dcf130
+- [x] 2.3 `pnpm exec supabase test db` passes the full database suite. — 8dcf130
 
 #### Manual
 
-- [x] 2.4 With local Supabase and `pnpm run dev`, create or use an authenticated buyer with no question rows and open `/dashboard`; confirm the full personal copy is created and displayed.
-- [x] 2.5 Reload `/dashboard` repeatedly and confirm row count, provenance, content, and positions do not change.
-- [x] 2.6 Confirm category rows remain in the flat sequence and are visually presented as headings or bold rows.
-- [x] 2.7 Force an unavailable/misconfigured Supabase path and confirm the dashboard shows a retryable error rather than a partial or empty-success state.
+- [x] 2.4 With local Supabase and `pnpm run dev`, create or use an authenticated buyer with no question rows and open `/dashboard`; confirm the full personal copy is created and displayed. — 8dcf130
+- [x] 2.5 Reload `/dashboard` repeatedly and confirm row count, provenance, content, and positions do not change. — 8dcf130
+- [x] 2.6 Confirm category rows remain in the flat sequence and are visually presented as headings or bold rows. — 8dcf130
+- [x] 2.7 Force an unavailable/misconfigured Supabase path and confirm the dashboard shows a retryable error rather than a partial or empty-success state. — 8dcf130
 
 ### Phase 3: Add Destructive Reset and Verify the Complete Flow
 
 #### Automated
 
-- [ ] 3.1 `pnpm exec supabase db reset` succeeds from a clean local database.
-- [ ] 3.2 `pnpm exec supabase test db` passes the complete database suite.
-- [ ] 3.3 `pnpm run lint` passes.
-- [ ] 3.4 `pnpm run build` passes.
+- [x] 3.1 `pnpm exec supabase db reset` succeeds from a clean local database.
+- [x] 3.2 `pnpm exec supabase test db` passes the complete database suite.
+- [x] 3.3 `pnpm run lint` passes.
+- [x] 3.4 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 3.5 On an initialized dashboard, cancel reset and confirm no rows change.
-- [ ] 3.6 Add or alter a buyer row through local Supabase, confirm reset, and verify every prior row is removed and replaced by the current active template document.
-- [ ] 3.7 Confirm reset success feedback appears and the refreshed flat list is complete and ordered.
-- [ ] 3.8 Simulate an expired session or reset failure and confirm the request cannot reset another buyer's rows and returns a safe retryable outcome.
-- [ ] 3.9 Confirm successful sign-in still redirects to `/`, and navigating to `/dashboard` initializes or displays the buyer's personal list.
+- [x] 3.5 On an initialized dashboard, cancel reset and confirm no rows change.
+- [x] 3.6 Add or alter a buyer row through local Supabase, confirm reset, and verify every prior row is removed and replaced by the current active template document.
+- [x] 3.7 Confirm reset success feedback appears and the refreshed flat list is complete and ordered.
+- [x] 3.8 Simulate an expired session or reset failure and confirm the request cannot reset another buyer's rows and returns a safe retryable outcome.
+- [x] 3.9 Confirm successful sign-in still redirects to `/`, and navigating to `/dashboard` initializes or displays the buyer's personal list.
