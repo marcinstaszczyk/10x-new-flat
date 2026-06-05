@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(40);
+select plan(44);
 
 insert into auth.users (
   id,
@@ -244,21 +244,19 @@ set local request.jwt.claims = '{"sub":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","r
 
 select lives_ok(
   $$
-    insert into public.buyer_questions (id, buyer_id, question_type, text, position)
-    values (
-      'aaaaaaaa-0000-4000-8000-000000000003',
-      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
-      'open_question',
-      'Buyer A inserted question',
-      2
-    )
+    insert into public.buyer_questions (question_type, text, position)
+    values ('open_question', 'Buyer A inserted question', 2)
   $$,
-  'buyer A can insert their own question'
+  'buyer A can insert their own question through database-owned identity'
 );
 select results_eq(
-  $$select count(*) from public.buyer_questions where id = 'aaaaaaaa-0000-4000-8000-000000000003'$$,
-  $$values (1::bigint)$$,
-  'buyer A can read their inserted question'
+  $$
+    select buyer_id, source_template_id, text
+    from public.buyer_questions
+    where position = 2
+  $$,
+  $$values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'::uuid, null::uuid, 'Buyer A inserted question')$$,
+  'buyer A insert uses their identity and has no template provenance'
 );
 select throws_ok(
   $$
@@ -269,12 +267,30 @@ select throws_ok(
   null,
   'buyer A cannot insert a question for buyer B'
 );
+select throws_ok(
+  $$
+    insert into public.buyer_questions (source_template_id, question_type, text, position)
+    values ('10000000-0000-0000-0000-000000000001', 'open_question', 'Spoofed provenance', 3)
+  $$,
+  '42501',
+  null,
+  'buyer A cannot insert client-controlled template provenance'
+);
+select throws_ok(
+  $$
+    insert into public.buyer_questions (created_at, question_type, text, position)
+    values ('2000-01-01 00:00:00+00'::timestamptz, 'open_question', 'Spoofed creation time', 3)
+  $$,
+  '42501',
+  null,
+  'buyer A cannot insert client-controlled creation timestamps'
+);
 select lives_ok(
-  $$update public.buyer_questions set text = 'Buyer A updated question' where id = 'aaaaaaaa-0000-4000-8000-000000000003'$$,
+  $$update public.buyer_questions set text = 'Buyer A updated question' where position = 2$$,
   'buyer A can update their own question'
 );
 select results_eq(
-  $$select text from public.buyer_questions where id = 'aaaaaaaa-0000-4000-8000-000000000003'$$,
+  $$select text from public.buyer_questions where position = 2$$,
   $$values ('Buyer A updated question')$$,
   'buyer A can read their update'
 );
@@ -288,16 +304,28 @@ select throws_ok(
   null,
   'buyer A cannot transfer a question to buyer B'
 );
+select throws_ok(
+  $$update public.buyer_questions set source_template_id = '10000000-0000-0000-0000-000000000001' where position = 2$$,
+  '42501',
+  null,
+  'buyer A cannot rewrite template provenance'
+);
+select throws_ok(
+  $$update public.buyer_questions set updated_at = '2000-01-01 00:00:00+00'::timestamptz where position = 2$$,
+  '42501',
+  null,
+  'buyer A cannot rewrite update timestamps'
+);
 select is_empty(
   $$delete from public.buyer_questions where id = 'bbbbbbbb-0000-4000-8000-000000000001' returning id$$,
   'buyer A cannot delete buyer B questions'
 );
 select lives_ok(
-  $$delete from public.buyer_questions where id = 'aaaaaaaa-0000-4000-8000-000000000003'$$,
+  $$delete from public.buyer_questions where position = 2$$,
   'buyer A can delete their own question'
 );
 select is_empty(
-  $$select id from public.buyer_questions where id = 'aaaaaaaa-0000-4000-8000-000000000003'$$,
+  $$select id from public.buyer_questions where position = 2$$,
   'buyer A deleted question is gone'
 );
 

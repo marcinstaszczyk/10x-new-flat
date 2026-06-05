@@ -199,15 +199,11 @@ set local request.jwt.claims = '{"sub":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","r
 select lives_ok(
   $$
     insert into public.buyer_questions (
-      buyer_id,
-      source_template_id,
       question_type,
       text,
       position
     )
     values (
-      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
-      null,
       'open_question',
       'Buyer A custom reset candidate',
       1000
