@@ -330,10 +330,10 @@ Expose the dedicated `/offers` workspace with list, create, detail, and confirme
 
 #### Automated
 
-- [x] 2.1 `pnpm exec supabase db reset` succeeds from a clean local database.
-- [x] 2.2 `pnpm exec supabase test db` passes the complete database suite.
-- [x] 2.3 `pnpm run lint` passes.
-- [x] 2.4 `pnpm run build` passes.
+- [x] 2.1 `pnpm exec supabase db reset` succeeds from a clean local database. - 00edaef
+- [x] 2.2 `pnpm exec supabase test db` passes the complete database suite. - 00edaef
+- [x] 2.3 `pnpm run lint` passes. - 00edaef
+- [x] 2.4 `pnpm run build` passes. - 00edaef
 
 #### Manual
 
