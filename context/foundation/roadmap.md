@@ -3,7 +3,7 @@ project: 10xNewFlat
 version: 1
 status: draft
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-06-05
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -29,7 +29,7 @@ Preparing questions and topics for a flat viewing takes time, and buyers can mis
 |---|---|---|---|---|---|
 | F-01 | buyer-data-ownership-contract | (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place. | - | FR-002, PRD Access Control, PRD Non-Functional Requirements | ready |
 | F-02 | extraction-contract-check | (foundation) A minimal extraction contract and verification path are agreed. | - | FR-005, PRD Success Criteria, PRD Non-Functional Requirements | ready |
-| S-01 | buyer-account-question-base | Buyer can sign in and receive a personal copy of the fixed base-question list. | F-01 | US-01, FR-001, FR-002 | proposed |
+| S-01 | buyer-account-question-base | Buyer can open their question base and receive a personal copy of the fixed base-question list. | F-01 | US-01, FR-001, FR-002 | proposed |
 | S-02 | saved-pasted-offer | Buyer can create, delete, and revisit a private flat offer containing pasted offer-page content. | S-01 | US-01, FR-003, FR-004, PRD Non-Functional Requirements | proposed |
 | S-03 | extracted-viewing-preparation | Buyer can review extracted answers, unanswered questions, doubtful facts, and unmapped offer information. | F-02, S-02 | US-01, FR-005, FR-006, FR-007, FR-008, PRD Success Criteria, PRD Non-Functional Requirements | proposed |
 | S-04 | personal-questions-notes | Buyer can add, edit, and remove personal questions and notes. | S-01 | FR-009 | proposed |
@@ -87,14 +87,14 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### S-01: Buyer account receives its question base
 
-- **Outcome:** Buyer can sign in and receive a personal copy of the fixed base-question list.
+- **Outcome:** Buyer can open their question base and receive a personal copy of the fixed base-question list.
 - **Change ID:** buyer-account-question-base
 - **PRD refs:** US-01, FR-001, FR-002
 - **Prerequisites:** F-01
 - **Parallel with:** F-02
 - **Blockers:** -
 - **Unknowns:** -
-- **Risk:** Authentication already exists, so this slice stays focused on the account-creation outcome instead of rebuilding login.
+- **Risk:** Authentication already exists, so this slice stays focused on lazy first-visit initialization and visible list review instead of rebuilding login. Repeat visits preserve the buyer copy, and explicit reset is the only replacement path.
 - **Status:** proposed
 
 ### S-02: Buyer saves pasted offer content
@@ -141,7 +141,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 |---|---|---|---|---|
 | F-01 | buyer-data-ownership-contract | Establish minimal buyer-data ownership contract | yes | Run `/10x-plan buyer-data-ownership-contract` |
 | F-02 | extraction-contract-check | Verify minimal extraction contract | yes | Run `/10x-plan extraction-contract-check` |
-| S-01 | buyer-account-question-base | Copy fixed questions into a buyer account | no | Requires F-01 |
+| S-01 | buyer-account-question-base | Initialize fixed questions on first question-base visit | no | Requires F-01 |
 | S-02 | saved-pasted-offer | Save private pasted offer content | no | Requires S-01 |
 | S-03 | extracted-viewing-preparation | Produce a reviewable viewing-preparation result | no | Requires F-02 and S-02 |
 | S-04 | personal-questions-notes | Manage personal questions and notes | no | Resolve note ownership and complete S-01 |

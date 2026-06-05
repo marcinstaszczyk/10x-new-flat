@@ -334,15 +334,15 @@ Expose the chosen destructive reset behavior through a confirmed UI action and p
 
 #### Automated
 
-- [ ] 1.1 `pnpm exec supabase db reset` applies the lifecycle migration from a clean local database.
-- [ ] 1.2 `pnpm exec supabase test db supabase/tests/database/question_base_lifecycle.test.sql` passes.
-- [ ] 1.3 `pnpm run lint` passes.
-- [ ] 1.4 `pnpm run build` passes.
+- [x] 1.1 `pnpm exec supabase db reset` applies the lifecycle migration from a clean local database.
+- [x] 1.2 `pnpm exec supabase test db supabase/tests/database/question_base_lifecycle.test.sql` passes.
+- [x] 1.3 `pnpm run lint` passes.
+- [x] 1.4 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 1.5 Review the foundation documents and confirm no active requirement still promises copy-on-account-creation behavior.
-- [ ] 1.6 Review the migration and confirm initialization and reset derive ownership only from `auth.uid()` and cannot leave a partial copy.
+- [x] 1.5 Review the foundation documents and confirm no active requirement still promises copy-on-account-creation behavior.
+- [x] 1.6 Review the migration and confirm initialization and reset derive ownership only from `auth.uid()` and cannot leave a partial copy.
 
 ### Phase 2: Render the Lazily Initialized Question Base
 

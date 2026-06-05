@@ -11,7 +11,7 @@ timeline_budget:
   hard_deadline: null
   after_hours_only: true
 created: 2026-05-19
-updated: 2026-05-19
+updated: 2026-06-05
 checkpoint:
   current_phase: 8
   phases_completed: [1, 2, 3, 4, 5, 6, 7]
@@ -23,7 +23,7 @@ checkpoint:
     - topic: "product insight"
       decision: "Use a knowledge base of questions, aggregate offer data into organized flat attributes, and avoid asking about facts already present unless doubts occur."
     - topic: "access model"
-      decision: "Buyers log in with Google auth, data is shared between devices, buyer is the primary MVP role, a fixed base question list is copied on account creation, buyers can add personal questions and notes, admin-managed question base is nice-to-have, and member/guest roles are out of MVP."
+      decision: "Buyers log in with Google auth, data is shared between devices, buyer is the primary MVP role, a fixed base question list is copied on first question-base visit, repeat visits preserve that personal copy without automatic template synchronization, buyers can explicitly reset the entire list after confirmation, buyers can add personal questions and notes, admin-managed question base is nice-to-have, and member/guest roles are out of MVP."
     - topic: "MVP flow"
       decision: "Buyer logs in, adds a flat offer, pastes offer-page content into a textarea, the system transforms pasted content into question and answer form, and the system displays unanswered questions."
     - topic: "timeline"
@@ -64,7 +64,9 @@ Buyer data is shared between devices, including PC and mobile Android.
 
 MVP role model:
 - Buyer is the primary MVP role.
-- On account creation, the app copies a fixed base question list to the buyer.
+- On first question-base visit, the app copies a fixed base question list to the buyer.
+- Repeat visits preserve the initialized personal copy; template changes do not synchronize automatically.
+- Buyers can explicitly reset the entire personal question list to the currently active base after confirmation.
 - Buyers can add personal questions and notes.
 
 Nice-to-have access capability:
@@ -104,8 +106,8 @@ Out of MVP:
 
 - FR-001: Buyer can log in with Google. Priority: must-have
   > Socrates: Counter-argument considered: Google-only login may limit buyers who prefer another login method. Resolution: kept for MVP; adding more login options is post-MVP.
-- FR-002: System can copy a fixed base question list to the buyer on account creation. Priority: must-have
-  > Socrates: Counter-argument considered: copied question lists can become stale if the base improves later. Resolution: kept for MVP; later synchronization or update handling is post-MVP.
+- FR-002: System can copy a fixed base question list to the buyer when they first open their question base. Priority: must-have
+  > Socrates: Counter-argument considered: copied question lists can become stale if the base improves later. Resolution: kept for MVP; repeat visits preserve the buyer's initialized copy, template changes do not synchronize automatically, and explicit reset can replace the entire personal list with the currently active base.
 
 ### Offer Preparation
 
@@ -143,7 +145,7 @@ Out of MVP:
 
 The app maps extracted offer information against a buyer-specific question base, treats matched facts as answered, surfaces unanswered questions, and flags uncertain or unmapped information for review.
 
-The rule consumes the fixed base question list copied to the buyer, the buyer's personal questions, and pasted offer-page content.
+The rule consumes the fixed base question list copied to the buyer on first question-base visit, the buyer's personal questions, and pasted offer-page content.
 
 The rule outputs extracted question and answer pairs, unanswered questions, uncertain or doubtful extracted facts, and extracted but unmapped offer information. The buyer encounters these outputs after pasting offer-page content into a flat offer entry.
 
