@@ -316,15 +316,15 @@ Expose the dedicated `/offers` workspace with list, create, detail, and confirme
 
 #### Automated
 
-- [ ] 1.1 `pnpm exec supabase db reset` applies the new migration from a clean local database.
-- [ ] 1.2 `pnpm exec supabase test db supabase/tests/database/flat_offers_contract.test.sql` passes.
-- [ ] 1.3 `pnpm run lint` passes.
-- [ ] 1.4 `pnpm run build` passes.
+- [x] 1.1 `pnpm exec supabase db reset` applies the new migration from a clean local database.
+- [x] 1.2 `pnpm exec supabase test db supabase/tests/database/flat_offers_contract.test.sql` passes.
+- [x] 1.3 `pnpm run lint` passes.
+- [x] 1.4 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 1.5 Review the migration and confirm `flat_offers` has RLS enabled plus explicit SELECT, INSERT, UPDATE, and DELETE behavior.
-- [ ] 1.6 Review the pgTAP negative cases and confirm they prove anonymous denial, cross-buyer isolation, denied owner update, and hard delete.
+- [x] 1.5 Review the migration and confirm `flat_offers` has RLS enabled plus explicit SELECT, INSERT, UPDATE, and DELETE behavior.
+- [x] 1.6 Review the pgTAP negative cases and confirm they prove anonymous denial, cross-buyer isolation, denied owner update, and hard delete.
 
 ### Phase 2: Add the Server-Rendered Saved Offer Flow
 

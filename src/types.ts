@@ -8,9 +8,55 @@ export interface BuyerQuestion {
   position: number;
 }
 
+export interface SavedOffer {
+  id: string;
+  title: string;
+  sourceUrl: string | null;
+  pastedContent: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Database {
   public: {
     Tables: {
+      flat_offers: {
+        Row: {
+          id: string;
+          buyer_id: string;
+          title: string;
+          source_url: string | null;
+          pasted_content: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          buyer_id?: string;
+          title: string;
+          source_url?: string | null;
+          pasted_content: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          buyer_id?: string;
+          title?: string;
+          source_url?: string | null;
+          pasted_content?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "flat_offers_buyer_id_fkey";
+            columns: ["buyer_id"];
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       buyer_questions: {
         Row: {
           id: string;
