@@ -334,30 +334,30 @@ Expose the chosen destructive reset behavior through a confirmed UI action and p
 
 #### Automated
 
-- [x] 1.1 `pnpm exec supabase db reset` applies the lifecycle migration from a clean local database.
-- [x] 1.2 `pnpm exec supabase test db supabase/tests/database/question_base_lifecycle.test.sql` passes.
-- [x] 1.3 `pnpm run lint` passes.
-- [x] 1.4 `pnpm run build` passes.
+- [x] 1.1 `pnpm exec supabase db reset` applies the lifecycle migration from a clean local database. — dd25b63
+- [x] 1.2 `pnpm exec supabase test db supabase/tests/database/question_base_lifecycle.test.sql` passes. — dd25b63
+- [x] 1.3 `pnpm run lint` passes. — dd25b63
+- [x] 1.4 `pnpm run build` passes. — dd25b63
 
 #### Manual
 
-- [x] 1.5 Review the foundation documents and confirm no active requirement still promises copy-on-account-creation behavior.
-- [x] 1.6 Review the migration and confirm initialization and reset derive ownership only from `auth.uid()` and cannot leave a partial copy.
+- [x] 1.5 Review the foundation documents and confirm no active requirement still promises copy-on-account-creation behavior. — dd25b63
+- [x] 1.6 Review the migration and confirm initialization and reset derive ownership only from `auth.uid()` and cannot leave a partial copy. — dd25b63
 
 ### Phase 2: Render the Lazily Initialized Question Base
 
 #### Automated
 
-- [ ] 2.1 `pnpm run lint` passes.
-- [ ] 2.2 `pnpm run build` passes.
-- [ ] 2.3 `pnpm exec supabase test db` passes the full database suite.
+- [x] 2.1 `pnpm run lint` passes.
+- [x] 2.2 `pnpm run build` passes.
+- [x] 2.3 `pnpm exec supabase test db` passes the full database suite.
 
 #### Manual
 
-- [ ] 2.4 With local Supabase and `pnpm run dev`, create or use an authenticated buyer with no question rows and open `/dashboard`; confirm the full personal copy is created and displayed.
-- [ ] 2.5 Reload `/dashboard` repeatedly and confirm row count, provenance, content, and positions do not change.
-- [ ] 2.6 Confirm category rows remain in the flat sequence and are visually presented as headings or bold rows.
-- [ ] 2.7 Force an unavailable/misconfigured Supabase path and confirm the dashboard shows a retryable error rather than a partial or empty-success state.
+- [x] 2.4 With local Supabase and `pnpm run dev`, create or use an authenticated buyer with no question rows and open `/dashboard`; confirm the full personal copy is created and displayed.
+- [x] 2.5 Reload `/dashboard` repeatedly and confirm row count, provenance, content, and positions do not change.
+- [x] 2.6 Confirm category rows remain in the flat sequence and are visually presented as headings or bold rows.
+- [x] 2.7 Force an unavailable/misconfigured Supabase path and confirm the dashboard shows a retryable error rather than a partial or empty-success state.
 
 ### Phase 3: Add Destructive Reset and Verify the Complete Flow
 

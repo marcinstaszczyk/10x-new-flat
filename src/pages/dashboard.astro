@@ -1,27 +1,58 @@
 ---
+import QuestionBaseList from "@/components/questions/QuestionBaseList.astro";
 import Layout from "@/layouts/Layout.astro";
+import { loadBuyerQuestionBase } from "@/lib/services/questions";
+import { createClient } from "@/lib/supabase";
 
 const { user } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const questionBase = supabase ? await loadBuyerQuestionBase(supabase) : { ok: false };
+const questions = questionBase.ok ? questionBase.questions : [];
+const hasQuestionBaseError = !questionBase.ok;
 ---
 
-<Layout title="Dashboard">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl">
-      <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-        Dashboard
-      </h1>
-      <p class="text-blue-100/80">
-        Welcome, <span class="font-semibold text-white">{user?.email}</span>
-      </p>
-      <p class="mt-2 text-sm text-blue-100/50">This page is only for authenticated users.</p>
-      <form method="POST" action="/api/auth/signout" class="mt-6">
-        <button
-          type="submit"
-          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
-        >
-          Sign out
-        </button>
-      </form>
+<Layout title="Question Base">
+  <main class="min-h-screen bg-slate-50 text-slate-950">
+    <header class="border-b border-slate-200 bg-white">
+      <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-slate-500">Signed in as {user?.email}</p>
+          <h1 class="mt-1 text-2xl font-semibold tracking-normal text-slate-950">Question base</h1>
+        </div>
+        <form method="POST" action="/api/auth/signout">
+          <button
+            type="submit"
+            class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
+          >
+            Sign out
+          </button>
+        </form>
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-5xl px-4 py-8">
+      {
+        hasQuestionBaseError ? (
+          <section
+            aria-live="polite"
+            class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-900"
+            role="alert"
+          >
+            We couldn't load your question base. Try again in a moment.
+          </section>
+        ) : (
+          <section>
+            <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-sm text-slate-500">Personal copy</p>
+                <h2 class="text-lg font-semibold text-slate-950">{questions.length} ordered rows</h2>
+              </div>
+              <p class="text-sm text-slate-500">Categories stay in the same sequence as the source document.</p>
+            </div>
+            <QuestionBaseList questions={questions} />
+          </section>
+        )
+      }
     </div>
-  </div>
+  </main>
 </Layout>
