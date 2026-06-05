@@ -14,7 +14,13 @@ export const POST: APIRoute = async (context) => {
     return context.redirect("/auth/signin", 303);
   }
 
-  const formData = await context.request.formData();
+  let formData: FormData;
+  try {
+    formData = await context.request.formData();
+  } catch {
+    return redirectToDashboard(context, "error");
+  }
+
   const result = resetQuestionBaseSchema.safeParse({
     confirmation: formData.get("confirmation"),
   });
