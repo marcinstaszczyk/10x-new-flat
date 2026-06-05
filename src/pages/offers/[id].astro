@@ -1,0 +1,118 @@
+---
+import DeleteOfferForm from "@/components/offers/DeleteOfferForm";
+import Layout from "@/layouts/Layout.astro";
+import { loadSavedOffer } from "@/lib/services/offers";
+import { createClient } from "@/lib/supabase";
+
+const { user } = Astro.locals;
+const offerId = Astro.params.id ?? "";
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const offerResult = supabase ? await loadSavedOffer(supabase, offerId) : { ok: false };
+const offer = offerResult.ok ? offerResult.offer : null;
+const hasLoadError = !offerResult.ok;
+const createdState = Astro.url.searchParams.get("created");
+const deletedState = Astro.url.searchParams.get("deleted");
+const hasCreateSuccess = createdState === "success";
+const hasDeleteError = deletedState === "error";
+const formatDate = new Intl.DateTimeFormat("en", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+---
+
+<Layout title={offer ? offer.title : "Saved Offer"}>
+  <main class="min-h-screen bg-slate-50 text-slate-950">
+    <header class="border-b border-slate-200 bg-white">
+      <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-slate-500">Signed in as {user?.email}</p>
+          <h1 class="mt-1 text-2xl font-semibold tracking-normal text-slate-950">Saved offer</h1>
+        </div>
+        <a
+          href="/offers"
+          class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
+        >
+          Back to offers
+        </a>
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-5xl px-4 py-8">
+      {
+        hasCreateSuccess && (
+          <section
+            aria-live="polite"
+            class="mb-5 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"
+            role="status"
+          >
+            Your offer was saved.
+          </section>
+        )
+      }
+      {
+        hasDeleteError && (
+          <section
+            aria-live="polite"
+            class="mb-5 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-900"
+            role="alert"
+          >
+            We couldn't delete that offer. Try again in a moment.
+          </section>
+        )
+      }
+      {
+        hasLoadError ? (
+          <section
+            aria-live="polite"
+            class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-900"
+            role="alert"
+          >
+            We couldn't load that offer. Try again in a moment.
+          </section>
+        ) : !offer ? (
+          <section class="rounded-md border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
+            <h2 class="text-base font-semibold text-slate-950">Offer not found</h2>
+            <p class="mt-2">This offer is unavailable or was deleted.</p>
+          </section>
+        ) : (
+          <article class="space-y-5 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-start sm:justify-between">
+              <div class="min-w-0">
+                <h2 class="text-xl font-semibold break-words text-slate-950">{offer.title}</h2>
+                {offer.sourceUrl && (
+                  <a
+                    class="mt-2 block text-sm break-all text-slate-600 transition-colors hover:text-slate-950 hover:underline"
+                    href={offer.sourceUrl}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    {offer.sourceUrl}
+                  </a>
+                )}
+              </div>
+              <DeleteOfferForm offerId={offer.id} client:load />
+            </div>
+
+            <dl class="grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+              <div>
+                <dt class="font-medium text-slate-800">Created</dt>
+                <dd>{formatDate.format(new Date(offer.createdAt))}</dd>
+              </div>
+              <div>
+                <dt class="font-medium text-slate-800">Updated</dt>
+                <dd>{formatDate.format(new Date(offer.updatedAt))}</dd>
+              </div>
+            </dl>
+
+            <section>
+              <h3 class="text-sm font-medium text-slate-800">Pasted content</h3>
+              <pre class="mt-2 rounded-md border border-slate-200 bg-slate-50 p-4 text-sm leading-6 break-words whitespace-pre-wrap text-slate-800">
+                {offer.pastedContent}
+              </pre>
+            </section>
+          </article>
+        )
+      }
+    </div>
+  </main>
+</Layout>

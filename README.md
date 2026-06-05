@@ -113,6 +113,14 @@ The dashboard includes a confirmed reset action. Reset is destructive: it delete
 
 Manual dashboard verification uses local Supabase plus `pnpm run dev`: sign in, open `/dashboard`, confirm the ordered list is created, reload to verify the row set is stable, cancel reset to verify no mutation, then confirm reset and verify the success feedback plus complete ordered list.
 
+### Saved pasted offers
+
+Authenticated buyers can use `/offers` to save private flat-offer source material before extraction exists. Each saved offer has a title, pasted offer-page content, and an optional source URL. Saved offers are read-only in this slice: there is no editing, extraction, comparison, scoring, or structured flat-attribute UI.
+
+Deletion is a confirmed hard delete. Once confirmed, the offer row and pasted content are removed immediately and disappear from the list and direct detail access.
+
+Manual saved-offer verification uses local Supabase plus `pnpm run dev`: sign in, open `/offers`, create offers with and without a source URL, confirm read-only detail rendering, submit invalid input to confirm generic error feedback, verify newest-updated list ordering, cancel and confirm delete, and check unauthenticated redirects for `/offers`, `/offers/new`, detail pages, and `/api/offers/**`.
+
 ### Database content migrations
 
 `supabase/migrations/` is the canonical source for database schema and product content. The fixed Polish buyer-question list is delivered by the question-template migration so local, preview, and production environments receive the same ordered document.
@@ -184,6 +192,7 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 | `/auth/signup`        | Email/password sign-up form                                             |
 | `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
 | `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+| `/offers`             | Protected saved-offer workspace for pasted flat-offer content           |
 
 Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
 

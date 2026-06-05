@@ -1,0 +1,84 @@
+---
+import Layout from "@/layouts/Layout.astro";
+
+const { user } = Astro.locals;
+const saveState = Astro.url.searchParams.get("save");
+const hasSaveError = saveState === "error";
+---
+
+<Layout title="New Saved Offer">
+  <main class="min-h-screen bg-slate-50 text-slate-950">
+    <header class="border-b border-slate-200 bg-white">
+      <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-slate-500">Signed in as {user?.email}</p>
+          <h1 class="mt-1 text-2xl font-semibold tracking-normal text-slate-950">New saved offer</h1>
+        </div>
+        <a
+          href="/offers"
+          class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
+        >
+          Back to offers
+        </a>
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-3xl px-4 py-8">
+      {
+        hasSaveError && (
+          <section
+            aria-live="polite"
+            class="mb-5 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-900"
+            role="alert"
+          >
+            We couldn't save that offer. Check the fields and try again.
+          </section>
+        )
+      }
+
+      <form
+        method="POST"
+        action="/api/offers/create"
+        class="space-y-5 rounded-md border border-slate-200 bg-white p-5 shadow-sm"
+      >
+        <label class="block">
+          <span class="text-sm font-medium text-slate-800">Title</span>
+          <input
+            name="title"
+            required
+            type="text"
+            class="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 transition-colors outline-none focus:border-slate-500"
+            autocomplete="off"
+          />
+        </label>
+
+        <label class="block">
+          <span class="text-sm font-medium text-slate-800">Source URL</span>
+          <input
+            name="sourceUrl"
+            type="url"
+            class="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 transition-colors outline-none focus:border-slate-500"
+            autocomplete="off"
+          />
+        </label>
+
+        <label class="block">
+          <span class="text-sm font-medium text-slate-800">Pasted offer content</span>
+          <textarea
+            name="pastedContent"
+            required
+            rows="14"
+            class="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm leading-6 text-slate-950 transition-colors outline-none focus:border-slate-500"
+          ></textarea>
+        </label>
+
+        <button
+          type="submit"
+          class="rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800"
+        >
+          Save offer
+        </button>
+      </form>
+    </div>
+  </main>
+</Layout>

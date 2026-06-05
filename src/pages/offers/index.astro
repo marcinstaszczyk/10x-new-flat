@@ -1,34 +1,41 @@
 ---
-import QuestionBaseList from "@/components/questions/QuestionBaseList.astro";
-import ResetQuestionBaseForm from "@/components/questions/ResetQuestionBaseForm";
+import OfferList from "@/components/offers/OfferList.astro";
 import Layout from "@/layouts/Layout.astro";
-import { loadBuyerQuestionBase } from "@/lib/services/questions";
+import { listSavedOffers } from "@/lib/services/offers";
 import { createClient } from "@/lib/supabase";
 
 const { user } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
-const questionBase = supabase ? await loadBuyerQuestionBase(supabase) : { ok: false };
-const questions = questionBase.ok ? questionBase.questions : [];
-const hasQuestionBaseError = !questionBase.ok;
-const resetState = Astro.url.searchParams.get("reset");
-const hasResetSuccess = resetState === "success";
-const hasResetError = resetState === "error";
+const offerList = supabase ? await listSavedOffers(supabase) : { ok: false };
+const offers = offerList.ok ? offerList.offers : [];
+const hasLoadError = !offerList.ok;
+const createdState = Astro.url.searchParams.get("created");
+const deletedState = Astro.url.searchParams.get("deleted");
+const hasCreateSuccess = createdState === "success";
+const hasDeleteSuccess = deletedState === "success";
+const hasDeleteError = deletedState === "error";
 ---
 
-<Layout title="Question Base">
+<Layout title="Saved Offers">
   <main class="min-h-screen bg-slate-50 text-slate-950">
     <header class="border-b border-slate-200 bg-white">
       <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p class="text-sm text-slate-500">Signed in as {user?.email}</p>
-          <h1 class="mt-1 text-2xl font-semibold tracking-normal text-slate-950">Question base</h1>
+          <h1 class="mt-1 text-2xl font-semibold tracking-normal text-slate-950">Saved offers</h1>
         </div>
         <div class="flex flex-wrap gap-3">
           <a
-            href="/offers"
+            href="/dashboard"
+            class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
+          >
+            Question base
+          </a>
+          <a
+            href="/offers/new"
             class="rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800"
           >
-            Saved offers
+            New offer
           </a>
           <form method="POST" action="/api/auth/signout">
             <button
@@ -44,50 +51,49 @@ const hasResetError = resetState === "error";
 
     <div class="mx-auto max-w-5xl px-4 py-8">
       {
-        hasResetSuccess && (
+        hasCreateSuccess && (
           <section
             aria-live="polite"
             class="mb-5 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"
             role="status"
           >
-            Your question base was reset to the active template list.
+            Your offer was saved.
           </section>
         )
       }
       {
-        hasResetError && (
+        hasDeleteSuccess && (
+          <section
+            aria-live="polite"
+            class="mb-5 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"
+            role="status"
+          >
+            Your offer was deleted.
+          </section>
+        )
+      }
+      {
+        hasDeleteError && (
           <section
             aria-live="polite"
             class="mb-5 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-900"
             role="alert"
           >
-            We couldn't reset your question base. Try again in a moment.
+            We couldn't delete that offer. Try again in a moment.
           </section>
         )
       }
       {
-        hasQuestionBaseError ? (
+        hasLoadError ? (
           <section
             aria-live="polite"
             class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-900"
             role="alert"
           >
-            We couldn't load your question base. Try again in a moment.
+            We couldn't load your saved offers. Try again in a moment.
           </section>
         ) : (
-          <section>
-            <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p class="text-sm text-slate-500">Personal copy</p>
-                <h2 class="text-lg font-semibold text-slate-950">{questions.length} ordered rows</h2>
-              </div>
-              <div class="flex flex-col items-start gap-3 sm:items-end">
-                <p class="text-sm text-slate-500">Categories stay in the same sequence as the source document.</p>
-                <ResetQuestionBaseForm client:load />
-              </div>
-            </div>
-            <QuestionBaseList questions={questions} />
-          </section>
+          <OfferList offers={offers} />
         )
       }
     </div>
