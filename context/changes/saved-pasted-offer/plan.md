@@ -84,7 +84,8 @@ Create the durable database contract for private saved offers and prove anonymou
 - Authenticated buyers can INSERT only owner-bound rows.
 - Authenticated UPDATE is explicitly denied for this slice.
 - Anonymous users have no table access.
-- Apply only the grants needed for intended behavior; do not grant broad table mutation privileges.
+- Apply only the grants needed for intended behavior: revoke all table privileges from `public`, `anon`, and `authenticated`; grant `select` and `delete` on `flat_offers` to `authenticated`; grant `insert (title, source_url, pasted_content)` on `flat_offers` to `authenticated`; grant no `update` privilege.
+- Direct clients cannot insert `buyer_id`, `created_at`, or `updated_at`; those values remain database-owned.
 
 #### 2. Saved offer pgTAP ownership tests
 
@@ -97,6 +98,7 @@ Create the durable database contract for private saved offers and prove anonymou
 - Verify the table, key columns, constraints, indexes, trigger function, and RLS are present.
 - Verify anonymous users cannot read, insert, update, or delete offers.
 - Verify buyer A can insert a valid offer and read only buyer A rows.
+- Verify buyer A cannot insert client-controlled `buyer_id`, `created_at`, or `updated_at` values.
 - Verify buyer B cannot read, update, or delete buyer A rows.
 - Verify title and pasted content reject blank values.
 - Verify blank `source_url` is rejected when inserted directly, while `null` is accepted.
