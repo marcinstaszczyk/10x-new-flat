@@ -3,7 +3,7 @@ project: 10xNewFlat
 version: 1
 status: draft
 created: 2026-06-02
-updated: 2026-06-05
+updated: 2026-06-08
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -27,10 +27,10 @@ Preparing questions and topics for a flat viewing takes time, and buyers can mis
 
 | ID | Change ID | Outcome (user can ...) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-01 | buyer-data-ownership-contract | (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place. | - | FR-002, PRD Access Control, PRD Non-Functional Requirements | ready |
-| F-02 | extraction-contract-check | (foundation) A minimal extraction contract and verification path are agreed. | - | FR-005, PRD Success Criteria, PRD Non-Functional Requirements | ready |
-| S-01 | buyer-account-question-base | Buyer can open their question base and receive a personal copy of the fixed base-question list. | F-01 | US-01, FR-001, FR-002 | proposed |
-| S-02 | saved-pasted-offer | Buyer can create, delete, and revisit a private flat offer containing pasted offer-page content. | S-01 | US-01, FR-003, FR-004, PRD Non-Functional Requirements | proposed |
+| F-01 | buyer-data-ownership-contract | (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place. | - | FR-002, PRD Access Control, PRD Non-Functional Requirements | impl_reviewed |
+| F-02 | extraction-contract-check | (foundation) A minimal extraction contract and verification path are agreed. | - | FR-005, PRD Success Criteria, PRD Non-Functional Requirements | new |
+| S-01 | buyer-account-question-base | Buyer can open their question base and receive a personal copy of the fixed base-question list. | F-01 | US-01, FR-001, FR-002 | impl_reviewed |
+| S-02 | saved-pasted-offer | Buyer can create, delete, and revisit a private flat offer containing pasted offer-page content. | S-01 | US-01, FR-003, FR-004, PRD Non-Functional Requirements | done |
 | S-03 | extracted-viewing-preparation | Buyer can review extracted answers, unanswered questions, doubtful facts, and unmapped offer information. | F-02, S-02 | US-01, FR-005, FR-006, FR-007, FR-008, PRD Success Criteria, PRD Non-Functional Requirements | proposed |
 | S-04 | personal-questions-notes | Buyer can add, edit, and remove personal questions and notes. | S-01 | FR-009 | proposed |
 
@@ -68,7 +68,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** -
 - **Unknowns:** -
 - **Risk:** Buyer content must be isolated from the first stored record; postponing ownership rules would make later vertical work unsafe to verify.
-- **Status:** ready
+- **Status:** implemented
 
 ### F-02: Minimal extraction contract check
 
@@ -81,7 +81,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** -
 - **Unknowns:** -
 - **Risk:** Extraction is the core product risk; a narrow contract check prevents the first complete flow from being planned around an unverified assumption.
-- **Status:** ready
+- **Status:** new
 
 ## Slices
 
@@ -95,7 +95,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** -
 - **Unknowns:** -
 - **Risk:** Authentication already exists, so this slice stays focused on lazy first-visit initialization and visible list review instead of rebuilding login. Repeat visits preserve the buyer copy, and explicit reset is the only replacement path.
-- **Status:** proposed
+- **Status:** impl_reviewed
 
 ### S-02: Buyer saves pasted offer content
 
@@ -107,7 +107,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** -
 - **Unknowns:** -
 - **Risk:** Persisted offer content is sensitive, so create and delete behavior must land together with ownership checks.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Buyer reviews an extracted viewing-preparation result
 
