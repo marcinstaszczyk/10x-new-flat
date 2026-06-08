@@ -51,4 +51,4 @@ None.
 
 - Phase 1 manual criteria are marked complete in the plan at commit `38f2b73`.
 - The review independently inspected the migration and pgTAP negative cases and confirmed the RLS, explicit policy behavior, anonymous denial, cross-buyer isolation, denied owner update, and hard delete coverage.
-- Phase 2 browser/manual criteria remain unchecked and outside this Phase 1 review.
+- Phase 2 browser/manual criteria were outside this Phase 1 review.

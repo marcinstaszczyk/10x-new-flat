@@ -30,19 +30,19 @@
 - **Fix**: Replace the empty-state sentence with copy focused only on saving pasted offer source material, without mentioning extraction.
 - **Decision**: PENDING
 
-### F2 - Phase 2 manual browser verification is still pending
+### F2 - Phase 2 manual browser verification was still pending
 
 - **Severity**: WARNING
 - **Impact**: MEDIUM - real tradeoff; pause to reason through it
 - **Dimension**: Success Criteria
 - **Location**: `context/changes/saved-pasted-offer/plan.md`
-- **Detail**: Phase 2 automated criteria pass, but manual criteria 2.5 through 2.14 remain unchecked. The sibling `todo-manual-verification.md` also records that manual verification is still pending, including create, missing URL, invalid input, ordering, delete cancel/confirm, cross-buyer isolation, and unauthenticated redirects.
+- **Detail**: At review time, Phase 2 automated criteria passed, but manual criteria 2.5 through 2.14 were unchecked. The sibling `todo-manual-verification.md` also recorded that manual verification was pending, including create, missing URL, invalid input, ordering, delete cancel/confirm, cross-buyer isolation, and unauthenticated redirects.
 - **Fix**: Run the listed local browser/auth checks, record the evidence, then mark the relevant Phase 2 manual progress items complete.
   - Strength: Closes the exact success criteria before the change is considered ready.
   - Tradeoff: Requires local auth/browser setup and may take longer than code-only review.
   - Confidence: HIGH - the pending checklist is explicit in the plan and todo file.
   - Blind spot: This review did not run the browser flow, so it does not prove whether any of those manual paths fail.
-- **Decision**: PENDING
+- **Decision**: DONE - manual browser verification was executed successfully on 2026-06-08, and plan items 2.5 through 2.14 are complete.
 
 ## Evidence
 
@@ -71,6 +71,6 @@
 
 ### Manual Verification Evidence
 
-- Phase 2 manual items 2.5 through 2.14 remain unchecked in the plan.
-- `context/changes/saved-pasted-offer/todo-manual-verification.md` explicitly says Phase 2 manual verification is still pending.
-- This review did not run the browser/auth flow.
+- Phase 2 manual items 2.5 through 2.14 are checked in the plan.
+- `context/changes/saved-pasted-offer/todo-manual-verification.md` records successful manual verification.
+- Manual browser/auth flow verification was executed successfully on 2026-06-08.

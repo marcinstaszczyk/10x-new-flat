@@ -337,13 +337,13 @@ Expose the dedicated `/offers` workspace with list, create, detail, and confirme
 
 #### Manual
 
-- [ ] 2.5 With local Supabase and `pnpm run dev`, sign in and open `/offers`; confirm an empty state appears for a buyer with no offers.
-- [ ] 2.6 Create an offer with title, pasted content, and source URL; confirm redirect to detail and read-only saved content.
-- [ ] 2.7 Create an offer without a source URL; confirm the detail page handles the missing URL cleanly.
-- [ ] 2.8 Submit invalid create input and confirm a generic retryable error appears without saving a row.
-- [ ] 2.9 Return to `/offers` and confirm offers are listed newest-updated first.
-- [ ] 2.10 Open the detail page repeatedly and confirm it does not mutate the saved row.
-- [ ] 2.11 Cancel delete and confirm the offer remains.
-- [ ] 2.12 Confirm delete and verify the row disappears from the list and from direct detail access.
-- [ ] 2.13 Sign in as another buyer or simulate another buyer locally and confirm they cannot see or delete the first buyer's offers.
-- [ ] 2.14 Confirm `/offers`, `/offers/new`, offer detail, and `/api/offers/**` redirect unauthenticated users to sign in.
+- [x] 2.5 With local Supabase and `pnpm run dev`, sign in and open `/offers`; confirm an empty state appears for a buyer with no offers. - manual verification 2026-06-08
+- [x] 2.6 Create an offer with title, pasted content, and source URL; confirm redirect to detail and read-only saved content. - manual verification 2026-06-08
+- [x] 2.7 Create an offer without a source URL; confirm the detail page handles the missing URL cleanly. - manual verification 2026-06-08
+- [x] 2.8 Submit invalid create input and confirm a generic retryable error appears without saving a row. - manual verification 2026-06-08
+- [x] 2.9 Return to `/offers` and confirm offers are listed newest-updated first. - manual verification 2026-06-08
+- [x] 2.10 Open the detail page repeatedly and confirm it does not mutate the saved row. - manual verification 2026-06-08
+- [x] 2.11 Cancel delete and confirm the offer remains. - manual verification 2026-06-08
+- [x] 2.12 Confirm delete and verify the row disappears from the list and from direct detail access. - manual verification 2026-06-08
+- [x] 2.13 Sign in as another buyer or simulate another buyer locally and confirm they cannot see or delete the first buyer's offers. - manual verification 2026-06-08
+- [x] 2.14 Confirm `/offers`, `/offers/new`, offer detail, and `/api/offers/**` redirect unauthenticated users to sign in. - manual verification 2026-06-08
