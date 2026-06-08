@@ -29,7 +29,7 @@ Preparing questions and topics for a flat viewing takes time, and buyers can mis
 |---|---|---|---|---|---|
 | F-01 | buyer-data-ownership-contract | (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place. | - | FR-002, PRD Access Control, PRD Non-Functional Requirements | done |
 | F-02 | extraction-contract-check | (foundation) A minimal extraction contract and verification path are agreed. | - | FR-005, PRD Success Criteria, PRD Non-Functional Requirements | new |
-| S-01 | buyer-account-question-base | Buyer can open their question base and receive a personal copy of the fixed base-question list. | F-01 | US-01, FR-001, FR-002 | impl_reviewed |
+| S-01 | buyer-account-question-base | Buyer can open their question base and receive a personal copy of the fixed base-question list. | F-01 | US-01, FR-001, FR-002 | done |
 | S-02 | saved-pasted-offer | Buyer can create, delete, and revisit a private flat offer containing pasted offer-page content. | S-01 | US-01, FR-003, FR-004, PRD Non-Functional Requirements | done |
 | S-03 | extracted-viewing-preparation | Buyer can review extracted answers, unanswered questions, doubtful facts, and unmapped offer information. | F-02, S-02 | US-01, FR-005, FR-006, FR-007, FR-008, PRD Success Criteria, PRD Non-Functional Requirements | proposed |
 | S-04 | personal-questions-notes | Buyer can add, edit, and remove personal questions and notes. | S-01 | FR-009 | proposed |
@@ -95,7 +95,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** -
 - **Unknowns:** -
 - **Risk:** Authentication already exists, so this slice stays focused on lazy first-visit initialization and visible list review instead of rebuilding login. Repeat visits preserve the buyer copy, and explicit reset is the only replacement path.
-- **Status:** impl_reviewed
+- **Status:** done
 
 ### S-02: Buyer saves pasted offer content
 
@@ -164,3 +164,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 ## Done
 
 - **F-01: (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place.** - Archived 2026-06-08 -> `context/archive/2026-06-04-buyer-data-ownership-contract/`. Lesson: -.
+- **S-01: Buyer can open their question base and receive a personal copy of the fixed base-question list.** - Archived 2026-06-08 -> `context/archive/2026-06-04-buyer-account-question-base/`. Lesson: -.
