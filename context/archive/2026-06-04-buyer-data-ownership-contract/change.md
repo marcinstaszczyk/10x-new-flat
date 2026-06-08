@@ -1,10 +1,10 @@
 ---
 change_id: buyer-data-ownership-contract
 title: Establish minimal buyer-data ownership contract
-status: impl_reviewed
+status: archived
 created: 2026-06-04
 updated: 2026-06-08
-archived_at: null
+archived_at: 2026-06-08T14:57:02Z
 ---
 
 ## Notes

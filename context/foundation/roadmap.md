@@ -27,7 +27,7 @@ Preparing questions and topics for a flat viewing takes time, and buyers can mis
 
 | ID | Change ID | Outcome (user can ...) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-01 | buyer-data-ownership-contract | (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place. | - | FR-002, PRD Access Control, PRD Non-Functional Requirements | impl_reviewed |
+| F-01 | buyer-data-ownership-contract | (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place. | - | FR-002, PRD Access Control, PRD Non-Functional Requirements | done |
 | F-02 | extraction-contract-check | (foundation) A minimal extraction contract and verification path are agreed. | - | FR-005, PRD Success Criteria, PRD Non-Functional Requirements | new |
 | S-01 | buyer-account-question-base | Buyer can open their question base and receive a personal copy of the fixed base-question list. | F-01 | US-01, FR-001, FR-002 | impl_reviewed |
 | S-02 | saved-pasted-offer | Buyer can create, delete, and revisit a private flat offer containing pasted offer-page content. | S-01 | US-01, FR-003, FR-004, PRD Non-Functional Requirements | done |
@@ -68,7 +68,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** -
 - **Unknowns:** -
 - **Risk:** Buyer content must be isolated from the first stored record; postponing ownership rules would make later vertical work unsafe to verify.
-- **Status:** implemented
+- **Status:** done
 
 ### F-02: Minimal extraction contract check
 
@@ -162,3 +162,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Automated production deployment** - Why parked: manual deployment is documented and sufficient for the first release.
 
 ## Done
+
+- **F-01: (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place.** - Archived 2026-06-08 -> `context/archive/2026-06-04-buyer-data-ownership-contract/`. Lesson: -.
