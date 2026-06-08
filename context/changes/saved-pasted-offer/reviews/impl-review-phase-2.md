@@ -28,7 +28,7 @@
 - **Location**: `src/components/offers/OfferList.astro:19`
 - **Detail**: The Phase 2 scope explicitly stops before extraction and says not to add extraction placeholders. The empty state says "before running extraction in a later slice", which puts future extraction behavior into the current saved-offer UI.
 - **Fix**: Replace the empty-state sentence with copy focused only on saving pasted offer source material, without mentioning extraction.
-- **Decision**: PENDING
+- **Decision**: FIXED - empty-state copy now focuses only on saved pasted offer source material and does not mention future extraction.
 
 ### F2 - Phase 2 manual browser verification was still pending
 
