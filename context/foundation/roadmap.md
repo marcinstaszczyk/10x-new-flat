@@ -165,3 +165,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 - **F-01: (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place.** - Archived 2026-06-08 -> `context/archive/2026-06-04-buyer-data-ownership-contract/`. Lesson: -.
 - **S-01: Buyer can open their question base and receive a personal copy of the fixed base-question list.** - Archived 2026-06-08 -> `context/archive/2026-06-04-buyer-account-question-base/`. Lesson: -.
+- **S-02: Buyer can create, delete, and revisit a private flat offer containing pasted offer-page content.** - Archived 2026-06-08 -> `context/archive/2026-06-05-saved-pasted-offer/`. Lesson: -.

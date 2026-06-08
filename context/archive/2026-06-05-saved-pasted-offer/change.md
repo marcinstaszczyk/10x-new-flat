@@ -1,10 +1,10 @@
 ---
 change_id: saved-pasted-offer
 title: Buyer saves pasted offer content
-status: done
+status: archived
 created: 2026-06-05
 updated: 2026-06-08
-archived_at: null
+archived_at: 2026-06-08T14:58:15Z
 ---
 
 ## Notes
