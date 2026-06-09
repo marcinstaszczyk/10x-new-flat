@@ -1,18 +1,12 @@
 /* eslint-disable no-console */
-/* global AbortController, DOMException, clearTimeout, console, fetch, process, setTimeout */
+/* global console, fetch, process */
 
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import {
-  DEFAULT_EXTRACTION_MODEL,
-  EXTRACTION_TIMEOUT_MS,
-  buildOpenRouterRequest,
-  extractionResultSchema,
-  validateExtractionInput,
-} from "../src/lib/services/extraction-contract.ts";
+import { DEFAULT_EXTRACTION_MODEL, validateExtractionInput } from "../src/lib/services/extraction-contract.ts";
+import { callOpenRouterExtraction } from "../src/lib/services/extraction-provider.ts";
 
 const FIXTURE_DIR = join("scripts", "fixtures", "extraction-contract");
-const OPENROUTER_CHAT_COMPLETIONS_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 async function main() {
   const apiKey = process.env.OPENROUTER_API_KEY;
@@ -31,25 +25,14 @@ async function main() {
   }
 
   const startedAt = Date.now();
-  const response = await callOpenRouter(input, apiKey, model);
-  const latencyMs = Date.now() - startedAt;
+  const extraction = await callOpenRouterExtraction(input, { apiKey, fetcher: fetch, model, startedAt });
 
-  if (!response.ok) {
-    fail("provider", `OpenRouter request failed with status ${response.status}.`);
+  if (!extraction.ok) {
+    fail(extraction.reason, extraction.diagnostic);
   }
 
-  const payload = await response.json();
-  const content = payload?.choices?.[0]?.message?.content;
-
-  if (payload?.error || payload?.choices?.[0]?.error) {
-    fail("provider", "OpenRouter returned a provider error.");
-  }
-
-  if (!content) {
-    fail("invalid_output", "OpenRouter response did not include message content.");
-  }
-
-  const result = parseResult(content);
+  const { latencyMs } = extraction.metadata;
+  const { result } = extraction;
   validateInvariants(result, expected, latencyMs);
 
   console.log(`Extraction contract check passed.`);
@@ -58,31 +41,6 @@ async function main() {
   console.log(
     `Buckets: answered=${result.answeredQuestions.length}, unanswered=${result.unansweredQuestions.length}, doubtful=${result.doubtfulFacts.length}, unmapped=${result.unmappedFacts.length}`,
   );
-}
-
-async function callOpenRouter(input, apiKey, model) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), EXTRACTION_TIMEOUT_MS);
-
-  try {
-    return await fetch(OPENROUTER_CHAT_COMPLETIONS_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(buildOpenRouterRequest(input, model)),
-      signal: controller.signal,
-    });
-  } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") {
-      fail("timeout", "OpenRouter request timed out.");
-    }
-
-    fail("provider", "OpenRouter request could not be completed.");
-  } finally {
-    clearTimeout(timeoutId);
-  }
 }
 
 async function readFixtureInput() {
@@ -102,24 +60,6 @@ async function readFixtureInput() {
 async function readJsonFixture(filename) {
   const content = await readFile(join(FIXTURE_DIR, filename), "utf8");
   return JSON.parse(content);
-}
-
-function parseResult(content) {
-  let parsed;
-
-  try {
-    parsed = JSON.parse(content);
-  } catch {
-    fail("invalid_output", "OpenRouter response content was not valid JSON.");
-  }
-
-  const validation = extractionResultSchema.safeParse(parsed);
-
-  if (!validation.success) {
-    fail("invalid_output", "OpenRouter JSON did not match the extraction schema.");
-  }
-
-  return validation.data;
 }
 
 function validateInvariants(result, expected, latencyMs) {

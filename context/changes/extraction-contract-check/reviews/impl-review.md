@@ -32,7 +32,7 @@
   - Tradeoff: Requires a small module split because scripts cannot import `astro:env/server`.
   - Confidence: HIGH - the duplicated path is visible in the script and service today.
   - Blind spot: None significant.
-- **Decision**: PENDING
+- **Decision**: FIXED - provider call/response parsing moved into `src/lib/services/extraction-provider.ts`; both `src/lib/services/extraction.ts` and `scripts/check-extraction-contract.mjs` now use that shared path.
 
 ## Verification
 
@@ -40,3 +40,7 @@
 - `pnpm.cmd run build` passed.
 - `pnpm.cmd run check:extraction-contract` without process key failed with the expected configuration message.
 - Live OpenRouter check passed unsandboxed: `openai/gpt-5.5`, `871ms`, buckets `answered=3`, `unanswered=1`, `doubtful=1`, `unmapped=11`.
+- After triage fix, `pnpm.cmd run lint` passed.
+- After triage fix, `pnpm.cmd run build` passed.
+- After triage fix, `pnpm.cmd run check:extraction-contract` without process key failed with the expected configuration message.
+- After triage fix, live OpenRouter check passed unsandboxed: `openai/gpt-5.5`, `2519ms`, buckets `answered=3`, `unanswered=1`, `doubtful=1`, `unmapped=12`.
