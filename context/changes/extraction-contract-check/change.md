@@ -1,7 +1,7 @@
 ---
 change_id: extraction-contract-check
 title: Extraction contract check
-status: implementing
+status: impl_reviewed
 created: 2026-06-08
 updated: 2026-06-09
 archived_at: null
