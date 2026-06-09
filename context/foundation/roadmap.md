@@ -31,7 +31,7 @@ Preparing questions and topics for a flat viewing takes time, and buyers can mis
 | F-02 | extraction-contract-check | (foundation) A minimal extraction contract and verification path are agreed. | - | FR-005, PRD Success Criteria, PRD Non-Functional Requirements | done |
 | S-01 | buyer-account-question-base | Buyer can open their question base and receive a personal copy of the fixed base-question list. | F-01 | US-01, FR-001, FR-002 | done |
 | S-02 | saved-pasted-offer | Buyer can create, delete, and revisit a private flat offer containing pasted offer-page content. | S-01 | US-01, FR-003, FR-004, PRD Non-Functional Requirements | done |
-| S-03 | extracted-viewing-preparation | Buyer can review extracted answers, unanswered questions, doubtful facts, and unmapped offer information. | F-02, S-02 | US-01, FR-005, FR-006, FR-007, FR-008, PRD Success Criteria, PRD Non-Functional Requirements | proposed |
+| S-03 | extracted-viewing-preparation | Buyer can review extracted answers, unanswered questions, doubtful facts, and unmapped offer information. | F-02, S-02 | US-01, FR-005, FR-006, FR-007, FR-008, PRD Success Criteria, PRD Non-Functional Requirements | done |
 | S-04 | personal-questions-notes | Buyer can add, edit, and remove personal questions and notes. | S-01 | FR-009 | proposed |
 
 ## Streams
@@ -120,7 +120,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Which user-facing wording makes doubtful and unmapped information easiest to review? - Owner: user. Block: no.
 - **Risk:** The result must remain useful without inventing facts; this slice proves the product before secondary editing features are prioritized.
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Buyer manages personal questions and notes
 
@@ -167,3 +167,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-01: Buyer can open their question base and receive a personal copy of the fixed base-question list.** - Archived 2026-06-08 -> `context/archive/2026-06-04-buyer-account-question-base/`. Lesson: -.
 - **S-02: Buyer can create, delete, and revisit a private flat offer containing pasted offer-page content.** - Archived 2026-06-08 -> `context/archive/2026-06-05-saved-pasted-offer/`. Lesson: -.
 - **F-02: (foundation) A minimal extraction contract and verification path are agreed for latency, doubtful values, and unmapped information.** - Archived 2026-06-09 -> `context/archive/2026-06-08-extraction-contract-check/`. Lesson: -.
+- **S-03: Buyer can review extracted answers, unanswered questions, doubtful facts, and unmapped offer information.** - Archived 2026-06-09 -> `context/archive/2026-06-09-extracted-viewing-preparation/`. Lesson: -.

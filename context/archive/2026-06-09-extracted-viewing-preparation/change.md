@@ -1,10 +1,10 @@
 ---
 change_id: extracted-viewing-preparation
 title: Extracted viewing preparation
-status: impl_reviewed
+status: archived
 created: 2026-06-09
 updated: 2026-06-09
-archived_at: null
+archived_at: 2026-06-09T16:58:04Z
 ---
 
 ## Notes
