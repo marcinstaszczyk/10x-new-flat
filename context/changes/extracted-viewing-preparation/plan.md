@@ -397,28 +397,28 @@ Update the saved-offer detail page to show the existing preparation result and a
 
 #### Automated
 
-- [x] 2.1 `pnpm run lint` passes.
-- [x] 2.2 `pnpm run build` passes.
+- [x] 2.1 `pnpm run lint` passes. - 73325e5
+- [x] 2.2 `pnpm run build` passes. - 73325e5
 
 #### Manual
 
-- [x] 2.3 Review services and confirm OpenRouter is never called when a persisted result already exists.
-- [x] 2.4 Review logs and API responses for sensitive-data exclusion.
-- [x] 2.5 Review failure handling and confirm failures leave no extraction-result row while Cloudflare logs retain safe diagnostics.
+- [x] 2.3 Review services and confirm OpenRouter is never called when a persisted result already exists. - 73325e5
+- [x] 2.4 Review logs and API responses for sensitive-data exclusion. - 73325e5
+- [x] 2.5 Review failure handling and confirm failures leave no extraction-result row while Cloudflare logs retain safe diagnostics. - 73325e5
 
 ### Phase 3: Render and Trigger Preparation on Offer Detail
 
 #### Automated
 
-- [ ] 3.1 `pnpm run lint` passes.
-- [ ] 3.2 `pnpm run build` passes.
+- [x] 3.1 `pnpm run lint` passes.
+- [x] 3.2 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 3.3 With no result, `/offers/:id` shows a usable "Prepare viewing" action.
-- [ ] 3.4 Clicking the action shows a pending state and does not allow duplicate clicks.
-- [ ] 3.5 A completed result appears after generation and remains visible after page reload.
-- [ ] 3.6 A second extraction attempt is blocked when a result already exists.
-- [ ] 3.7 Answered and unanswered questions render in category order where matching question IDs exist.
-- [ ] 3.8 Failed attempts show safe user-facing status only and do not create a persisted result.
-- [ ] 3.9 Deleting the offer removes the saved offer and its preparation result.
+- [x] 3.3 With no result, `/offers/:id` shows a usable "Prepare viewing" action.
+- [x] 3.4 Clicking the action shows a pending state and does not allow duplicate clicks.
+- [x] 3.5 A completed result appears after generation and remains visible after page reload.
+- [x] 3.6 A second extraction attempt is blocked when a result already exists.
+- [x] 3.7 Answered and unanswered questions render in category order where matching question IDs exist.
+- [x] 3.8 Failed attempts show safe user-facing status only and do not create a persisted result.
+- [x] 3.9 Deleting the offer removes the saved offer and its preparation result.

@@ -1,4 +1,4 @@
-import type { ExtractionRequestInput, ExtractionResult } from "@/types";
+import type { ExtractionQuestionInput, ExtractionRequestInput, ExtractionResult } from "@/types";
 import { EXTRACTION_TIMEOUT_MS, buildOpenRouterRequest, extractionResultSchema } from "./extraction-contract.ts";
 
 const OPENROUTER_CHAT_COMPLETIONS_URL = "https://openrouter.ai/api/v1/chat/completions";
@@ -67,7 +67,7 @@ export async function callOpenRouterExtraction(
       signal: controller.signal,
     });
 
-    return await handleOpenRouterResponse(response, options.model, startedAt);
+    return await handleOpenRouterResponse(response, options.model, startedAt, input.questions);
   } catch (error) {
     return handleOpenRouterError(error, options.model, startedAt);
   } finally {
@@ -106,6 +106,7 @@ async function handleOpenRouterResponse(
   response: Response,
   model: string,
   startedAt: number,
+  questions: ExtractionQuestionInput[],
 ): Promise<ExtractionServiceResult> {
   const metadata = buildMetadata(model, startedAt);
 
@@ -124,7 +125,51 @@ async function handleOpenRouterResponse(
     return invalidOutput("OpenRouter response did not include message content.", metadata);
   }
 
-  return parseExtractionContent(content, metadata);
+  return parseExtractionContentForQuestions(content, metadata, questions);
+}
+
+function parseExtractionContentForQuestions(
+  content: string,
+  metadata: ExtractionMetadata,
+  questions: ExtractionQuestionInput[],
+): ExtractionServiceResult {
+  const result = parseExtractionContent(content, metadata);
+
+  if (!result.ok) {
+    return result;
+  }
+
+  return {
+    ok: true,
+    result: completeUnansweredQuestions(result.result, questions),
+    metadata,
+  };
+}
+
+function completeUnansweredQuestions(result: ExtractionResult, questions: ExtractionQuestionInput[]): ExtractionResult {
+  const answeredQuestions = result.answeredQuestions.filter(hasSubstantiveAnswer);
+  const mappedQuestionIds = new Set(answeredQuestions.map((question) => question.questionId));
+
+  return {
+    ...result,
+    answeredQuestions,
+    unansweredQuestions: questions
+      .filter((question) => !mappedQuestionIds.has(question.id))
+      .map((question) => ({
+        questionId: question.id,
+        questionText: question.text,
+        reason: "No supporting fact was found in the pasted offer.",
+      })),
+  };
+}
+
+function hasSubstantiveAnswer(question: ExtractionResult["answeredQuestions"][number]): boolean {
+  const answer = question.answerText.toLocaleLowerCase();
+  const evidence = question.evidenceText.toLocaleLowerCase();
+  const nonAnswerPattern =
+    /(?:not specified|not provided|not mentioned|does not mention|doesn't mention|does not include|no information|no explicit|unknown|brak informacji|nie podano|nie wskazano|nie wymieniono)/;
+
+  return !nonAnswerPattern.test(answer) && !nonAnswerPattern.test(evidence);
 }
 
 function handleOpenRouterError(error: unknown, model: string, startedAt: number): ExtractionServiceResult {

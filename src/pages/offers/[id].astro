@@ -1,7 +1,11 @@
 ---
 import DeleteOfferForm from "@/components/offers/DeleteOfferForm";
+import OfferPreparationResult from "@/components/offers/OfferPreparationResult.astro";
+import PrepareViewingButton from "@/components/offers/PrepareViewingButton";
 import Layout from "@/layouts/Layout.astro";
+import { loadOfferExtractionResult } from "@/lib/services/offer-extraction-results";
 import { loadSavedOffer } from "@/lib/services/offers";
+import { loadBuyerQuestionBase } from "@/lib/services/questions";
 import { createClient } from "@/lib/supabase";
 
 const { user } = Astro.locals;
@@ -10,6 +14,18 @@ const supabase = createClient(Astro.request.headers, Astro.cookies);
 const offerResult = supabase ? await loadSavedOffer(supabase, offerId) : { ok: false };
 const offer = offerResult.ok ? offerResult.offer : null;
 const hasLoadError = !offerResult.ok;
+let preparationResult = { ok: true, result: null };
+let questionBase = { ok: true, questions: [] };
+
+if (supabase && offer) {
+  preparationResult = await loadOfferExtractionResult(supabase, offer.id);
+  questionBase = await loadBuyerQuestionBase(supabase);
+}
+
+const preparation = preparationResult.ok ? preparationResult.result : null;
+const questions = questionBase.ok ? questionBase.questions : [];
+const hasPreparationLoadError = !preparationResult.ok;
+const hasQuestionBaseError = !questionBase.ok;
 const createdState = Astro.url.searchParams.get("created");
 const deletedState = Astro.url.searchParams.get("deleted");
 const hasCreateSuccess = createdState === "success";
@@ -75,42 +91,67 @@ const formatDate = new Intl.DateTimeFormat("en", {
             <p class="mt-2">This offer is unavailable or was deleted.</p>
           </section>
         ) : (
-          <article class="space-y-5 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-start sm:justify-between">
-              <div class="min-w-0">
-                <h2 class="text-xl font-semibold break-words text-slate-950">{offer.title}</h2>
-                {offer.sourceUrl && (
-                  <a
-                    class="mt-2 block text-sm break-all text-slate-600 transition-colors hover:text-slate-950 hover:underline"
-                    href={offer.sourceUrl}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    {offer.sourceUrl}
-                  </a>
-                )}
+          <div class="space-y-6">
+            <article class="space-y-5 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+              <div class="flex flex-col gap-4 border-b border-slate-200 pb-5 lg:flex-row lg:items-start lg:justify-between">
+                <div class="min-w-0">
+                  <h2 class="text-xl font-semibold break-words text-slate-950">{offer.title}</h2>
+                  {offer.sourceUrl && (
+                    <a
+                      class="mt-2 block text-sm break-all text-slate-600 transition-colors hover:text-slate-950 hover:underline"
+                      href={offer.sourceUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {offer.sourceUrl}
+                    </a>
+                  )}
+                </div>
+                <div class="flex flex-col items-start gap-3 sm:flex-row lg:items-start">
+                  <PrepareViewingButton offerId={offer.id} hasResult={Boolean(preparation)} client:load />
+                  <DeleteOfferForm offerId={offer.id} client:load />
+                </div>
               </div>
-              <DeleteOfferForm offerId={offer.id} client:load />
-            </div>
 
-            <dl class="grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
-              <div>
-                <dt class="font-medium text-slate-800">Created</dt>
-                <dd>{formatDate.format(new Date(offer.createdAt))}</dd>
-              </div>
-              <div>
-                <dt class="font-medium text-slate-800">Updated</dt>
-                <dd>{formatDate.format(new Date(offer.updatedAt))}</dd>
-              </div>
-            </dl>
+              <dl class="grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+                <div>
+                  <dt class="font-medium text-slate-800">Created</dt>
+                  <dd>{formatDate.format(new Date(offer.createdAt))}</dd>
+                </div>
+                <div>
+                  <dt class="font-medium text-slate-800">Updated</dt>
+                  <dd>{formatDate.format(new Date(offer.updatedAt))}</dd>
+                </div>
+              </dl>
 
-            <section>
-              <h3 class="text-sm font-medium text-slate-800">Pasted content</h3>
-              <pre class="mt-2 rounded-md border border-slate-200 bg-slate-50 p-4 text-sm leading-6 break-words whitespace-pre-wrap text-slate-800">
-                {offer.pastedContent}
-              </pre>
-            </section>
-          </article>
+              <section>
+                <h3 class="text-sm font-medium text-slate-800">Pasted content</h3>
+                <pre class="mt-2 rounded-md border border-slate-200 bg-slate-50 p-4 text-sm leading-6 break-words whitespace-pre-wrap text-slate-800">
+                  {offer.pastedContent}
+                </pre>
+              </section>
+            </article>
+
+            {hasPreparationLoadError && (
+              <section
+                aria-live="polite"
+                class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-900"
+                role="alert"
+              >
+                We couldn't load the preparation result. The saved offer is still available.
+              </section>
+            )}
+            {hasQuestionBaseError && (
+              <section
+                aria-live="polite"
+                class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-900"
+                role="alert"
+              >
+                We couldn't load your question base. Existing preparation rows may be uncategorized.
+              </section>
+            )}
+            {preparation && <OfferPreparationResult result={preparation} questions={questions} />}
+          </div>
         )
       }
     </div>
