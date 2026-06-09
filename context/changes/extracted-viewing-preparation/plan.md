@@ -410,15 +410,15 @@ Update the saved-offer detail page to show the existing preparation result and a
 
 #### Automated
 
-- [x] 3.1 `pnpm run lint` passes.
-- [x] 3.2 `pnpm run build` passes.
+- [x] 3.1 `pnpm run lint` passes. - fdcb999
+- [x] 3.2 `pnpm run build` passes. - fdcb999
 
 #### Manual
 
-- [x] 3.3 With no result, `/offers/:id` shows a usable "Prepare viewing" action.
-- [x] 3.4 Clicking the action shows a pending state and does not allow duplicate clicks.
-- [x] 3.5 A completed result appears after generation and remains visible after page reload.
-- [x] 3.6 A second extraction attempt is blocked when a result already exists.
-- [x] 3.7 Answered and unanswered questions render in category order where matching question IDs exist.
-- [x] 3.8 Failed attempts show safe user-facing status only and do not create a persisted result.
-- [x] 3.9 Deleting the offer removes the saved offer and its preparation result.
+- [x] 3.3 With no result, `/offers/:id` shows a usable "Prepare viewing" action. - fdcb999
+- [x] 3.4 Clicking the action shows a pending state and does not allow duplicate clicks. - fdcb999
+- [x] 3.5 A completed result appears after generation and remains visible after page reload. - fdcb999
+- [x] 3.6 A second extraction attempt is blocked when a result already exists. - fdcb999
+- [x] 3.7 Answered and unanswered questions render in category order where matching question IDs exist. - fdcb999
+- [x] 3.8 Failed attempts show safe user-facing status only and do not create a persisted result. - fdcb999
+- [x] 3.9 Deleting the offer removes the saved offer and its preparation result. - fdcb999
