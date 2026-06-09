@@ -66,7 +66,7 @@ Add the server-only configuration, DTOs, validation, and OpenRouter call boundar
 
 #### 1. Server-only OpenRouter configuration
 
-**Files**: `astro.config.mjs`, `.env.example`
+**Files**: `astro.config.mjs`, `.env.example`, `.env`, `.dev.vars`
 
 **Intent**: Make OpenRouter secrets available only on the server and keep local setup discoverable.
 
@@ -76,6 +76,8 @@ Add the server-only configuration, DTOs, validation, and OpenRouter call boundar
 - Add optional `OPENROUTER_MODEL` with default behavior in code, not as a required secret.
 - Add optional attribution variables only if the implementation uses `HTTP-Referer` or `X-OpenRouter-Title`.
 - Mirror non-sensitive variable names in `.env.example`; never include a real key.
+- Keep `.env` and `.dev.vars` aligned with the same OpenRouter variable names for local development, using empty placeholders unless the developer already has a local key.
+- Document hosted setup through Cloudflare Worker secrets instead of committed Wrangler plaintext variables.
 - Preserve existing Supabase env fields.
 
 #### 2. Extraction DTOs
@@ -111,11 +113,16 @@ Add the server-only configuration, DTOs, validation, and OpenRouter call boundar
 - Default model is `openai/gpt-5.5`; allow override through `OPENROUTER_MODEL` or an explicit test option.
 - Send `reasoning: { effort: "low", exclude: true }`.
 - Send `stream: false`, low temperature, and strict `response_format` JSON schema.
+- Set a bounded output budget with `max_tokens` so model latency and cost stay inside the fixture and product budget.
 - Use `AbortController` with a timeout below 60 seconds, recommended 55 seconds.
+- Validate input before calling the provider:
+  - reject pasted offer content above a named character limit,
+  - reject question lists above a named count limit,
+  - return a typed `input_too_large` failure instead of truncating silently.
 - Parse `choices[0].message.content` as JSON and validate it with zod before returning success.
 - Return a typed result:
   - `ok: true`, `result`, and metadata such as `model` and `latencyMs`.
-  - `ok: false`, `reason` as `configuration | timeout | provider | invalid_output`, and safe diagnostic text.
+  - `ok: false`, `reason` as `configuration | input_too_large | timeout | provider | invalid_output`, and safe diagnostic text.
 - Never accept a client-supplied buyer ID.
 - Never log pasted offer content, full prompts, or raw model output by default.
 
@@ -131,6 +138,7 @@ Add the server-only configuration, DTOs, validation, and OpenRouter call boundar
 - The prompt must separate offer content from buyer questions.
 - The prompt must require known facts to become answered question pairs, absent facts to become unanswered questions, suspicious or uncertain values to become doubtful facts, and useful unmatched facts to become unmapped facts.
 - The JSON schema must reject additional top-level properties.
+- The JSON schema must bound bucket sizes and string lengths for answers, evidence, labels, values, and reasons.
 - Evidence fields must be short excerpts or summaries from the pasted content, not external claims.
 
 ### Success Criteria
@@ -190,7 +198,8 @@ Create one controlled extraction fixture and a repeatable command that proves th
 - Read the fixture files from `scripts/fixtures/extraction-contract/`.
 - Require `OPENROUTER_API_KEY`; fail with a clear setup message when missing.
 - Use `OPENROUTER_MODEL` when present; otherwise use `openai/gpt-5.5`.
-- Call the same endpoint and request shape as the extraction service.
+- Reuse the extraction service's schema, prompt/request builder, timeout constants, and provider call path where practical, or extract those pieces into a small shared module owned by `src/lib/services/extraction.ts`.
+- Do not duplicate the OpenRouter request shape in the script; the fixture check must fail if the app-facing service contract drifts.
 - Validate JSON shape and expected invariants.
 - Fail nonzero on timeout, provider error, invalid JSON, schema failure, or invariant failure.
 - Print only safe summary data: model, latency, bucket counts, and failure reason.
@@ -262,6 +271,8 @@ Create one controlled extraction fixture and a repeatable command that proves th
 
 - The service uses one external request and light JSON validation only.
 - Timeout should leave margin inside the 60-second product requirement; 55 seconds is the recommended service budget.
+- Define named limits for maximum pasted offer characters, maximum buyer question count, maximum model output tokens, maximum bucket counts, and maximum evidence string length.
+- Requests that exceed the named input limits return the typed `input_too_large` failure without sending pasted content to OpenRouter.
 - Keep fixture content short enough to exercise the contract without measuring large-document behavior.
 - Do not add local parsing packages that depend on unsupported Node APIs or increase Cloudflare Worker CPU risk.
 
