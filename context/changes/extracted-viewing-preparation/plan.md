@@ -384,27 +384,27 @@ Update the saved-offer detail page to show the existing preparation result and a
 
 #### Automated
 
-- [x] 1.1 Supabase database test for `offer_extraction_results` passes.
-- [x] 1.2 `pnpm run lint` passes.
-- [x] 1.3 `pnpm run build` passes.
+- [x] 1.1 Supabase database test for `offer_extraction_results` passes - 2e40206
+- [x] 1.2 `pnpm run lint` passes - 2e40206
+- [x] 1.3 `pnpm run build` passes - 2e40206
 
 #### Manual
 
-- [x] 1.4 Review the migration and confirm RLS policies cover SELECT, INSERT, UPDATE, and DELETE explicitly.
-- [x] 1.5 Review cascade behavior and confirm deleting an offer deletes its extraction result.
+- [x] 1.4 Review the migration and confirm RLS policies cover SELECT, INSERT, UPDATE, and DELETE explicitly - 2e40206
+- [x] 1.5 Review cascade behavior and confirm deleting an offer deletes its extraction result - 2e40206
 
 ### Phase 2: Add Extraction Result Services and API
 
 #### Automated
 
-- [ ] 2.1 `pnpm run lint` passes.
-- [ ] 2.2 `pnpm run build` passes.
+- [x] 2.1 `pnpm run lint` passes.
+- [x] 2.2 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 2.3 Review services and confirm OpenRouter is never called when a persisted result already exists.
-- [ ] 2.4 Review logs and API responses for sensitive-data exclusion.
-- [ ] 2.5 Review failure handling and confirm failures leave no extraction-result row while Cloudflare logs retain safe diagnostics.
+- [x] 2.3 Review services and confirm OpenRouter is never called when a persisted result already exists.
+- [x] 2.4 Review logs and API responses for sensitive-data exclusion.
+- [x] 2.5 Review failure handling and confirm failures leave no extraction-result row while Cloudflare logs retain safe diagnostics.
 
 ### Phase 3: Render and Trigger Preparation on Offer Detail
 
