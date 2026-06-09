@@ -90,7 +90,7 @@ export function parseExtractionContent(content: string, metadata: ExtractionMeta
     return invalidOutput("OpenRouter JSON did not match the extraction schema.", metadata);
   }
 
-  return { ok: true, result: result.data, metadata };
+  return { ok: true, result: { ...result.data, unansweredQuestions: [] }, metadata };
 }
 
 export function extractionFailure(
@@ -158,7 +158,6 @@ function completeUnansweredQuestions(result: ExtractionResult, questions: Extrac
       .map((question) => ({
         questionId: question.id,
         questionText: question.text,
-        reason: "No supporting fact was found in the pasted offer.",
       })),
   };
 }

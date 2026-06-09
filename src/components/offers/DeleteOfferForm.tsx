@@ -6,7 +6,7 @@ interface Props {
 }
 
 const confirmationValue = "delete-flat-offer";
-const confirmationMessage = "Delete this saved offer? The pasted content will be removed permanently.";
+const confirmationMessage = "Usunąć tę zapisaną ofertę? Wklejona treść zostanie trwale usunięta.";
 
 export default function DeleteOfferForm(props: Props) {
   let confirmationInput: HTMLInputElement | undefined;
@@ -30,7 +30,7 @@ export default function DeleteOfferForm(props: Props) {
         class="inline-flex items-center justify-center gap-2 rounded-md border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:outline-none"
       >
         <Trash2 class="size-4" aria-hidden="true" />
-        Delete offer
+        Usuń ofertę
       </button>
     </form>
   );

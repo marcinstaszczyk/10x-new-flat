@@ -16,10 +16,16 @@ type QuestionResultItem = AnsweredExtractionQuestion | UnansweredExtractionQuest
 const { result, questions } = Astro.props;
 const answeredGroups = groupQuestionResults(result.result.answeredQuestions, questions);
 const unansweredGroups = groupQuestionResults(result.result.unansweredQuestions, questions);
-const formatDate = new Intl.DateTimeFormat("en", {
+const formatDate = new Intl.DateTimeFormat("pl-PL", {
   dateStyle: "medium",
   timeStyle: "short",
 });
+
+const confidenceLabels: Record<AnsweredExtractionQuestion["confidence"], string> = {
+  high: "wysoka pewność",
+  medium: "średnia pewność",
+  low: "niska pewność",
+};
 
 function groupQuestionResults<TItem extends QuestionResultItem>(items: TItem[], questionBase: BuyerQuestion[]) {
   const questionMetadata = buildQuestionMetadata(questionBase);
@@ -40,13 +46,13 @@ function groupQuestionResults<TItem extends QuestionResultItem>(items: TItem[], 
 
   return [
     ...Array.from(groups, ([title, groupItems]) => ({ title, items: groupItems })),
-    ...(uncategorized.length ? [{ title: "Uncategorized", items: uncategorized }] : []),
+    ...(uncategorized.length ? [{ title: "Bez kategorii", items: uncategorized }] : []),
   ];
 }
 
 function buildQuestionMetadata(questionBase: BuyerQuestion[]) {
   const metadata = new Map<string, { category: string; position: number }>();
-  let currentCategory = "Uncategorized";
+  let currentCategory = "Bez kategorii";
 
   for (const question of questionBase) {
     if (question.type === "category") {
@@ -77,15 +83,15 @@ function sortQuestionResult(
 <section class="space-y-6">
   <div class="flex flex-col gap-1 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
     <div>
-      <p class="text-sm text-slate-500">Generated {formatDate.format(new Date(result.createdAt))}</p>
-      <h2 class="text-xl font-semibold text-slate-950">Viewing preparation</h2>
+      <p class="text-sm text-slate-500">Wygenerowano {formatDate.format(new Date(result.createdAt))}</p>
+      <h2 class="text-xl font-semibold text-slate-950">Wyniki</h2>
     </div>
     <p class="text-sm text-slate-500">Model: {result.model}</p>
   </div>
 
   <section class="space-y-4">
     <h3 class="text-base font-semibold text-slate-950">
-      Answered questions ({result.result.answeredQuestions.length})
+      Pytania z odpowiedzią ({result.result.answeredQuestions.length})
     </h3>
     {
       answeredGroups.length ? (
@@ -98,25 +104,25 @@ function sortQuestionResult(
                   <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <h5 class="text-sm font-semibold text-slate-950">{item.questionText}</h5>
                     <span class="w-fit rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600">
-                      {item.confidence} confidence
+                      {confidenceLabels[item.confidence]}
                     </span>
                   </div>
                   <p class="mt-3 text-sm text-slate-800">{item.answerText}</p>
-                  <p class="mt-2 text-xs leading-5 text-slate-500">Evidence: {item.evidenceText}</p>
+                  <p class="mt-2 text-xs leading-5 text-slate-500">Źródło: {item.evidenceText}</p>
                 </article>
               ))}
             </div>
           </section>
         ))
       ) : (
-        <p class="rounded-md border border-slate-200 bg-white p-4 text-sm text-slate-500">No answered questions.</p>
+        <p class="rounded-md border border-slate-200 bg-white p-4 text-sm text-slate-500">Brak pytań z odpowiedzią.</p>
       )
     }
   </section>
 
   <section class="space-y-4">
     <h3 class="text-base font-semibold text-slate-950">
-      Unanswered questions ({result.result.unansweredQuestions.length})
+      Pytania bez odpowiedzi ({result.result.unansweredQuestions.length})
     </h3>
     {
       unansweredGroups.length ? (
@@ -127,20 +133,19 @@ function sortQuestionResult(
               {group.items.map((item) => (
                 <article class="rounded-md border border-slate-200 bg-white p-4">
                   <h5 class="text-sm font-semibold text-slate-950">{item.questionText}</h5>
-                  <p class="mt-2 text-sm text-slate-700">Reason: {item.reason}</p>
                 </article>
               ))}
             </div>
           </section>
         ))
       ) : (
-        <p class="rounded-md border border-slate-200 bg-white p-4 text-sm text-slate-500">No unanswered questions.</p>
+        <p class="rounded-md border border-slate-200 bg-white p-4 text-sm text-slate-500">Brak pytań bez odpowiedzi.</p>
       )
     }
   </section>
 
   <section class="space-y-4">
-    <h3 class="text-base font-semibold text-slate-950">Doubtful facts ({result.result.doubtfulFacts.length})</h3>
+    <h3 class="text-base font-semibold text-slate-950">Wątpliwe informacje ({result.result.doubtfulFacts.length})</h3>
     <div class="grid gap-3">
       {
         result.result.doubtfulFacts.length ? (
@@ -148,19 +153,21 @@ function sortQuestionResult(
             <article class="rounded-md border border-amber-200 bg-white p-4">
               <h4 class="text-sm font-semibold text-slate-950">{fact.label}</h4>
               {fact.value && <p class="mt-2 text-sm text-slate-800">{fact.value}</p>}
-              <p class="mt-2 text-sm text-amber-800">Reason: {fact.reason}</p>
-              <p class="mt-2 text-xs leading-5 text-slate-500">Evidence: {fact.evidence}</p>
+              <p class="mt-2 text-sm text-amber-800">Powód: {fact.reason}</p>
+              <p class="mt-2 text-xs leading-5 text-slate-500">Źródło: {fact.evidence}</p>
             </article>
           ))
         ) : (
-          <p class="rounded-md border border-slate-200 bg-white p-4 text-sm text-slate-500">No doubtful facts.</p>
+          <p class="rounded-md border border-slate-200 bg-white p-4 text-sm text-slate-500">
+            Brak wątpliwych informacji.
+          </p>
         )
       }
     </div>
   </section>
 
   <section class="space-y-4">
-    <h3 class="text-base font-semibold text-slate-950">Unmapped facts ({result.result.unmappedFacts.length})</h3>
+    <h3 class="text-base font-semibold text-slate-950">Pozostałe informacje ({result.result.unmappedFacts.length})</h3>
     <div class="grid gap-3">
       {
         result.result.unmappedFacts.length ? (
@@ -168,11 +175,13 @@ function sortQuestionResult(
             <article class="rounded-md border border-slate-200 bg-white p-4">
               <h4 class="text-sm font-semibold text-slate-950">{fact.label}</h4>
               <p class="mt-2 text-sm text-slate-800">{fact.value}</p>
-              <p class="mt-2 text-xs leading-5 text-slate-500">Evidence: {fact.evidence}</p>
+              <p class="mt-2 text-xs leading-5 text-slate-500">Źródło: {fact.evidence}</p>
             </article>
           ))
         ) : (
-          <p class="rounded-md border border-slate-200 bg-white p-4 text-sm text-slate-500">No unmapped facts.</p>
+          <p class="rounded-md border border-slate-200 bg-white p-4 text-sm text-slate-500">
+            Brak pozostałych informacji.
+          </p>
         )
       }
     </div>

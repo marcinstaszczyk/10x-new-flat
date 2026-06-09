@@ -18,15 +18,15 @@ type PrepareStatus =
   | "unexpected";
 
 const errorLabels: Record<PrepareStatus, string> = {
-  already_exists: "Preparation already exists. Reloading...",
-  configuration: "Preparation is not configured yet.",
-  input_too_large: "This offer is too large to prepare.",
-  invalid_output: "The provider returned an invalid result. Try again.",
-  provider: "The provider could not prepare this offer. Try again.",
-  question_base: "We couldn't load your question base. Try again.",
-  storage: "We couldn't save the preparation result. Try again.",
-  timeout: "Preparation timed out. Try again.",
-  unexpected: "We couldn't prepare this offer. Try again.",
+  already_exists: "Odpowiedzi są już gotowe. Przewiń niżej, aby je zobaczyć.",
+  configuration: "Generowanie odpowiedzi nie jest jeszcze skonfigurowane.",
+  input_too_large: "Ta oferta jest zbyt duża, aby przygotować odpowiedzi.",
+  invalid_output: "Dostawca zwrócił nieprawidłowy wynik. Spróbuj ponownie.",
+  provider: "Nie udało się przygotować odpowiedzi. Spróbuj ponownie.",
+  question_base: "Nie udało się wczytać Twoich pytań. Spróbuj ponownie.",
+  storage: "Nie udało się zapisać wyników. Spróbuj ponownie.",
+  timeout: "Przygotowanie odpowiedzi trwało zbyt długo. Spróbuj ponownie.",
+  unexpected: "Nie udało się przygotować odpowiedzi. Spróbuj ponownie.",
 };
 
 export default function PrepareViewingButton(props: Props) {
@@ -41,7 +41,7 @@ export default function PrepareViewingButton(props: Props) {
 
     setIsPending(true);
     setIsError(false);
-    setMessage("Preparing viewing notes. This can take up to a minute.");
+    setMessage("Przygotowuję odpowiedzi. To może potrwać do minuty.");
 
     try {
       const response = await fetch(`/api/offers/${props.offerId}/prepare`, { method: "POST" });
@@ -81,7 +81,7 @@ export default function PrepareViewingButton(props: Props) {
         ) : (
           <Sparkles class="size-4" aria-hidden="true" />
         )}
-        {props.hasResult ? "Preparation ready" : isPending() ? "Preparing..." : "Prepare viewing"}
+        {props.hasResult ? "Odpowiedzi gotowe" : isPending() ? "Przygotowuję..." : "Przygotuj odpowiedzi"}
       </button>
       {message() && (
         <p class={isError() ? "max-w-sm text-sm text-red-700" : "max-w-sm text-sm text-slate-500"} aria-live="polite">

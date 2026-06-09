@@ -44,7 +44,6 @@ export interface AnsweredExtractionQuestion {
 export interface UnansweredExtractionQuestion {
   questionId: string;
   questionText: string;
-  reason: string;
 }
 
 export interface DoubtfulExtractionFact {

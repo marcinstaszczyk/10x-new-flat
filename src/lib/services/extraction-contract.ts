@@ -26,17 +26,6 @@ export const extractionResultSchema = z
           .strict(),
       )
       .max(MAX_EXTRACTION_BUCKET_ITEMS),
-    unansweredQuestions: z
-      .array(
-        z
-          .object({
-            questionId: z.string().min(1).max(120),
-            questionText: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
-            reason: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
-          })
-          .strict(),
-      )
-      .max(MAX_EXTRACTION_BUCKET_ITEMS),
     doubtfulFacts: z
       .array(
         z
@@ -105,7 +94,6 @@ function buildSystemPrompt(): string {
     "Map known facts to buyer questions as answered question pairs.",
     "Only answer a buyer question when the pasted offer contains explicit supporting evidence.",
     "If a buyer question has no explicit answer, omit it from answeredQuestions.",
-    "Do not generate missing-question rows yourself; return unansweredQuestions as an empty array.",
     "It is valid for a buyer question to be absent from every model-generated bucket.",
     "Put suspicious, contradictory, vague, or uncertain values in doubtfulFacts.",
     "Put useful offer facts that do not match any buyer question in unmappedFacts.",
@@ -137,10 +125,9 @@ function buildExtractionJsonSchema(): Record<string, unknown> {
   return {
     type: "object",
     additionalProperties: false,
-    required: ["answeredQuestions", "unansweredQuestions", "doubtfulFacts", "unmappedFacts"],
+    required: ["answeredQuestions", "doubtfulFacts", "unmappedFacts"],
     properties: {
       answeredQuestions: buildAnsweredQuestionsSchema(questionId, shortText),
-      unansweredQuestions: buildUnansweredQuestionsSchema(questionId, shortText),
       doubtfulFacts: buildDoubtfulFactsSchema(questionId, label, shortText),
       unmappedFacts: buildUnmappedFactsSchema(label, shortText),
     },
@@ -162,19 +149,6 @@ function buildAnsweredQuestionsSchema(questionId: object, shortText: object): ob
         evidenceText: shortText,
         confidence: { type: "string", enum: ["high", "medium", "low"] },
       },
-    },
-  };
-}
-
-function buildUnansweredQuestionsSchema(questionId: object, shortText: object): object {
-  return {
-    type: "array",
-    maxItems: MAX_EXTRACTION_BUCKET_ITEMS,
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["questionId", "questionText", "reason"],
-      properties: { questionId, questionText: shortText, reason: shortText },
     },
   };
 }
