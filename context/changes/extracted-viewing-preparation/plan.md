@@ -384,14 +384,14 @@ Update the saved-offer detail page to show the existing preparation result and a
 
 #### Automated
 
-- [ ] 1.1 Supabase database test for `offer_extraction_results` passes.
-- [ ] 1.2 `pnpm run lint` passes.
-- [ ] 1.3 `pnpm run build` passes.
+- [x] 1.1 Supabase database test for `offer_extraction_results` passes.
+- [x] 1.2 `pnpm run lint` passes.
+- [x] 1.3 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 1.4 Review the migration and confirm RLS policies cover SELECT, INSERT, UPDATE, and DELETE explicitly.
-- [ ] 1.5 Review cascade behavior and confirm deleting an offer deletes its extraction result.
+- [x] 1.4 Review the migration and confirm RLS policies cover SELECT, INSERT, UPDATE, and DELETE explicitly.
+- [x] 1.5 Review cascade behavior and confirm deleting an offer deletes its extraction result.
 
 ### Phase 2: Add Extraction Result Services and API
 
