@@ -25,7 +25,7 @@ The buyer opens a saved offer, clicks "Prepare viewing", waits with clear feedba
 | Long-running UX | Solid button with pending state | Gives feedback during the external call without background jobs. | User / Plan |
 | Layout | Sections on offer detail | Keeps source material and extracted preparation together. | User / Plan |
 | Ordering | Preserve question categories | Matches the PRD's natural viewing-conversation flow. | User / PRD |
-| Errors | Safe statuses plus DB/log diagnostics | Buyer sees useful errors while operators keep deeper troubleshooting data. | User / Plan |
+| Errors | Safe statuses plus logs | Buyer sees useful errors while operators keep deeper troubleshooting data without storing failed results. | User / Plan |
 | Verification | DB tests, lint/build, manual flow | Covers RLS/cascade risk and the core UX. | User / Plan |
 
 ## Scope
@@ -45,7 +45,7 @@ The buyer opens a saved offer, clicks "Prepare viewing", waits with clear feedba
 
 ## Architecture / Approach
 
-`/offers/[id]` remains the workspace. The page loads the saved offer, current buyer question base, and any persisted extraction result. A Solid island posts to a protected API route, which calls a thin orchestration service: load offer, block if result exists, load open questions, call `extractOfferPreparation`, persist completed or failed status, and return a safe JSON response.
+`/offers/[id]` remains the workspace. The page loads the saved offer, current buyer question base, and any persisted extraction result. A Solid island posts to a protected API route, which calls a thin orchestration service: load offer, block if result exists, load open questions, call `extractOfferPreparation`, persist completed results, log failures without DB changes, and return a safe JSON response.
 
 ## Phases at a Glance
 
@@ -62,7 +62,7 @@ The buyer opens a saved offer, clicks "Prepare viewing", waits with clear feedba
 
 - Storing the result as JSONB is enough for MVP because the app does not query inside individual extracted facts yet.
 - Category grouping uses the current buyer question base at render time; if the buyer later edits/reorders questions, old extraction rows may appear under current categories or "Uncategorized".
-- Failed extraction rows are persisted to expose safe diagnostics and avoid silent repeated provider calls.
+- Failed extraction attempts are not persisted; safe diagnostics live in Cloudflare logs and the buyer can try again.
 - Cloudflare logs are enough for operator troubleshooting in MVP.
 
 ## Success Criteria Summary
@@ -70,4 +70,4 @@ The buyer opens a saved offer, clicks "Prepare viewing", waits with clear feedba
 - Buyer can generate one preparation result from a saved offer and revisit it later.
 - Rerun is blocked when a result already exists.
 - Offer deletion removes extracted content.
-- UI errors are safe, while DB rows and Cloudflare logs retain useful diagnostics.
+- UI errors are safe, while Cloudflare logs retain useful diagnostics.

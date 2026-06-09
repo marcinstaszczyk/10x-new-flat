@@ -28,7 +28,7 @@ Buyer questions are already initialized lazily through `loadBuyerQuestionBase`, 
 - The app stores at most one extraction result per offer. If a result already exists, rerun is blocked in this slice.
 - The result is visible when the buyer revisits the offer, and it is deleted automatically when the offer is deleted.
 - Answered and unanswered questions are rendered in the buyer question-base order with category grouping where possible.
-- Buyer-facing errors are safe and specific; deeper diagnostics remain available from stored failure metadata and Cloudflare logs without exposing pasted content, prompts, API keys, or raw model output.
+- Buyer-facing errors are safe and specific; deeper diagnostics remain available from Cloudflare logs without exposing pasted content, prompts, API keys, or raw model output.
 
 ## What We're NOT Doing
 
@@ -41,9 +41,9 @@ Buyer questions are already initialized lazily through `loadBuyerQuestionBase`, 
 
 ## Implementation Approach
 
-Add a persisted `offer_extraction_results` table with a unique `offer_id`, `buyer_id`, JSON result payload, status fields, failure reason, safe diagnostic text, provider metadata, and timestamps. Use RLS to let authenticated buyers read and insert their own results, deny direct client updates, and allow deletion only through ownership. The table references `flat_offers(id)` with `on delete cascade`.
+Add a persisted `offer_extraction_results` table with a unique `offer_id`, `buyer_id`, JSON result payload, provider metadata, and timestamps. Use RLS to let authenticated buyers read and insert their own completed results while denying direct client updates and deletes. The table references `flat_offers(id)` with `on delete cascade`, so deleting the offer remains the only result-deletion path in this slice.
 
-Add a service layer that loads an offer, ensures no result exists, loads only open buyer questions for extraction, calls `extractOfferPreparation`, and stores either the success payload or safe failure metadata. Add a protected API route under the offer namespace for the Solid trigger island. Render existing results server-side on `/offers/[id]`.
+Add a service layer that loads an offer, ensures no result exists, loads only open buyer questions for extraction, calls `extractOfferPreparation`, stores the success payload, and logs failures without DB changes. Add a protected API route under the offer namespace for the Solid trigger island. Render existing results server-side on `/offers/[id]`.
 
 ## Decisions
 
@@ -55,7 +55,7 @@ Add a service layer that loads an offer, ensures no result exists, loads only op
 | Long-running UX | Solid island fetch with pending state | Gives clear feedback during the external call without adding background infrastructure. |
 | Layout | Sections on offer detail | Keeps source material and preparation output in one context. |
 | Question ordering | Preserve category grouping where possible | Matches the PRD goal of natural viewing-conversation order. |
-| Failure display | Safe specific statuses plus stored/logged diagnostics | Helps buyers and operators understand failures without leaking sensitive content. |
+| Failure display | Safe specific statuses plus logged diagnostics | Helps buyers and operators understand failures without leaking sensitive content or storing failed results. |
 | Verification | Migration tests, lint/build, manual UI flow | Covers privacy, cascade behavior, and the core user path. |
 
 ## Phase 1: Persist Buyer-Owned Extraction Results
@@ -79,10 +79,8 @@ Create the database contract for one extraction result per saved offer, includin
   - `id uuid primary key default gen_random_uuid()`
   - `offer_id uuid not null references public.flat_offers(id) on delete cascade`
   - `buyer_id uuid not null default auth.uid() references auth.users(id) on delete cascade`
-  - `status text not null` constrained to `completed` or `failed`
-  - `result jsonb null`
-  - `failure_reason text null`
-  - `safe_diagnostic text null`
+  - `status text not null` constrained to `completed`
+  - `result jsonb not null`
   - `model text not null`
   - `latency_ms integer not null`
   - `created_at timestamptz not null default now()`
@@ -90,8 +88,7 @@ Create the database contract for one extraction result per saved offer, includin
 - Add constraints:
   - unique `offer_id`
   - `latency_ms >= 0`
-  - completed rows require `result is not null` and no failure fields
-  - failed rows require failure fields and no result
+  - completed rows require `result is not null`
   - `buyer_id` must match the referenced offer owner. Use a trigger or security-definer insert function if a cross-table check cannot be expressed safely as a check constraint.
 - Add owner-scoped indexes for offer lookup and buyer ordering.
 - Add an updated-at trigger using the existing trigger style.
@@ -100,7 +97,7 @@ Create the database contract for one extraction result per saved offer, includin
   - SELECT own rows
   - INSERT own rows for own offers
   - UPDATE denied
-  - DELETE own rows
+  - DELETE denied
 - Revoke broad table access from public/anon/authenticated.
 - Grant only the minimum table/column privileges needed by the server route.
 
@@ -118,10 +115,10 @@ Create the database contract for one extraction result per saved offer, includin
 - Verify buyer A can insert one result for buyer A offer.
 - Verify buyer A cannot insert for buyer B offer or spoof `buyer_id`.
 - Verify duplicate result for the same offer is rejected.
-- Verify direct updates are denied.
+- Verify direct updates and direct deletes are denied.
 - Verify deleting a flat offer cascades to its extraction result.
 - Verify deleting buyer A does not affect buyer B results.
-- Verify completed and failed row invariants reject malformed rows.
+- Verify completed row invariants reject malformed rows.
 
 #### 3. TypeScript database types and app DTOs
 
@@ -157,7 +154,7 @@ Create the database contract for one extraction result per saved offer, includin
 
 ### Overview
 
-Add server-side operations that load the current result, generate a result once, persist success or failure safely, and reject reruns when a result already exists.
+Add server-side operations that load the current result, generate a result once, persist success safely, log failures without DB changes, and reject reruns when a result already exists.
 
 ### Changes Required
 
@@ -174,7 +171,7 @@ Add server-side operations that load the current result, generate a result once,
 - Export a small mapper from Supabase row shape to app-facing shape.
 - Return typed `{ ok: true } | { ok: false }` results consistent with existing services.
 - Do not accept client-supplied `buyer_id`.
-- Store only safe diagnostics. Do not store pasted content, prompts, raw provider response, or API keys.
+- Store only successful extraction results. Do not store diagnostics, pasted content, prompts, raw provider response, or API keys.
 
 #### 2. Orchestration service
 
@@ -192,9 +189,9 @@ Add server-side operations that load the current result, generate a result once,
 - Preserve question categories for rendering by storing/rendering against the full current question base, not by sending category rows to the model.
 - Call `extractOfferPreparation` with the existing service defaults.
 - Persist successful extraction result as `completed`.
-- Persist typed extraction failures as `failed`, including `failure_reason`, `safe_diagnostic`, `model`, and `latency_ms`.
+- For typed extraction failures, do not write an extraction-result row.
 - Log a Cloudflare-safe structured message for failures and blocked reruns:
-  - include offer ID, result reason/status, model, and latency
+  - include offer ID, failure reason/status, model, and latency
   - exclude pasted content, prompt, raw model output, API key, and buyer email
 
 #### 3. Protected prepare API route
@@ -212,7 +209,7 @@ Add server-side operations that load the current result, generate a result once,
 - Create Supabase client through `createClient(context.request.headers, context.cookies)`.
 - Call `prepareOfferViewing`.
 - Return JSON statuses:
-  - `201` for created completed/failed persisted result
+  - `201` for created completed persisted result
   - `409` for already existing result
   - `404` for offer not found
   - `400` for invalid ID
@@ -230,7 +227,7 @@ Add server-side operations that load the current result, generate a result once,
 
 - Review services and confirm OpenRouter is never called when a persisted result already exists.
 - Review logs and API responses for sensitive-data exclusion.
-- Review failure storage and confirm deeper diagnostics are available from the DB row and Cloudflare logs.
+- Review failure handling and confirm failures leave no extraction-result row while Cloudflare logs retain safe diagnostics.
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause for manual confirmation before Phase 3.
 
@@ -287,7 +284,7 @@ Update the saved-offer detail page to show the existing preparation result and a
 - For answered and unanswered question rows, preserve category grouping where possible by matching result question IDs against the current full buyer question base.
 - Keep unmatched result rows visible in an "Uncategorized" group instead of dropping them.
 - Show answer, evidence, confidence, and reason fields where relevant.
-- For failed persisted results, show a safe specific status and short retry guidance, but do not expose raw diagnostics.
+- For failed API responses, show a safe specific status and leave the page ready for another attempt because no result was persisted.
 - Use the existing restrained dashboard style: full-width content, small cards for repeated rows, no nested cards.
 
 #### 3. Offer detail page integration
@@ -320,7 +317,7 @@ Update the saved-offer detail page to show the existing preparation result and a
 - A completed result appears after generation and remains visible after page reload.
 - A second extraction attempt is blocked when a result already exists.
 - Answered and unanswered questions render in category order where matching question IDs exist.
-- Failed results show safe user-facing status only.
+- Failed attempts show safe user-facing status only and do not create a persisted result.
 - Deleting the offer removes the saved offer and its preparation result.
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause for final manual confirmation before closing the change.
@@ -348,14 +345,14 @@ Update the saved-offer detail page to show the existing preparation result and a
 3. Confirm pending state, completed result rendering, and persistence after reload.
 4. Try to run extraction again and confirm it is blocked.
 5. Delete the offer and confirm the result is gone through cascade behavior.
-6. Temporarily simulate provider/configuration failure and confirm safe UI plus stored/logged diagnostics.
+6. Temporarily simulate provider/configuration failure and confirm safe UI, safe logs, and no extraction-result row.
 
 ## Performance Considerations
 
 - Extraction remains one external OpenRouter request plus light validation.
 - The existing 55-second service timeout stays below the PRD's 60-second target.
 - The trigger island must prevent duplicate clicks while the request is pending.
-- Blocking reruns after persistence prevents accidental repeated provider calls.
+- Blocking reruns after successful persistence prevents accidental repeated provider calls.
 - Persisted JSON is small and bounded by the existing extraction schema limits.
 
 ## Migration Notes
@@ -407,7 +404,7 @@ Update the saved-offer detail page to show the existing preparation result and a
 
 - [ ] 2.3 Review services and confirm OpenRouter is never called when a persisted result already exists.
 - [ ] 2.4 Review logs and API responses for sensitive-data exclusion.
-- [ ] 2.5 Review failure storage and confirm deeper diagnostics are available from the DB row and Cloudflare logs.
+- [ ] 2.5 Review failure handling and confirm failures leave no extraction-result row while Cloudflare logs retain safe diagnostics.
 
 ### Phase 3: Render and Trigger Preparation on Offer Detail
 
@@ -423,5 +420,5 @@ Update the saved-offer detail page to show the existing preparation result and a
 - [ ] 3.5 A completed result appears after generation and remains visible after page reload.
 - [ ] 3.6 A second extraction attempt is blocked when a result already exists.
 - [ ] 3.7 Answered and unanswered questions render in category order where matching question IDs exist.
-- [ ] 3.8 Failed results show safe user-facing status only.
+- [ ] 3.8 Failed attempts show safe user-facing status only and do not create a persisted result.
 - [ ] 3.9 Deleting the offer removes the saved offer and its preparation result.
