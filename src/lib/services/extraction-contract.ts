@@ -45,7 +45,7 @@ export const extractionResultSchema = z
             value: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH).nullable(),
             evidence: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
             reason: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
-            relatedQuestionId: z.string().min(1).max(120).optional(),
+            relatedQuestionId: z.string().min(1).max(120).nullable().optional(),
           })
           .strict(),
       )
@@ -183,13 +183,13 @@ function buildDoubtfulFactsSchema(questionId: object, label: object, shortText: 
     items: {
       type: "object",
       additionalProperties: false,
-      required: ["label", "value", "evidence", "reason"],
+      required: ["label", "value", "evidence", "reason", "relatedQuestionId"],
       properties: {
         label,
         value: { anyOf: [shortText, { type: "null" }] },
         evidence: shortText,
         reason: shortText,
-        relatedQuestionId: questionId,
+        relatedQuestionId: { anyOf: [questionId, { type: "null" }] },
       },
     },
   };

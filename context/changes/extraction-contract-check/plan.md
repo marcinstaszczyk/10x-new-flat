@@ -316,13 +316,13 @@ Create one controlled extraction fixture and a repeatable command that proves th
 
 #### Automated
 
-- [ ] 2.1 `pnpm run lint` passes.
-- [ ] 2.2 `pnpm run build` passes.
-- [ ] 2.3 With `OPENROUTER_API_KEY` configured, `pnpm run check:extraction-contract` completes successfully within 60 seconds and prints safe bucket-count output.
-- [ ] 2.4 Without `OPENROUTER_API_KEY`, `pnpm run check:extraction-contract` fails with a clear configuration message and does not print sensitive data.
+- [x] 2.1 `pnpm run lint` passes.
+- [x] 2.2 `pnpm run build` passes.
+- [x] 2.3 With `OPENROUTER_API_KEY` configured, `pnpm run check:extraction-contract` completes successfully within 60 seconds and prints safe bucket-count output.
+- [x] 2.4 Without `OPENROUTER_API_KEY`, `pnpm run check:extraction-contract` fails with a clear configuration message and does not print sensitive data.
 
 #### Manual
 
-- [ ] 2.5 Review the fixture and confirm it covers answered, unanswered, doubtful, and unmapped cases.
-- [ ] 2.6 Review a successful command output and confirm no pasted offer content or API key is printed.
-- [ ] 2.7 Confirm the result is good enough to unblock S-03 planning without adding persistence in F-02.
+- [x] 2.5 Review the fixture and confirm it covers answered, unanswered, doubtful, and unmapped cases.
+- [x] 2.6 Review a successful command output and confirm no pasted offer content or API key is printed.
+- [x] 2.7 Confirm the result is good enough to unblock S-03 planning without adding persistence in F-02.

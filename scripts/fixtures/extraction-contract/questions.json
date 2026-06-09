@@ -1,0 +1,18 @@
+[
+  {
+    "id": "q-price",
+    "text": "What is the asking price of the flat?"
+  },
+  {
+    "id": "q-floor",
+    "text": "Which floor is the flat on and how many floors does the building have?"
+  },
+  {
+    "id": "q-rent",
+    "text": "What is the monthly administrative rent?"
+  },
+  {
+    "id": "q-mortgage-register",
+    "text": "What is the land and mortgage register status?"
+  }
+]

@@ -52,6 +52,7 @@ pnpm run dev
 - `pnpm run dev` - Start development server (Cloudflare workerd runtime)
 - `pnpm run build` - Build for production
 - `pnpm run preview` - Preview production build
+- `pnpm run check:extraction-contract` - Run the live OpenRouter extraction contract check
 - `pnpm run lint` - Run ESLint with type-checked rules
 - `pnpm run lint:fix` - Auto-fix ESLint issues
 - `pnpm run format` - Run Prettier
@@ -120,6 +121,24 @@ Authenticated buyers can use `/offers` to save private flat-offer source materia
 Deletion is a confirmed hard delete. Once confirmed, the offer row and pasted content are removed immediately and disappear from the list and direct detail access.
 
 Manual saved-offer verification uses local Supabase plus `pnpm run dev`: sign in, open `/offers`, create offers with and without a source URL, confirm read-only detail rendering, submit invalid input to confirm generic error feedback, verify newest-updated list ordering, cancel and confirm delete, and check unauthenticated redirects for `/offers`, `/offers/new`, detail pages, and `/api/offers/**`.
+
+### Extraction contract check
+
+Extraction is currently a server-side contract probe only. Results are not persisted, not shown in the UI, and not connected to saved-offer detail pages in this slice.
+
+The live check uses OpenRouter and requires a process-level API key:
+
+```bash
+OPENROUTER_API_KEY=<key> pnpm run check:extraction-contract
+```
+
+Optional model override:
+
+```bash
+OPENROUTER_MODEL=openai/gpt-5.5
+```
+
+The command validates the fixture in `scripts/fixtures/extraction-contract/` against the shared extraction schema and prints only model, latency, bucket counts, and safe failure reasons. It intentionally does not run during `pnpm run build` because it needs network access and a human-approved OpenRouter secret. For hosted or CI use, configure `OPENROUTER_API_KEY` as a Cloudflare Worker or CI secret, not as committed Wrangler plaintext.
 
 ### Database content migrations
 

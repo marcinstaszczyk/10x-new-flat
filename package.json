@@ -7,6 +7,7 @@
     "build": "node scripts/build.mjs",
     "preview": "astro preview",
     "astro": "astro",
+    "check:extraction-contract": "node scripts/check-extraction-contract.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."

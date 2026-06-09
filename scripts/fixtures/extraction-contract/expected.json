@@ -1,0 +1,12 @@
+{
+  "maxLatencyMs": 60000,
+  "minimumBucketCounts": {
+    "answeredQuestions": 2,
+    "unansweredQuestions": 1,
+    "doubtfulFacts": 1,
+    "unmappedFacts": 1
+  },
+  "requiredAnsweredQuestionIds": ["q-price", "q-floor"],
+  "requiredUnansweredQuestionIds": ["q-mortgage-register"],
+  "requiredDoubtfulQuestionIds": ["q-rent"]
+}

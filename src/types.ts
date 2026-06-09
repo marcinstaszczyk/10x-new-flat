@@ -52,7 +52,7 @@ export interface DoubtfulExtractionFact {
   value: string | null;
   evidence: string;
   reason: string;
-  relatedQuestionId?: string;
+  relatedQuestionId?: string | null;
 }
 
 export interface UnmappedExtractionFact {
