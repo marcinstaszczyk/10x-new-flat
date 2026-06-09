@@ -9,4 +9,7 @@ archived_at: null
 
 ## Notes
 
-<!-- Free-form notes for this change: links, ad-hoc context, decisions that don't belong in research/frame/plan. -->
+- Plan created for roadmap slice S-03.
+- Buyer starts extraction manually from the saved-offer detail page.
+- Store at most one latest extraction result per offer.
+- Existing result blocks rerun for this slice; replacement/versioning is out of scope.
