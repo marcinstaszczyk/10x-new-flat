@@ -45,6 +45,8 @@ Add a persisted `offer_extraction_results` table with a unique `offer_id`, `buye
 
 Add a service layer that loads an offer, ensures no result exists, loads only open buyer questions for extraction, calls `extractOfferPreparation`, stores the success payload, and logs failures without DB changes. Add a protected API route under the offer namespace for the Solid trigger island. Render existing results server-side on `/offers/[id]`.
 
+The extraction provider contract is intentionally adjusted in this slice: the model returns only answered questions, doubtful facts, and unmapped facts. The app completes the `unansweredQuestions` bucket after provider validation by adding every submitted open question that did not receive a substantive answer. This keeps missing-question coverage deterministic and avoids asking the model to invent "not found" evidence. A question can still appear in `doubtfulFacts` and `unansweredQuestions` when the offer contains an uncertain or contradictory value but no substantive answer.
+
 ## Decisions
 
 | Decision | Choice | Why |
@@ -55,6 +57,7 @@ Add a service layer that loads an offer, ensures no result exists, loads only op
 | Long-running UX | Solid island fetch with pending state | Gives clear feedback during the external call without adding background infrastructure. |
 | Layout | Sections on offer detail | Keeps source material and preparation output in one context. |
 | Question ordering | Preserve category grouping where possible | Matches the PRD goal of natural viewing-conversation order. |
+| Unanswered questions | Complete locally after provider validation | Guarantees every non-answered open question remains visible without requiring model-generated missing-question rows. |
 | Failure display | Safe specific statuses plus logged diagnostics | Helps buyers and operators understand failures without leaking sensitive content or storing failed results. |
 | Verification | Migration tests, lint/build, manual UI flow | Covers privacy, cascade behavior, and the core user path. |
 

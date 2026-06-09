@@ -7,6 +7,6 @@
     "unmappedFacts": 1
   },
   "requiredAnsweredQuestionIds": ["q-price", "q-floor"],
-  "requiredUnansweredQuestionIds": ["q-mortgage-register"],
+  "requiredUnansweredQuestionIds": ["q-rent", "q-mortgage-register"],
   "requiredDoubtfulQuestionIds": ["q-rent"]
 }

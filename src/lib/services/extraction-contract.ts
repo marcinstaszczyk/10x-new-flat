@@ -11,45 +11,55 @@ export const MAX_EXTRACTION_TEXT_LENGTH = 1_200;
 
 const EXTRACTION_SCHEMA_NAME = "flat_offer_extraction_result";
 
+const answeredExtractionQuestionSchema = z
+  .object({
+    questionId: z.string().min(1).max(120),
+    questionText: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
+    answerText: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
+    evidenceText: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
+    confidence: z.enum(["high", "medium", "low"]),
+  })
+  .strict();
+
+const unansweredExtractionQuestionSchema = z
+  .object({
+    questionId: z.string().min(1).max(120),
+    questionText: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
+  })
+  .strict();
+
+const doubtfulExtractionFactSchema = z
+  .object({
+    label: z.string().min(1).max(160),
+    value: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH).nullable(),
+    evidence: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
+    reason: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
+    relatedQuestionId: z.string().min(1).max(120).nullable().optional(),
+  })
+  .strict();
+
+const unmappedExtractionFactSchema = z
+  .object({
+    label: z.string().min(1).max(160),
+    value: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
+    evidence: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
+  })
+  .strict();
+
+export const completedExtractionResultSchema = z
+  .object({
+    answeredQuestions: z.array(answeredExtractionQuestionSchema).max(MAX_EXTRACTION_BUCKET_ITEMS),
+    unansweredQuestions: z.array(unansweredExtractionQuestionSchema).max(MAX_EXTRACTION_BUCKET_ITEMS),
+    doubtfulFacts: z.array(doubtfulExtractionFactSchema).max(MAX_EXTRACTION_BUCKET_ITEMS),
+    unmappedFacts: z.array(unmappedExtractionFactSchema).max(MAX_EXTRACTION_BUCKET_ITEMS),
+  })
+  .strict();
+
 export const extractionResultSchema = z
   .object({
-    answeredQuestions: z
-      .array(
-        z
-          .object({
-            questionId: z.string().min(1).max(120),
-            questionText: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
-            answerText: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
-            evidenceText: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
-            confidence: z.enum(["high", "medium", "low"]),
-          })
-          .strict(),
-      )
-      .max(MAX_EXTRACTION_BUCKET_ITEMS),
-    doubtfulFacts: z
-      .array(
-        z
-          .object({
-            label: z.string().min(1).max(160),
-            value: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH).nullable(),
-            evidence: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
-            reason: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
-            relatedQuestionId: z.string().min(1).max(120).nullable().optional(),
-          })
-          .strict(),
-      )
-      .max(MAX_EXTRACTION_BUCKET_ITEMS),
-    unmappedFacts: z
-      .array(
-        z
-          .object({
-            label: z.string().min(1).max(160),
-            value: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
-            evidence: z.string().min(1).max(MAX_EXTRACTION_TEXT_LENGTH),
-          })
-          .strict(),
-      )
-      .max(MAX_EXTRACTION_BUCKET_ITEMS),
+    answeredQuestions: z.array(answeredExtractionQuestionSchema).max(MAX_EXTRACTION_BUCKET_ITEMS),
+    doubtfulFacts: z.array(doubtfulExtractionFactSchema).max(MAX_EXTRACTION_BUCKET_ITEMS),
+    unmappedFacts: z.array(unmappedExtractionFactSchema).max(MAX_EXTRACTION_BUCKET_ITEMS),
   })
   .strict();
 

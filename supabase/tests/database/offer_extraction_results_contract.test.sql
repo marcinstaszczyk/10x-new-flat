@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(37);
+select plan(41);
 
 insert into auth.users (
   id,
@@ -71,6 +71,34 @@ values
     'Buyer B offer',
     null,
     'Buyer B pasted content'
+  ),
+  (
+    'aaaaaaaa-0000-4000-8000-000000000004',
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    'Buyer A malformed offer 1',
+    null,
+    'Buyer A malformed pasted content 1'
+  ),
+  (
+    'aaaaaaaa-0000-4000-8000-000000000005',
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    'Buyer A malformed offer 2',
+    null,
+    'Buyer A malformed pasted content 2'
+  ),
+  (
+    'aaaaaaaa-0000-4000-8000-000000000006',
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    'Buyer A malformed offer 3',
+    null,
+    'Buyer A malformed pasted content 3'
+  ),
+  (
+    'aaaaaaaa-0000-4000-8000-000000000007',
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    'Buyer A malformed offer 4',
+    null,
+    'Buyer A malformed pasted content 4'
   );
 
 insert into public.offer_extraction_results (
@@ -138,7 +166,7 @@ select is(
 
 select ok(
   (
-    select count(*) = 8
+    select count(*) = 9
     from pg_constraint
     where conname in (
       'offer_extraction_results_buyer_id_fkey',
@@ -147,6 +175,7 @@ select ok(
       'offer_extraction_results_offer_id_fkey',
       'offer_extraction_results_offer_id_unique',
       'offer_extraction_results_pkey',
+      'offer_extraction_results_result_buckets',
       'offer_extraction_results_result_object',
       'offer_extraction_results_status_completed'
     )
@@ -318,7 +347,12 @@ select throws_ok(
 select throws_ok(
   $$
     insert into public.offer_extraction_results (offer_id, result, model, latency_ms)
-    values ('aaaaaaaa-0000-4000-8000-000000000002', '{}', 'openrouter/duplicate', 1)
+    values (
+      'aaaaaaaa-0000-4000-8000-000000000002',
+      '{"answeredQuestions":[],"unansweredQuestions":[],"doubtfulFacts":[],"unmappedFacts":[]}'::jsonb,
+      'openrouter/duplicate',
+      1
+    )
   $$,
   '23505',
   null,
@@ -387,6 +421,60 @@ select throws_ok(
   '23514',
   null,
   'non-object result is rejected'
+);
+select throws_ok(
+  $$
+    insert into public.offer_extraction_results (offer_id, buyer_id, result, model, latency_ms)
+    values ('aaaaaaaa-0000-4000-8000-000000000004', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', '{}', 'openrouter/model', 1)
+  $$,
+  '23514',
+  null,
+  'result missing all buckets is rejected'
+);
+select throws_ok(
+  $$
+    insert into public.offer_extraction_results (offer_id, buyer_id, result, model, latency_ms)
+    values (
+      'aaaaaaaa-0000-4000-8000-000000000005',
+      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      '{"unansweredQuestions":[],"doubtfulFacts":[],"unmappedFacts":[]}'::jsonb,
+      'openrouter/model',
+      1
+    )
+  $$,
+  '23514',
+  null,
+  'result missing answeredQuestions bucket is rejected'
+);
+select throws_ok(
+  $$
+    insert into public.offer_extraction_results (offer_id, buyer_id, result, model, latency_ms)
+    values (
+      'aaaaaaaa-0000-4000-8000-000000000006',
+      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      '{"answeredQuestions":[],"doubtfulFacts":[],"unmappedFacts":[]}'::jsonb,
+      'openrouter/model',
+      1
+    )
+  $$,
+  '23514',
+  null,
+  'result missing unansweredQuestions bucket is rejected'
+);
+select throws_ok(
+  $$
+    insert into public.offer_extraction_results (offer_id, buyer_id, result, model, latency_ms)
+    values (
+      'aaaaaaaa-0000-4000-8000-000000000007',
+      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      '{"answeredQuestions":[],"unansweredQuestions":[],"doubtfulFacts":{},"unmappedFacts":[]}'::jsonb,
+      'openrouter/model',
+      1
+    )
+  $$,
+  '23514',
+  null,
+  'result bucket with non-array value is rejected'
 );
 select throws_ok(
   $$

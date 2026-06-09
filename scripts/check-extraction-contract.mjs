@@ -33,7 +33,7 @@ async function main() {
 
   const { latencyMs } = extraction.metadata;
   const { result } = extraction;
-  validateInvariants(result, expected, latencyMs);
+  validateInvariants(result, expected, input.questions, latencyMs);
 
   console.log(`Extraction contract check passed.`);
   console.log(`Model: ${model}`);
@@ -62,7 +62,7 @@ async function readJsonFixture(filename) {
   return JSON.parse(content);
 }
 
-function validateInvariants(result, expected, latencyMs) {
+function validateInvariants(result, expected, questions, latencyMs) {
   const failures = [];
   const counts = expected.minimumBucketCounts;
 
@@ -88,6 +88,7 @@ function validateInvariants(result, expected, latencyMs) {
     result.unansweredQuestions.map((item) => item.questionId),
     expected.requiredUnansweredQuestionIds,
   );
+  requireSynthesizedUnansweredQuestions(failures, result, questions);
   requireQuestionIds(
     failures,
     "doubtfulFacts",
@@ -97,6 +98,20 @@ function validateInvariants(result, expected, latencyMs) {
 
   if (failures.length > 0) {
     fail("invariant", failures.join("; "));
+  }
+}
+
+function requireSynthesizedUnansweredQuestions(failures, result, questions) {
+  const answeredIds = new Set(result.answeredQuestions.map((item) => item.questionId));
+  const expectedUnansweredIds = questions.map((question) => question.id).filter((id) => !answeredIds.has(id));
+  const actualUnansweredIds = result.unansweredQuestions.map((item) => item.questionId);
+
+  requireQuestionIds(failures, "unansweredQuestions", actualUnansweredIds, expectedUnansweredIds);
+
+  for (const actualId of actualUnansweredIds) {
+    if (!expectedUnansweredIds.includes(actualId)) {
+      failures.push(`unansweredQuestions included answered or unknown question ${actualId}`);
+    }
   }
 }
 
