@@ -3,7 +3,7 @@ project: 10xNewFlat
 version: 1
 status: draft
 created: 2026-06-02
-updated: 2026-06-08
+updated: 2026-06-09
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -28,7 +28,7 @@ Preparing questions and topics for a flat viewing takes time, and buyers can mis
 | ID | Change ID | Outcome (user can ...) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | buyer-data-ownership-contract | (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place. | - | FR-002, PRD Access Control, PRD Non-Functional Requirements | done |
-| F-02 | extraction-contract-check | (foundation) A minimal extraction contract and verification path are agreed. | - | FR-005, PRD Success Criteria, PRD Non-Functional Requirements | new |
+| F-02 | extraction-contract-check | (foundation) A minimal extraction contract and verification path are agreed. | - | FR-005, PRD Success Criteria, PRD Non-Functional Requirements | done |
 | S-01 | buyer-account-question-base | Buyer can open their question base and receive a personal copy of the fixed base-question list. | F-01 | US-01, FR-001, FR-002 | done |
 | S-02 | saved-pasted-offer | Buyer can create, delete, and revisit a private flat offer containing pasted offer-page content. | S-01 | US-01, FR-003, FR-004, PRD Non-Functional Requirements | done |
 | S-03 | extracted-viewing-preparation | Buyer can review extracted answers, unanswered questions, doubtful facts, and unmapped offer information. | F-02, S-02 | US-01, FR-005, FR-006, FR-007, FR-008, PRD Success Criteria, PRD Non-Functional Requirements | proposed |
@@ -81,7 +81,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** -
 - **Unknowns:** -
 - **Risk:** Extraction is the core product risk; a narrow contract check prevents the first complete flow from being planned around an unverified assumption.
-- **Status:** new
+- **Status:** done
 
 ## Slices
 
@@ -166,3 +166,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **F-01: (foundation) Minimal buyer-owned persistence rules and a fixed base-question source are in place.** - Archived 2026-06-08 -> `context/archive/2026-06-04-buyer-data-ownership-contract/`. Lesson: -.
 - **S-01: Buyer can open their question base and receive a personal copy of the fixed base-question list.** - Archived 2026-06-08 -> `context/archive/2026-06-04-buyer-account-question-base/`. Lesson: -.
 - **S-02: Buyer can create, delete, and revisit a private flat offer containing pasted offer-page content.** - Archived 2026-06-08 -> `context/archive/2026-06-05-saved-pasted-offer/`. Lesson: -.
+- **F-02: (foundation) A minimal extraction contract and verification path are agreed for latency, doubtful values, and unmapped information.** - Archived 2026-06-09 -> `context/archive/2026-06-08-extraction-contract-check/`. Lesson: -.
