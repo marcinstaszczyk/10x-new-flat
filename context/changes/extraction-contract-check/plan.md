@@ -302,15 +302,15 @@ Create one controlled extraction fixture and a repeatable command that proves th
 
 #### Automated
 
-- [ ] 1.1 `pnpm run lint` passes.
-- [ ] 1.2 `pnpm run build` passes with no OpenRouter key configured.
-- [ ] 1.3 TypeScript build proves the extraction service and DTOs compile in the Cloudflare Worker target.
+- [x] 1.1 `pnpm run lint` passes.
+- [x] 1.2 `pnpm run build` passes with no OpenRouter key configured.
+- [x] 1.3 TypeScript build proves the extraction service and DTOs compile in the Cloudflare Worker target.
 
 #### Manual
 
-- [ ] 1.4 Review `src/types.ts` and confirm the four-bucket result shape matches the PRD.
-- [ ] 1.5 Review `src/lib/services/extraction.ts` and confirm all failure paths are typed and safe.
-- [ ] 1.6 Review env handling and confirm OpenRouter values are server-only.
+- [x] 1.4 Review `src/types.ts` and confirm the four-bucket result shape matches the PRD.
+- [x] 1.5 Review `src/lib/services/extraction.ts` and confirm all failure paths are typed and safe.
+- [x] 1.6 Review env handling and confirm OpenRouter values are server-only.
 
 ### Phase 2: Add the Fixture Contract Check
 

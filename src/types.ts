@@ -17,6 +17,57 @@ export interface SavedOffer {
   updatedAt: string;
 }
 
+export interface ExtractionOfferInput {
+  id: string;
+  title: string;
+  pastedContent: string;
+}
+
+export interface ExtractionQuestionInput {
+  id: string;
+  text: string;
+}
+
+export interface ExtractionRequestInput {
+  offer: ExtractionOfferInput;
+  questions: ExtractionQuestionInput[];
+}
+
+export interface AnsweredExtractionQuestion {
+  questionId: string;
+  questionText: string;
+  answerText: string;
+  evidenceText: string;
+  confidence: "high" | "medium" | "low";
+}
+
+export interface UnansweredExtractionQuestion {
+  questionId: string;
+  questionText: string;
+  reason: string;
+}
+
+export interface DoubtfulExtractionFact {
+  label: string;
+  value: string | null;
+  evidence: string;
+  reason: string;
+  relatedQuestionId?: string;
+}
+
+export interface UnmappedExtractionFact {
+  label: string;
+  value: string;
+  evidence: string;
+}
+
+export interface ExtractionResult {
+  answeredQuestions: AnsweredExtractionQuestion[];
+  unansweredQuestions: UnansweredExtractionQuestion[];
+  doubtfulFacts: DoubtfulExtractionFact[];
+  unmappedFacts: UnmappedExtractionFact[];
+}
+
 export interface Database {
   public: {
     Tables: {
