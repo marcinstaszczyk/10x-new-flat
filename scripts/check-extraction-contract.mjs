@@ -103,14 +103,17 @@ function validateInvariants(result, expected, questions, latencyMs) {
 
 function requireSynthesizedUnansweredQuestions(failures, result, questions) {
   const answeredIds = new Set(result.answeredQuestions.map((item) => item.questionId));
-  const expectedUnansweredIds = questions.map((question) => question.id).filter((id) => !answeredIds.has(id));
+  const doubtfulIds = new Set(result.doubtfulFacts.map((item) => item.relatedQuestionId).filter(Boolean));
+  const expectedUnansweredIds = questions
+    .map((question) => question.id)
+    .filter((id) => !answeredIds.has(id) && !doubtfulIds.has(id));
   const actualUnansweredIds = result.unansweredQuestions.map((item) => item.questionId);
 
   requireQuestionIds(failures, "unansweredQuestions", actualUnansweredIds, expectedUnansweredIds);
 
   for (const actualId of actualUnansweredIds) {
     if (!expectedUnansweredIds.includes(actualId)) {
-      failures.push(`unansweredQuestions included answered or unknown question ${actualId}`);
+      failures.push(`unansweredQuestions included answered, doubtful, or unknown question ${actualId}`);
     }
   }
 }

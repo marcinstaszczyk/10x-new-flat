@@ -149,6 +149,11 @@ function parseExtractionContentForQuestions(
 function completeUnansweredQuestions(result: ExtractionResult, questions: ExtractionQuestionInput[]): ExtractionResult {
   const answeredQuestions = result.answeredQuestions.filter(hasSubstantiveAnswer);
   const mappedQuestionIds = new Set(answeredQuestions.map((question) => question.questionId));
+  for (const fact of result.doubtfulFacts) {
+    if (fact.relatedQuestionId) {
+      mappedQuestionIds.add(fact.relatedQuestionId);
+    }
+  }
 
   return {
     ...result,

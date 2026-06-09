@@ -40,13 +40,13 @@
 - **Impact**: MEDIUM - real tradeoff; pause to reason through it
 - **Dimension**: Scope Discipline / Architecture
 - **Location**: `src/lib/services/extraction-contract.ts:95`, `src/lib/services/extraction-provider.ts:93`
-- **Detail**: Phase 3 changed the provider contract to omit model-generated unanswered questions and synthesize them locally. That may be valid, but it changed the prior extraction contract and can cause a question to appear in both `doubtfulFacts` and `unansweredQuestions` when no substantive answer exists.
+- **Detail**: Phase 3 changed the provider contract to omit model-generated unanswered questions and synthesize them locally. That may be valid, but it changed the prior extraction contract and needed explicit documentation and verification.
 - **Fix**: Document the change as an intentional contract decision and adjust the extraction contract check so synthesized unanswered-question behavior is explicit.
   - Strength: Preserves deterministic unanswered-question coverage and updates the source of truth.
   - Tradeoff: The contract now distinguishes model output buckets from final app-result buckets.
-  - Confidence: HIGH - the checker now verifies unanswered questions are generated from submitted questions not answered by the provider.
+  - Confidence: HIGH - the checker now verifies unanswered questions are generated from submitted questions that are neither answered nor represented by a related doubtful fact.
   - Blind spot: The live OpenRouter-backed contract check was not run because `OPENROUTER_API_KEY` is not set.
-- **Decision**: FIXED - documented in the plan and updated the extraction contract checker/fixture.
+- **Decision**: FIXED - documented in the plan and updated the extraction contract checker/fixture. Doubtful related questions are not duplicated in `unansweredQuestions`.
 
 ## Verification
 
