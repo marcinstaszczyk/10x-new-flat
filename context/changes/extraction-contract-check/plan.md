@@ -302,27 +302,27 @@ Create one controlled extraction fixture and a repeatable command that proves th
 
 #### Automated
 
-- [x] 1.1 `pnpm run lint` passes.
-- [x] 1.2 `pnpm run build` passes with no OpenRouter key configured.
-- [x] 1.3 TypeScript build proves the extraction service and DTOs compile in the Cloudflare Worker target.
+- [x] 1.1 `pnpm run lint` passes. — 63f5c6d
+- [x] 1.2 `pnpm run build` passes with no OpenRouter key configured. — 63f5c6d
+- [x] 1.3 TypeScript build proves the extraction service and DTOs compile in the Cloudflare Worker target. — 63f5c6d
 
 #### Manual
 
-- [x] 1.4 Review `src/types.ts` and confirm the four-bucket result shape matches the PRD.
-- [x] 1.5 Review `src/lib/services/extraction.ts` and confirm all failure paths are typed and safe.
-- [x] 1.6 Review env handling and confirm OpenRouter values are server-only.
+- [x] 1.4 Review `src/types.ts` and confirm the four-bucket result shape matches the PRD. — 63f5c6d
+- [x] 1.5 Review `src/lib/services/extraction.ts` and confirm all failure paths are typed and safe. — 63f5c6d
+- [x] 1.6 Review env handling and confirm OpenRouter values are server-only. — 63f5c6d
 
 ### Phase 2: Add the Fixture Contract Check
 
 #### Automated
 
-- [x] 2.1 `pnpm run lint` passes.
-- [x] 2.2 `pnpm run build` passes.
-- [x] 2.3 With `OPENROUTER_API_KEY` configured, `pnpm run check:extraction-contract` completes successfully within 60 seconds and prints safe bucket-count output.
-- [x] 2.4 Without `OPENROUTER_API_KEY`, `pnpm run check:extraction-contract` fails with a clear configuration message and does not print sensitive data.
+- [x] 2.1 `pnpm run lint` passes. — c1a4862
+- [x] 2.2 `pnpm run build` passes. — c1a4862
+- [x] 2.3 With `OPENROUTER_API_KEY` configured, `pnpm run check:extraction-contract` completes successfully within 60 seconds and prints safe bucket-count output. — c1a4862
+- [x] 2.4 Without `OPENROUTER_API_KEY`, `pnpm run check:extraction-contract` fails with a clear configuration message and does not print sensitive data. — c1a4862
 
 #### Manual
 
-- [x] 2.5 Review the fixture and confirm it covers answered, unanswered, doubtful, and unmapped cases.
-- [x] 2.6 Review a successful command output and confirm no pasted offer content or API key is printed.
-- [x] 2.7 Confirm the result is good enough to unblock S-03 planning without adding persistence in F-02.
+- [x] 2.5 Review the fixture and confirm it covers answered, unanswered, doubtful, and unmapped cases. — c1a4862
+- [x] 2.6 Review a successful command output and confirm no pasted offer content or API key is printed. — c1a4862
+- [x] 2.7 Confirm the result is good enough to unblock S-03 planning without adding persistence in F-02. — c1a4862

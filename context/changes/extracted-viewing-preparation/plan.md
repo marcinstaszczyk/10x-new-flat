@@ -387,41 +387,41 @@ Update the saved-offer detail page to show the existing preparation result and a
 
 #### Automated
 
-- [x] 1.1 Supabase database test for `offer_extraction_results` passes - 2e40206
-- [x] 1.2 `pnpm run lint` passes - 2e40206
-- [x] 1.3 `pnpm run build` passes - 2e40206
+- [x] 1.1 Supabase database test for `offer_extraction_results` passes — 2e40206
+- [x] 1.2 `pnpm run lint` passes — 2e40206
+- [x] 1.3 `pnpm run build` passes — 2e40206
 
 #### Manual
 
-- [x] 1.4 Review the migration and confirm RLS policies cover SELECT, INSERT, UPDATE, and DELETE explicitly - 2e40206
-- [x] 1.5 Review cascade behavior and confirm deleting an offer deletes its extraction result - 2e40206
+- [x] 1.4 Review the migration and confirm RLS policies cover SELECT, INSERT, UPDATE, and DELETE explicitly — 2e40206
+- [x] 1.5 Review cascade behavior and confirm deleting an offer deletes its extraction result — 2e40206
 
 ### Phase 2: Add Extraction Result Services and API
 
 #### Automated
 
-- [x] 2.1 `pnpm run lint` passes. - 73325e5
-- [x] 2.2 `pnpm run build` passes. - 73325e5
+- [x] 2.1 `pnpm run lint` passes. — 73325e5
+- [x] 2.2 `pnpm run build` passes. — 73325e5
 
 #### Manual
 
-- [x] 2.3 Review services and confirm OpenRouter is never called when a persisted result already exists. - 73325e5
-- [x] 2.4 Review logs and API responses for sensitive-data exclusion. - 73325e5
-- [x] 2.5 Review failure handling and confirm failures leave no extraction-result row while Cloudflare logs retain safe diagnostics. - 73325e5
+- [x] 2.3 Review services and confirm OpenRouter is never called when a persisted result already exists. — 73325e5
+- [x] 2.4 Review logs and API responses for sensitive-data exclusion. — 73325e5
+- [x] 2.5 Review failure handling and confirm failures leave no extraction-result row while Cloudflare logs retain safe diagnostics. — 73325e5
 
 ### Phase 3: Render and Trigger Preparation on Offer Detail
 
 #### Automated
 
-- [x] 3.1 `pnpm run lint` passes. - fdcb999
-- [x] 3.2 `pnpm run build` passes. - fdcb999
+- [x] 3.1 `pnpm run lint` passes. — fdcb999
+- [x] 3.2 `pnpm run build` passes. — fdcb999
 
 #### Manual
 
-- [x] 3.3 With no result, `/offers/:id` shows a usable "Prepare viewing" action. - fdcb999
-- [x] 3.4 Clicking the action shows a pending state and does not allow duplicate clicks. - fdcb999
-- [x] 3.5 A completed result appears after generation and remains visible after page reload. - fdcb999
-- [x] 3.6 A second extraction attempt is blocked when a result already exists. - fdcb999
-- [x] 3.7 Answered and unanswered questions render in category order where matching question IDs exist. - fdcb999
-- [x] 3.8 Failed attempts show safe user-facing status only and do not create a persisted result. - fdcb999
-- [x] 3.9 Deleting the offer removes the saved offer and its preparation result. - fdcb999
+- [x] 3.3 With no result, `/offers/:id` shows a usable "Prepare viewing" action. — fdcb999
+- [x] 3.4 Clicking the action shows a pending state and does not allow duplicate clicks. — fdcb999
+- [x] 3.5 A completed result appears after generation and remains visible after page reload. — fdcb999
+- [x] 3.6 A second extraction attempt is blocked when a result already exists. — fdcb999
+- [x] 3.7 Answered and unanswered questions render in category order where matching question IDs exist. — fdcb999
+- [x] 3.8 Failed attempts show safe user-facing status only and do not create a persisted result. — fdcb999
+- [x] 3.9 Deleting the offer removes the saved offer and its preparation result. — fdcb999
