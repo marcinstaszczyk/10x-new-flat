@@ -28,7 +28,7 @@ export const POST: APIRoute = async (context) => {
     return jsonResponse({ status: "configuration" }, 500);
   }
 
-  const result = await prepareOfferViewing(supabase, params.data.id, buildPrepareOptions());
+  const result = await prepareOfferViewing(supabase, params.data.id, buildPrepareOptions(context));
   if (result.ok) {
     return jsonResponse(
       {
@@ -62,14 +62,26 @@ function statusCodeForFailure(reason: PrepareFailureReason): number {
   }
 }
 
-function buildPrepareOptions() {
-  if (E2E_OPENROUTER_MOCK !== "true" || !import.meta.env.DEV) {
+function buildPrepareOptions(context: Parameters<APIRoute>[0]) {
+  if (!shouldUseE2eMock(context)) {
     return {};
   }
 
   return {
     extractOfferPreparation: createE2eOpenRouterMockExtractor(),
   };
+}
+
+function shouldUseE2eMock(context: Parameters<APIRoute>[0]) {
+  if (!isLoopbackHost(context.url.hostname)) {
+    return false;
+  }
+
+  return E2E_OPENROUTER_MOCK === "true" || context.cookies.get("e2e-openrouter-mock")?.value === "true";
+}
+
+function isLoopbackHost(hostname: string) {
+  return hostname === "127.0.0.1" || hostname === "localhost" || hostname === "::1";
 }
 
 function jsonResponse(body: Record<string, string>, status: number) {

@@ -16,14 +16,6 @@ export default defineConfig({
     storageState: "test-results/.auth/user.json",
     trace: "on-first-retry",
   },
-  webServer: process.env.PLAYWRIGHT_BASE_URL
-    ? undefined
-    : {
-        command: "node scripts/e2e-dev-server.mjs",
-        url: baseURL,
-        reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
-      },
   projects: [
     {
       name: "chromium",

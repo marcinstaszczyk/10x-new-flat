@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 // Seed for future browser tests.
 // Provenance: roadmap S-03, test-plan risks #1 and #4, manual smoke from
@@ -11,6 +11,13 @@ test.describe("North Star prepare-viewing flow", () => {
     const sourceUrl = `https://example.test/offers/${timestamp}`;
 
     await page.goto("/offers/new");
+    await page.context().addCookies([
+      {
+        name: "e2e-openrouter-mock",
+        value: "true",
+        url: new URL("/", page.url()).toString(),
+      },
+    ]);
 
     // Setup: create a unique saved offer through the real authenticated app flow.
     await page.getByLabel("Title").fill(title);
@@ -21,12 +28,16 @@ test.describe("North Star prepare-viewing flow", () => {
     await expect(page).toHaveURL(/\/offers\/[0-9a-f-]+\?created=success$/);
     await expect(page.getByRole("heading", { name: title })).toBeVisible();
     await expect(page.getByText("E2E_LONG_OFFER_END")).toBeVisible();
+    await waitForAstroIslands(page);
 
     // Action: prepare the offer through the backend; OpenRouter is mocked server-side.
-    const prepareResponse = page.waitForResponse(
-      (response) => response.url().includes("/api/offers/") && response.url().endsWith("/prepare"),
-    );
-    await page.getByRole("button", { name: /Przygotuj/ }).click();
+    const prepareResponse = page.waitForResponse((response) => {
+      const request = response.request();
+      return (
+        request.method() === "POST" && response.url().includes("/api/offers/") && response.url().includes("/prepare")
+      );
+    });
+    await page.getByRole("button", { name: "Przygotuj odpowiedzi" }).click();
     const response = await prepareResponse;
     expect(response.status()).toBe(201);
 
@@ -51,4 +62,11 @@ function buildLongOfferContent(): string {
     "The monthly rent is listed once as PLN 3,500 and later as PLN 3,800.",
     "E2E_LONG_OFFER_END",
   ].join("\n");
+}
+
+async function waitForAstroIslands(page: Page) {
+  await page.waitForFunction(() => {
+    const islands = Array.from(document.querySelectorAll("astro-island"));
+    return islands.length > 0 && islands.every((island) => !island.hasAttribute("ssr"));
+  });
 }

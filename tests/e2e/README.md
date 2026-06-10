@@ -17,7 +17,8 @@ Required local or CI env:
 - `SUPABASE_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
 
-The Playwright dev web server sets `E2E_OPENROUTER_MOCK=true`, so this test
-never calls OpenRouter. Auth, routing, API handlers, and Supabase persistence
-stay real. To move this into CI, start/reset local Supabase, install Chromium,
-then run `pnpm run test:e2e` after `npm run test:app`.
+Playwright global setup starts the Astro dev server with
+`E2E_OPENROUTER_MOCK=true`, so this test never calls OpenRouter. Auth, routing,
+API handlers, and Supabase persistence stay real. To move this into CI,
+start/reset local Supabase, install Chromium, then run `pnpm run test:e2e`
+after `npm run test:app`.
