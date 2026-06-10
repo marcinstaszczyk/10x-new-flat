@@ -419,14 +419,14 @@ Finish the rollout phase by documenting the human/browser smoke and updating the
 
 #### Automated
 
-- [ ] 1.1 `pnpm run test:app` runs without browser, Supabase runtime, or OpenRouter secrets.
-- [ ] 1.2 `pnpm run lint` passes.
-- [ ] 1.3 `pnpm run build` passes.
+- [x] 1.1 `pnpm run test:app` runs without browser, Supabase runtime, or OpenRouter secrets.
+- [x] 1.2 `pnpm run lint` passes.
+- [x] 1.3 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 1.4 Review `vitest.config.ts` and confirm no browser mode, live provider setup, or secret lookup is configured.
-- [ ] 1.5 Review `package.json` and confirm `test:app` is distinct from `check:extraction-contract`.
+- [x] 1.4 Review `vitest.config.ts` and confirm no browser mode, live provider setup, or secret lookup is configured.
+- [x] 1.5 Review `package.json` and confirm `test:app` is distinct from `check:extraction-contract`.
 
 ### Phase 2: Cover Extraction Boundary and Input Guard
 
