@@ -95,7 +95,7 @@ interface DbRelationship<
   referencedColumns: ReferencedColumns;
 }
 
-interface FlatOfferRecord {
+interface FlatOfferRecord extends Record<string, unknown> {
   id: string;
   buyer_id: string;
   title: string;
@@ -105,7 +105,7 @@ interface FlatOfferRecord {
   updated_at: string;
 }
 
-interface OfferExtractionResultRecord {
+interface OfferExtractionResultRecord extends Record<string, unknown> {
   id: string;
   offer_id: string;
   buyer_id: string;
@@ -117,7 +117,7 @@ interface OfferExtractionResultRecord {
   updated_at: string;
 }
 
-interface BuyerQuestionRecord {
+interface BuyerQuestionRecord extends Record<string, unknown> {
   id: string;
   buyer_id: string;
   source_template_id: string | null;
@@ -128,7 +128,7 @@ interface BuyerQuestionRecord {
   updated_at: string;
 }
 
-interface QuestionTemplateRecord {
+interface QuestionTemplateRecord extends Record<string, unknown> {
   id: string;
   question_type: QuestionType;
   text: string;

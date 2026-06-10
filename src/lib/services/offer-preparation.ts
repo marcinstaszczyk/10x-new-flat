@@ -24,6 +24,8 @@ export type PrepareOfferViewingResult =
       metadata?: ExtractionMetadata;
     };
 
+type PrepareOfferViewingFailureReason = Extract<PrepareOfferViewingResult, { ok: false }>["reason"];
+
 export async function prepareOfferViewing(
   client: OfferPreparationClient,
   offerId: string,
@@ -95,7 +97,7 @@ export async function prepareOfferViewing(
 
 function logPrepareFailure(
   offerId: string,
-  reason: PrepareOfferViewingResult extends { ok: false; reason: infer Reason } ? Reason : never,
+  reason: PrepareOfferViewingFailureReason,
   metadata?: ExtractionMetadata,
   diagnostic?: string,
 ) {

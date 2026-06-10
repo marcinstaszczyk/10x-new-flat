@@ -20,7 +20,7 @@ export default function ResetQuestionBaseForm() {
   };
 
   return (
-    <form method="POST" action="/api/questions/reset" onSubmit={handleSubmit}>
+    <form method="post" action="/api/questions/reset" onSubmit={handleSubmit}>
       <input ref={confirmationInput} type="hidden" name="confirmation" value="" />
       <button
         type="submit"

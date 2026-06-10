@@ -23,7 +23,7 @@ export default function DeleteOfferForm(props: Props) {
   };
 
   return (
-    <form method="POST" action={`/api/offers/${props.offerId}/delete`} onSubmit={handleSubmit}>
+    <form method="post" action={`/api/offers/${props.offerId}/delete`} onSubmit={handleSubmit}>
       <input ref={confirmationInput} type="hidden" name="confirmation" value="" />
       <button
         type="submit"

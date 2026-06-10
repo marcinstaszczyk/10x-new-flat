@@ -82,7 +82,7 @@ export default function SignUpForm({ serverError }: Props) {
   }
 
   return (
-    <form method="POST" action="/api/auth/signup" class="space-y-4" onSubmit={handleSubmit} noValidate>
+    <form method="post" action="/api/auth/signup" class="space-y-4" onSubmit={handleSubmit} noValidate>
       <FormField
         id="email"
         type="email"
