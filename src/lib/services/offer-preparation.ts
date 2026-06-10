@@ -7,7 +7,7 @@ import { loadSavedOffer } from "./offers";
 import { loadBuyerQuestionBase } from "./questions";
 
 type OfferPreparationClient = SupabaseClient<Database>;
-type ExtractOfferPreparation = (input: ExtractionRequestInput) => Promise<ExtractionServiceResult>;
+export type ExtractOfferPreparation = (input: ExtractionRequestInput) => Promise<ExtractionServiceResult>;
 
 interface PrepareOfferViewingOptions {
   extractOfferPreparation?: ExtractOfferPreparation;

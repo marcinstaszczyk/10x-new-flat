@@ -84,7 +84,7 @@ but it already has five Supabase pgTAP database contract tests under
 |---|---|---|---|
 | database contract | Supabase CLI / pgTAP | `supabase` ^2.23.4 | Existing owner, lifecycle, offer, and extraction-result contracts. |
 | unit + integration | Vitest | 4.1.6 | `pnpm run test:app` runs deterministic app/service tests with fake fetchers and injected extractors. |
-| e2e/browser smoke | Browser plugin / local dev | checked: 2026-06-09 | Use selectively for the primary prepare-viewing path and duplicate-submit behavior. |
+| e2e/browser smoke | Playwright | `@playwright/test` ^1.60.0 | `pnpm run test:e2e` drives the primary prepare-viewing seed with backend OpenRouter mock enabled. |
 | live extraction contract | `pnpm run check:extraction-contract` | project script | On-demand before release; do not run on every change. |
 | AI-native review | none planned | checked: 2026-06-09 | When NOT to use: deterministic contracts or browser checks already catch the risk. |
 
@@ -101,7 +101,7 @@ but it already has five Supabase pgTAP database contract tests under
 | lint + typecheck/build | local + CI | required | syntax, type, Astro SSR, and Cloudflare build drift |
 | database contracts | local; CI after Phase 4 if wired | required after 2 Phase 2 | RLS, ownership, lifecycle, cascade regressions |
 | app integration | local; CI after Phase 4 if wired | required after 2 Phase 1 | primary flow and route/service regressions |
-| critical browser/manual smoke | local before release | required after 2 Phase 1 | broken user-facing prepare-viewing and duplicate-submit paths |
+| critical browser/manual smoke | local; CI-ready after Supabase env is provided | required after 2 Phase 1 | broken user-facing prepare-viewing and duplicate-submit paths |
 | live LLM contract check | manual pre-release | optional, on-demand | provider/schema drift without per-change cost |
 
 ## 6. Cookbook Patterns
@@ -138,20 +138,19 @@ computed with the same production completion logic.
 
 ### 6.3 Adding a critical browser/manual smoke
 
-Use a seeded persisted result for the critical prepare-viewing browser
-smoke. Do not click the live prepare action unless the goal is an explicit
-provider check.
+Use `tests/e2e/seed.spec.ts` for the critical prepare-viewing browser smoke.
+It creates a logged-in buyer, saves a long offer through the app, clicks the
+real prepare action, and relies on the backend `E2E_OPENROUTER_MOCK=true`
+switch instead of calling OpenRouter.
 
-Seed or create a logged-in buyer, a saved offer, the buyer question base,
-and one completed `offer_extraction_results` row for that offer. The
-seeded result must include all four app buckets:
+The mocked backend result must include all four app buckets:
 
 - answered questions,
 - unanswered questions,
 - doubtful facts,
 - unmapped facts.
 
-Run `pnpm run dev`, sign in as the buyer, and open `/offers/:id`. Verify:
+Run `pnpm run test:e2e`. Verify:
 
 - the saved offer source content is visible,
 - answered and unanswered question sections render expected counts,
@@ -159,11 +158,13 @@ Run `pnpm run dev`, sign in as the buyer, and open `/offers/:id`. Verify:
 - answered and unanswered questions appear in question-base order where
   IDs match,
 - doubtful and unmapped facts remain visible,
-- the prepare action is disabled or absent when the result already exists.
+- the prepare action is disabled when the result already exists.
 
 This smoke must not require `OPENROUTER_API_KEY` and must not call
 OpenRouter. It verifies persisted user-visible rendering, not provider
-quality.
+quality. Local and CI runs require `SUPABASE_URL`, `SUPABASE_KEY`, and
+`SUPABASE_SERVICE_ROLE_KEY` so the Playwright setup can create and delete an
+isolated buyer.
 
 ### 6.4 Adding an on-demand live extraction check
 
@@ -186,8 +187,11 @@ Phase 1, Critical prepare-viewing flow:
   called.
 - `prepareOfferViewing` supports an injected extractor for tests while
   production callers keep `prepareOfferViewing(client, offerId)`.
-- Browser smoke for this risk uses a seeded persisted four-bucket result,
-  not a live LLM call.
+- Browser smoke for this risk uses the backend four-bucket mock during the
+  prepare action, not a live LLM call.
+- Playwright `tests/e2e/seed.spec.ts` now automates the North Star flow with
+  real auth, routing, API, and Supabase persistence plus backend OpenRouter
+  mocking.
 
 ## 7. What We Deliberately Don't Test
 

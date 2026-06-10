@@ -20,6 +20,7 @@ export default defineConfig({
       SUPABASE_KEY: envField.string({ context: "server", access: "secret", optional: true }),
       OPENROUTER_API_KEY: envField.string({ context: "server", access: "secret", optional: true }),
       OPENROUTER_MODEL: envField.string({ context: "server", access: "secret", optional: true }),
+      E2E_OPENROUTER_MOCK: envField.string({ context: "server", access: "secret", optional: true }),
     },
   },
 });

@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
+import { E2E_OPENROUTER_MOCK } from "astro:env/server";
 import { z } from "zod";
+import { createE2eOpenRouterMockExtractor } from "@/lib/services/e2e-extraction-mock";
 import { prepareOfferViewing, type PrepareOfferViewingResult } from "@/lib/services/offer-preparation";
 import { createClient } from "@/lib/supabase";
 
@@ -26,7 +28,7 @@ export const POST: APIRoute = async (context) => {
     return jsonResponse({ status: "configuration" }, 500);
   }
 
-  const result = await prepareOfferViewing(supabase, params.data.id);
+  const result = await prepareOfferViewing(supabase, params.data.id, buildPrepareOptions());
   if (result.ok) {
     return jsonResponse(
       {
@@ -58,6 +60,16 @@ function statusCodeForFailure(reason: PrepareFailureReason): number {
     case "storage":
       return 500;
   }
+}
+
+function buildPrepareOptions() {
+  if (E2E_OPENROUTER_MOCK !== "true" || !import.meta.env.DEV) {
+    return {};
+  }
+
+  return {
+    extractOfferPreparation: createE2eOpenRouterMockExtractor(),
+  };
 }
 
 function jsonResponse(body: Record<string, string>, status: number) {
