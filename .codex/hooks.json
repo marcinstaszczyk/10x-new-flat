@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cmd /c \"npx eslint --fix . --quiet 2>&1 || (echo Lint hook failed. Fix the reported ESLint errors. && exit /b 2)\""
+            "command": "node scripts/hooks/lint.mjs"
           }
         ]
       },
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cmd /c \"npx tsc --noEmit 2>&1 || (echo Typecheck hook failed. Fix the reported TypeScript errors. && exit /b 2)\""
+            "command": "node scripts/hooks/typecheck.mjs"
           }
         ]
       }
