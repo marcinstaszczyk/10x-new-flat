@@ -29,3 +29,89 @@ export default Sentry.withSentry(
   handler,
 );
 ```
+
+### Information from Sentry site
+
+#### Configure SDK
+
+Configure the Sentry integration in your astro.config.mjs file:
+
+```
+// astro.config.mjs
+import { defineConfig } from "astro/config";
+import sentry from "@sentry/astro";
+
+export default defineConfig({
+  integrations: [
+    sentry({
+      project: "javascript-astro",
+      org: "marcin-staszczyk",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }),
+  ],
+});
+```
+
+Create a sentry.client.config.js file in the root of your project to configure the client-side SDK:
+
+```
+// sentry.client.config.js
+import * as Sentry from "@sentry/astro";
+
+Sentry.init({
+  dsn: env.SENTRY_DSN,
+  // To disable sending user data, uncomment the line below. For more info visit:
+  // https://docs.sentry.io/platforms/javascript/guides/astro/configuration/options/#dataCollection
+  // dataCollection: { userInfo: false },
+  integrations: [
+    Sentry.browserTracingIntegration(),
+  ],
+  // Enable logs to be sent to Sentry
+  enableLogs: true,
+  // Define how likely traces are sampled. Adjust this value in production,
+  // or use tracesSampler for greater control.
+  tracesSampleRate: 1.0,
+});
+```
+
+Create a sentry.server.config.js file in the root of your project to configure the server-side SDK:
+
+```
+// sentry.server.config.js
+import * as Sentry from "@sentry/astro";
+
+Sentry.init({
+  dsn: env.SENTRY_DSN,
+  // To disable sending user data, uncomment the line below. For more info visit:
+  // https://docs.sentry.io/platforms/javascript/guides/astro/configuration/options/#dataCollection
+  // dataCollection: { userInfo: false },
+  // Enable logs to be sent to Sentry
+  enableLogs: true,
+  // Define how likely traces are sampled. Adjust this value in production,
+  // or use tracesSampler for greater control.
+  tracesSampleRate: 1.0,
+});
+```
+
+Verify
+Then throw a test error anywhere in your app, so you can test that everything is working:
+
+```
+<!-- your-page.astro -->
+---
+---
+<button id="error-button">Throw test error</button>
+<script>
+  import * as Sentry from "@sentry/astro";
+  function handleClick () {
+    // Send a log before throwing the error
+    Sentry.logger.info(Sentry.logger.fmt`User ${"sentry-test"} triggered test error button`, {
+      action: "test_error_button_click",
+    });
+    // Send a test metric before throwing the error
+    Sentry.metrics.count('test_counter', 1);
+    throw new Error('This is a test error');
+  }
+  document.querySelector("#error-button").addEventListener("click", handleClick);
+</script>
+```
