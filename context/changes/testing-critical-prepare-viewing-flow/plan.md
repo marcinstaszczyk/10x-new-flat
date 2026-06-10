@@ -432,27 +432,27 @@ Finish the rollout phase by documenting the human/browser smoke and updating the
 
 #### Automated
 
-- [x] 2.1 `pnpm run test:app` passes with provider-boundary and input-limit tests.
-- [x] 2.2 `pnpm run lint` passes.
-- [x] 2.3 `pnpm run build` passes.
+- [x] 2.1 `pnpm run test:app` passes with provider-boundary and input-limit tests. - a837e23
+- [x] 2.2 `pnpm run lint` passes. - a837e23
+- [x] 2.3 `pnpm run build` passes. - a837e23
 
 #### Manual
 
-- [x] 2.4 Review tests and confirm expected bucket IDs are literal oracle values.
-- [x] 2.5 Review command output and confirm no pasted fixture content, provider raw output, or secrets are printed.
+- [x] 2.4 Review tests and confirm expected bucket IDs are literal oracle values. - a837e23
+- [x] 2.5 Review command output and confirm no pasted fixture content, provider raw output, or secrets are printed. - a837e23
 
 ### Phase 3: Cover Prepare Orchestration Without LLM Calls
 
 #### Automated
 
-- [ ] 3.1 `pnpm run test:app` passes with prepare orchestration tests.
-- [ ] 3.2 `pnpm run lint` passes.
-- [ ] 3.3 `pnpm run build` passes.
+- [x] 3.1 `pnpm run test:app` passes with prepare orchestration tests.
+- [x] 3.2 `pnpm run lint` passes.
+- [x] 3.3 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 3.4 Review the injection seam and confirm production callers do not need to change.
-- [ ] 3.5 Review the fake Supabase fixture and confirm it is scoped to service orchestration only.
+- [x] 3.4 Review the injection seam and confirm production callers do not need to change.
+- [x] 3.5 Review the fake Supabase fixture and confirm it is scoped to service orchestration only.
 
 ### Phase 4: Document Manual Smoke and Cookbook
 

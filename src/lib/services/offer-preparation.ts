@@ -1,12 +1,17 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database, OfferExtractionResult } from "@/types";
+import type { Database, ExtractionRequestInput, OfferExtractionResult } from "@/types";
 import { extractOfferPreparation } from "./extraction";
-import type { ExtractionFailureReason, ExtractionMetadata } from "./extraction-provider";
+import type { ExtractionFailureReason, ExtractionMetadata, ExtractionServiceResult } from "./extraction-provider";
 import { createOfferExtractionResult, loadOfferExtractionResult } from "./offer-extraction-results";
 import { loadSavedOffer } from "./offers";
 import { loadBuyerQuestionBase } from "./questions";
 
 type OfferPreparationClient = SupabaseClient<Database>;
+type ExtractOfferPreparation = (input: ExtractionRequestInput) => Promise<ExtractionServiceResult>;
+
+interface PrepareOfferViewingOptions {
+  extractOfferPreparation?: ExtractOfferPreparation;
+}
 
 export type PrepareOfferViewingResult =
   | {
@@ -22,7 +27,9 @@ export type PrepareOfferViewingResult =
 export async function prepareOfferViewing(
   client: OfferPreparationClient,
   offerId: string,
+  options: PrepareOfferViewingOptions = {},
 ): Promise<PrepareOfferViewingResult> {
+  const extractor = options.extractOfferPreparation ?? extractOfferPreparation;
   const offerResult = await loadSavedOffer(client, offerId);
   if (!offerResult.ok) {
     return { ok: false, reason: "storage" };
@@ -54,7 +61,7 @@ export async function prepareOfferViewing(
     return { ok: false, reason: "question_base" };
   }
 
-  const extractionResult = await extractOfferPreparation({
+  const extractionResult = await extractor({
     offer: {
       id: offerResult.offer.id,
       title: offerResult.offer.title,
