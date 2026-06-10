@@ -76,7 +76,7 @@ Introduce Vitest and the minimum configuration needed to run TypeScript service 
 
 #### 1. Vitest dependency and scripts
 
-**Files**: `package.json`, lockfiles
+**Files**: `package.json`, `package-lock.json`, `pnpm-lock.yaml`
 
 **Intent**: Make deterministic app tests discoverable through the existing package-script workflow.
 
@@ -87,7 +87,7 @@ Introduce Vitest and the minimum configuration needed to run TypeScript service 
 - Optionally add `test:app:watch` only if it does not create extra maintenance surface.
 - Do not add the live OpenRouter contract check to `test:app`.
 - Preserve existing `check:extraction-contract`, `lint`, and `build` scripts.
-- Keep both package lockfiles consistent if the dependency install updates both.
+- Update both lockfiles because local workflow uses pnpm while CI runs `npm ci`.
 
 #### 2. Test-specific Vitest config
 
@@ -122,7 +122,7 @@ Introduce Vitest and the minimum configuration needed to run TypeScript service 
 
 #### Automated Verification
 
-- `pnpm run test:app` runs and reports zero tests or placeholder-free passing tests after later phases add them.
+- `pnpm run test:app` has an unambiguous Phase 1 outcome: either add the first real placeholder-free test in this phase, or set Vitest `passWithNoTests` explicitly and document that it is temporary until Phase 2 adds tests.
 - `pnpm run lint` passes.
 - `pnpm run build` passes.
 
