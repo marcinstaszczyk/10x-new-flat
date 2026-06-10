@@ -18,6 +18,7 @@ describe("prepareOfferViewing", () => {
   it("blocks reruns when a completed result already exists", testRerunBlocking);
   it("does not persist when extraction fails", testExtractorFailure);
   it("returns storage failure when persisting a successful extraction fails", testStorageFailure);
+  it("returns already_exists when insert hits a unique conflict", testInsertConflict);
 });
 
 async function testSuccessfulPreparation() {
@@ -95,6 +96,17 @@ async function testStorageFailure() {
 
   expect(client.insertedExtractionResults).toEqual([insertPayload()]);
   expect(result).toEqual({ ok: false, reason: "storage", metadata: { model, latencyMs } });
+}
+
+async function testInsertConflict() {
+  const client = createFakeSupabaseClient({ insertError: { code: "23505" } });
+
+  const result = await prepareOfferViewing(client, offerId, {
+    extractOfferPreparation: () => Promise.resolve(extractionSuccess()),
+  });
+
+  expect(client.insertedExtractionResults).toEqual([insertPayload()]);
+  expect(result).toEqual({ ok: false, reason: "already_exists", metadata: { model, latencyMs } });
 }
 
 function extractionSuccess(): ExtractionServiceResult {

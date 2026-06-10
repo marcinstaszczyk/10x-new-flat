@@ -17,7 +17,6 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.test.ts"],
     exclude: ["dist/**", "node_modules/**", "context/archive/**"],
-    passWithNoTests: true,
     root: rootDir,
   },
 });
