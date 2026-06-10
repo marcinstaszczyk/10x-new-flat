@@ -419,27 +419,27 @@ Finish the rollout phase by documenting the human/browser smoke and updating the
 
 #### Automated
 
-- [x] 1.1 `pnpm run test:app` runs without browser, Supabase runtime, or OpenRouter secrets.
-- [x] 1.2 `pnpm run lint` passes.
-- [x] 1.3 `pnpm run build` passes.
+- [x] 1.1 `pnpm run test:app` runs without browser, Supabase runtime, or OpenRouter secrets. - 3eaf98d
+- [x] 1.2 `pnpm run lint` passes. - 3eaf98d
+- [x] 1.3 `pnpm run build` passes. - 3eaf98d
 
 #### Manual
 
-- [x] 1.4 Review `vitest.config.ts` and confirm no browser mode, live provider setup, or secret lookup is configured.
-- [x] 1.5 Review `package.json` and confirm `test:app` is distinct from `check:extraction-contract`.
+- [x] 1.4 Review `vitest.config.ts` and confirm no browser mode, live provider setup, or secret lookup is configured. - 3eaf98d
+- [x] 1.5 Review `package.json` and confirm `test:app` is distinct from `check:extraction-contract`. - 3eaf98d
 
 ### Phase 2: Cover Extraction Boundary and Input Guard
 
 #### Automated
 
-- [ ] 2.1 `pnpm run test:app` passes with provider-boundary and input-limit tests.
-- [ ] 2.2 `pnpm run lint` passes.
-- [ ] 2.3 `pnpm run build` passes.
+- [x] 2.1 `pnpm run test:app` passes with provider-boundary and input-limit tests.
+- [x] 2.2 `pnpm run lint` passes.
+- [x] 2.3 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 2.4 Review tests and confirm expected bucket IDs are literal oracle values.
-- [ ] 2.5 Review command output and confirm no pasted fixture content, provider raw output, or secrets are printed.
+- [x] 2.4 Review tests and confirm expected bucket IDs are literal oracle values.
+- [x] 2.5 Review command output and confirm no pasted fixture content, provider raw output, or secrets are printed.
 
 ### Phase 3: Cover Prepare Orchestration Without LLM Calls
 
