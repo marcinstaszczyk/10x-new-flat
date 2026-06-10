@@ -66,7 +66,7 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | Critical prepare-viewing flow | Prove the primary long-offer preparation path still works without live LLM on every change. | #1, #4 | integration + e2e/manual smoke + on-demand contract check | planned | testing-critical-prepare-viewing-flow |
+| 1 | Critical prepare-viewing flow | Prove the primary long-offer preparation path still works without live LLM on every change. | #1, #4 | integration + e2e/manual smoke + on-demand contract check | implementing | testing-critical-prepare-viewing-flow |
 | 2 | Ownership and destructive actions | Prove question lifecycle and offer deletion stay owner-scoped. | #2, #3, #6 | database contract + API/route integration | not started | - |
 | 3 | Duplicate-submit protection | Prove slow or repeated saved-offer submission cannot create duplicate entries. | #5 | integration + focused browser/manual check | not started | - |
 | 4 | Quality gates and cookbook | Make the shipped test commands discoverable and enforceable without adding live provider cost to CI. | cross-cutting | gates + cookbook | not started | - |
@@ -83,7 +83,7 @@ but it already has five Supabase pgTAP database contract tests under
 | Layer | Tool | Version | Notes |
 |---|---|---|---|
 | database contract | Supabase CLI / pgTAP | `supabase` ^2.23.4 | Existing owner, lifecycle, offer, and extraction-result contracts. |
-| unit + integration | none yet | - | Add only where Phase 1/2 research proves cost x signal. |
+| unit + integration | Vitest | 4.1.6 | `pnpm run test:app` runs deterministic app/service tests with fake fetchers and injected extractors. |
 | e2e/browser smoke | Browser plugin / local dev | checked: 2026-06-09 | Use selectively for the primary prepare-viewing path and duplicate-submit behavior. |
 | live extraction contract | `pnpm run check:extraction-contract` | project script | On-demand before release; do not run on every change. |
 | AI-native review | none planned | checked: 2026-06-09 | When NOT to use: deterministic contracts or browser checks already catch the risk. |
@@ -117,20 +117,77 @@ contracts.
 
 ### 6.2 Adding an app integration test
 
-TBD - see 3 Phase 1 for prepare-viewing and extraction-bucket behavior.
+Use `pnpm run test:app` for deterministic app/service tests. Keep these
+tests in `src/**/*.test.ts`; Vitest runs them in Node through
+`vitest.config.ts` with the `@/*` alias and the test-only
+`astro:env/server` stub.
+
+Prefer the cheapest boundary that proves the risk:
+
+- Provider-boundary tests call `callOpenRouterExtraction` with a fake
+  `fetcher`.
+- Extraction wrapper tests call `extractOfferPreparation` with safe test
+  options.
+- Prepare orchestration tests call `prepareOfferViewing(client, offerId,
+  { extractOfferPreparation })` with an injected fake extractor.
+
+Do not call OpenRouter from `test:app`. For too-large extraction tests,
+assert the provider or fetcher is not called. Expected extraction buckets
+must be literal oracle values from product/research context, not values
+computed with the same production completion logic.
 
 ### 6.3 Adding a critical browser/manual smoke
 
-TBD - see 3 Phase 1 for long-offer preparation and 3 Phase 3 for
-duplicate-submit behavior.
+Use a seeded persisted result for the critical prepare-viewing browser
+smoke. Do not click the live prepare action unless the goal is an explicit
+provider check.
+
+Seed or create a logged-in buyer, a saved offer, the buyer question base,
+and one completed `offer_extraction_results` row for that offer. The
+seeded result must include all four app buckets:
+
+- answered questions,
+- unanswered questions,
+- doubtful facts,
+- unmapped facts.
+
+Run `pnpm run dev`, sign in as the buyer, and open `/offers/:id`. Verify:
+
+- the saved offer source content is visible,
+- answered and unanswered question sections render expected counts,
+- doubtful and unmapped fact sections render expected counts,
+- answered and unanswered questions appear in question-base order where
+  IDs match,
+- doubtful and unmapped facts remain visible,
+- the prepare action is disabled or absent when the result already exists.
+
+This smoke must not require `OPENROUTER_API_KEY` and must not call
+OpenRouter. It verifies persisted user-visible rendering, not provider
+quality.
 
 ### 6.4 Adding an on-demand live extraction check
 
-TBD - see 3 Phase 4. This stays pre-release/on-demand, not per-change CI.
+Use `pnpm run check:extraction-contract` only when intentionally checking
+live provider behavior, such as before release or when provider/schema
+drift is suspected.
+
+This command requires `OPENROUTER_API_KEY`. It is not part of
+`pnpm run test:app`, `pnpm run lint`, `pnpm run build`, per-change
+verification, or CI quality gates unless the team explicitly accepts live
+LLM cost and network flake.
 
 ### 6.5 Per-rollout-phase notes
 
-TBD - filled as rollout phases ship.
+Phase 1, Critical prepare-viewing flow:
+
+- Deterministic app tests are now available through `pnpm run test:app`.
+- Long-offer success is covered below the 100,000 character input limit.
+- The above-limit negative path must prove the provider/fetcher is not
+  called.
+- `prepareOfferViewing` supports an injected extractor for tests while
+  production callers keep `prepareOfferViewing(client, offerId)`.
+- Browser smoke for this risk uses a seeded persisted four-bucket result,
+  not a live LLM call.
 
 ## 7. What We Deliberately Don't Test
 

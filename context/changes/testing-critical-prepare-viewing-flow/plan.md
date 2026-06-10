@@ -445,25 +445,25 @@ Finish the rollout phase by documenting the human/browser smoke and updating the
 
 #### Automated
 
-- [x] 3.1 `pnpm run test:app` passes with prepare orchestration tests.
-- [x] 3.2 `pnpm run lint` passes.
-- [x] 3.3 `pnpm run build` passes.
+- [x] 3.1 `pnpm run test:app` passes with prepare orchestration tests. - 4b662fb
+- [x] 3.2 `pnpm run lint` passes. - 4b662fb
+- [x] 3.3 `pnpm run build` passes. - 4b662fb
 
 #### Manual
 
-- [x] 3.4 Review the injection seam and confirm production callers do not need to change.
-- [x] 3.5 Review the fake Supabase fixture and confirm it is scoped to service orchestration only.
+- [x] 3.4 Review the injection seam and confirm production callers do not need to change. - 4b662fb
+- [x] 3.5 Review the fake Supabase fixture and confirm it is scoped to service orchestration only. - 4b662fb
 
 ### Phase 4: Document Manual Smoke and Cookbook
 
 #### Automated
 
-- [ ] 4.1 `pnpm run test:app` passes.
-- [ ] 4.2 `pnpm run lint` passes.
-- [ ] 4.3 `pnpm run build` passes.
+- [x] 4.1 `pnpm run test:app` passes.
+- [x] 4.2 `pnpm run lint` passes.
+- [x] 4.3 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 4.4 Follow the documented seeded-result smoke locally with `pnpm run dev`.
-- [ ] 4.5 Confirm the smoke does not call OpenRouter.
-- [ ] 4.6 Confirm cookbook wording makes the live LLM boundary clear.
+- [x] 4.4 Follow the documented seeded-result smoke locally with `pnpm run dev`.
+- [x] 4.5 Confirm the smoke does not call OpenRouter.
+- [x] 4.6 Confirm cookbook wording makes the live LLM boundary clear.
