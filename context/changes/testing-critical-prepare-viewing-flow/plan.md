@@ -458,12 +458,12 @@ Finish the rollout phase by documenting the human/browser smoke and updating the
 
 #### Automated
 
-- [x] 4.1 `pnpm run test:app` passes.
-- [x] 4.2 `pnpm run lint` passes.
-- [x] 4.3 `pnpm run build` passes.
+- [x] 4.1 `pnpm run test:app` passes. - 4896e78
+- [x] 4.2 `pnpm run lint` passes. - 4896e78
+- [x] 4.3 `pnpm run build` passes. - 4896e78
 
 #### Manual
 
-- [x] 4.4 Follow the documented seeded-result smoke locally with `pnpm run dev`.
-- [x] 4.5 Confirm the smoke does not call OpenRouter.
-- [x] 4.6 Confirm cookbook wording makes the live LLM boundary clear.
+- [x] 4.4 Follow the documented seeded-result smoke locally with `pnpm run dev`. - 4896e78
+- [x] 4.5 Confirm the smoke does not call OpenRouter. - 4896e78
+- [x] 4.6 Confirm cookbook wording makes the live LLM boundary clear. - 4896e78

@@ -1,7 +1,7 @@
 ---
 change_id: testing-critical-prepare-viewing-flow
 title: Critical prepare-viewing flow tests
-status: implementing
+status: implemented
 created: 2026-06-09
 updated: 2026-06-10
 archived_at: null
