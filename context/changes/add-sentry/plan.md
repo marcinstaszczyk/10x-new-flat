@@ -14,6 +14,8 @@ The Astro integration is already present in `astro.config.mjs` with telemetry di
 
 Browser capture is not configured yet. There is no `sentry.client.config.*` file and no public browser-readable Sentry env binding. Because browser code cannot read server-only Astro env values, the same Sentry DSN value should be exposed through a public browser variable while keeping the existing Worker `SENTRY_DSN` binding for server runtime.
 
+The original change notes include two Sentry setup patterns with the same conventional filename: a Cloudflare Worker entrypoint named `sentry.server.config.ts`, and Sentry's normal Astro server SDK init file pattern `sentry.server.config.*`. In this repository, root `sentry.server.config.ts` is the Worker entrypoint. Implementation must not assume it is a normal `Sentry.init()` module.
+
 ### Key Discoveries
 
 - `astro.config.mjs:13` already registers `@sentry/astro` with telemetry disabled and source maps disabled.
@@ -24,6 +26,7 @@ Browser capture is not configured yet. There is no `sentry.client.config.*` file
 - `.env.example:7` already lists `SENTRY_DSN`.
 - `package.json:24` and `package.json:25` already include `@sentry/astro` and `@sentry/cloudflare`.
 - Context7 docs for `/getsentry/sentry-javascript` confirm the Cloudflare `withSentry` wrapper and `captureConsoleIntegration({ levels: ["warn", "error"] })` configuration shape.
+- `@sentry/astro` auto-detects root `sentry.server.config.*` files as server SDK init files, so this plan must explicitly protect the custom Worker entrypoint from being treated as an unrelated SDK init module.
 
 ## Desired End State
 
@@ -60,6 +63,8 @@ The browser DSN is not a private secret, but it must still be handled intentiona
 | Verification | Temporary smoke route/page, removed before completion | Proves real capture without leaving a permanent debug surface. | User |
 | Source maps | Keep disabled | Avoids auth-token/org/project setup and upload complexity for this change. | User |
 | Noise filters | None beyond warn/error levels | User explicitly wants no additional filtering now. | User |
+| Server init ownership | Root `sentry.server.config.ts` stays the Cloudflare Worker entrypoint; any regular Sentry server SDK init must use an explicit separate path or be disabled if the Worker wrapper covers server capture. | Prevents `@sentry/astro` auto-detection from misusing the Worker entrypoint as a normal SDK init file. | Review |
+| Browser DSN availability | `PUBLIC_SENTRY_DSN` is a client build-time public variable, not a Worker runtime secret. | `import.meta.env.PUBLIC_SENTRY_DSN` is bundled into browser code by Astro/Vite. | Review |
 
 ## Phase 1: Normalize Sentry Configuration
 
@@ -80,7 +85,8 @@ Make the existing Sentry setup explicit and consistent before adding browser cap
 - Preserve `output: "server"`.
 - Preserve `sentry({ telemetry: false, sourcemaps: { disable: true } })`.
 - Preserve server-only optional `SENTRY_DSN`.
-- Add an optional browser-readable public Sentry DSN env binding, expected name `PUBLIC_SENTRY_DSN`.
+- Add an optional browser-readable public Sentry DSN env binding, expected name `PUBLIC_SENTRY_DSN`, using Astro's client/public env schema shape.
+- Explicitly handle `@sentry/astro` server-init behavior: do not let the integration auto-import the Worker entrypoint as a plain `Sentry.init()` server config. If the Worker wrapper is sufficient for server capture, disable or bypass normal server SDK init for this change; if a normal server SDK init is still needed, put it in a distinct file and wire it through an explicit `serverInitPath`.
 - Do not add Sentry auth token, org, project, source map upload options, tracing, profiling, or replay config.
 
 #### 2. Worker wrapper review
@@ -96,6 +102,7 @@ Make the existing Sentry setup explicit and consistent before adding browser cap
 - Keep reading DSN from Worker env `SENTRY_DSN`.
 - Keep Sentry disabled when `SENTRY_DSN` is absent.
 - Keep `Sentry.captureConsoleIntegration({ levels: ["warn", "error"] })`.
+- Keep this file's role as the Cloudflare Worker entrypoint, not a normal `Sentry.init()` server SDK config.
 - Do not add filters, sampling, tracing, profiling, or logging wrappers.
 
 #### 3. Cloudflare entrypoint review
@@ -124,6 +131,8 @@ Make the existing Sentry setup explicit and consistent before adding browser cap
 - Review `wrangler.jsonc` and confirm the custom Sentry Worker entrypoint remains active.
 
 **Implementation Note**: If Astro's env schema rejects the chosen `PUBLIC_SENTRY_DSN` declaration shape, adjust only the schema syntax. Do not replace the server/client env split with a hard-coded DSN.
+
+**Implementation Note**: Before changing Sentry config, verify the existing build behavior around root `sentry.server.config.ts`. The implementation must leave a clear, working ownership model: Worker entrypoint wrapping through `Sentry.withSentry`, plus browser init through `sentry.client.config.ts`.
 
 ---
 
@@ -160,7 +169,8 @@ Add browser-side Sentry initialization so client runtime errors and browser `con
 
 - Add `PUBLIC_SENTRY_DSN=` to `.env.example`.
 - Document that local `.env` and `.dev.vars` should set both `SENTRY_DSN` and `PUBLIC_SENTRY_DSN` to the same Sentry DSN value when testing Sentry.
-- Document that Cloudflare deployment needs `SENTRY_DSN` configured as a Worker secret or binding and `PUBLIC_SENTRY_DSN` configured for browser build/runtime exposure according to the project's Astro/Cloudflare env path.
+- Document that Cloudflare deployment needs `SENTRY_DSN` configured as a Worker secret or binding.
+- Document that `PUBLIC_SENTRY_DSN` must be available to the browser build through the environment used by the production build, including GitHub Actions if CI builds the deploy artifact. It is not enough to add it only as a Worker runtime secret because `import.meta.env.PUBLIC_SENTRY_DSN` is resolved into client code at build time.
 - Do not document or request `SENTRY_AUTH_TOKEN`.
 - Do not paste any real DSN into committed files.
 
@@ -175,6 +185,7 @@ Add browser-side Sentry initialization so client runtime errors and browser `con
 
 - Review browser config and confirm it cannot read `SENTRY_DSN` directly.
 - Review `.env.example` and README and confirm no real DSN or auth token is committed.
+- Review deployment docs and confirm `PUBLIC_SENTRY_DSN` is described as build-time public configuration, not only a Worker runtime secret.
 - Confirm source map upload is still disabled after browser config is added.
 
 ---
@@ -322,7 +333,7 @@ Capturing only errors and warning/error console calls should have low runtime ov
 
 - No Supabase migration is needed.
 - Dependency installation is already complete; lockfiles should not change unless implementation discovers a missing package or version mismatch.
-- Deployment needs env/secrets configured outside source control.
+- Deployment needs env/secrets configured outside source control. `SENTRY_DSN` belongs in Worker runtime secrets or bindings; `PUBLIC_SENTRY_DSN` must be present in the production build environment that generates browser assets.
 - CI should continue to build without Sentry DSN values because both DSN variables are optional.
 
 ## References

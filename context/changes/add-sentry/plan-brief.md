@@ -8,7 +8,7 @@ Finish Sentry error reporting for the Astro 6 Cloudflare Worker app. The goal is
 
 ## Starting Point
 
-Most server-side setup already exists: dependencies are installed, Astro has the Sentry integration, Wrangler uses a custom Sentry Worker entrypoint, and the Worker wrapper captures `console.warn` and `console.error`. Browser capture is not configured yet.
+Most server-side setup already exists: dependencies are installed, Astro has the Sentry integration, Wrangler uses a custom Sentry Worker entrypoint, and the Worker wrapper captures `console.warn` and `console.error`. Browser capture is not configured yet. The root `sentry.server.config.ts` file is the Worker entrypoint, not a normal Sentry `Sentry.init()` server config.
 
 ## Desired End State
 
@@ -24,6 +24,8 @@ Server and browser runtime errors plus `console.warn`/`console.error` events rea
 | Verification | Temporary smoke route/page | Proves real delivery while avoiding a permanent debug surface. |
 | Source maps | Disabled | User confirmed no source map upload setup for now. |
 | Filters | None beyond warn/error | User confirmed no filtering yet. |
+| Server init ownership | Keep `sentry.server.config.ts` as Worker entrypoint | Avoids Sentry Astro auto-detecting the Worker entrypoint as a plain server SDK init file. |
+| Browser DSN availability | Build-time public env | `PUBLIC_SENTRY_DSN` must exist where browser assets are built, not only as a Worker runtime secret. |
 
 ## Scope
 
@@ -31,7 +33,7 @@ Server and browser runtime errors plus `console.warn`/`console.error` events rea
 
 - Preserve existing Worker-side Sentry wrapper.
 - Add browser-side Sentry initialization.
-- Add public browser DSN env contract.
+- Add public browser DSN env contract, including production build-time wiring.
 - Document local and deployment DSN setup.
 - Verify with temporary smoke code, then remove it.
 - Run lint and build.
@@ -45,7 +47,7 @@ Server and browser runtime errors plus `console.warn`/`console.error` events rea
 
 ## Architecture / Approach
 
-The Worker entrypoint remains `sentry.server.config.ts`, wrapping Astro's Cloudflare handler with `Sentry.withSentry`. Browser capture is added through `sentry.client.config.ts`, initialized from a public DSN env value and configured to capture warning/error console calls. Verification uses temporary app code that is removed before handoff.
+The Worker entrypoint remains `sentry.server.config.ts`, wrapping Astro's Cloudflare handler with `Sentry.withSentry`. Implementation must explicitly prevent that entrypoint from being treated as a normal Astro server SDK init file. Browser capture is added through `sentry.client.config.ts`, initialized from a public build-time DSN env value and configured to capture warning/error console calls. Verification uses temporary app code that is removed before handoff.
 
 ## Phases at a Glance
 
@@ -62,8 +64,9 @@ The Worker entrypoint remains `sentry.server.config.ts`, wrapping Astro's Cloudf
 ## Open Risks & Assumptions
 
 - `PUBLIC_SENTRY_DSN` may need Astro-specific schema syntax adjustment during implementation.
+- Sentry Astro auto-detects root `sentry.server.config.*`; implementation must verify the Worker entrypoint/server-init ownership model.
 - Manual Sentry verification depends on access to the Sentry project.
-- Cloudflare environment setup may differ between local `.dev.vars`, CI, and deployed Worker settings.
+- Cloudflare environment setup may differ between local `.dev.vars`, CI build-time env, and deployed Worker runtime settings.
 
 ## Success Criteria (Summary)
 
