@@ -395,11 +395,11 @@ Capturing only errors and warning/error console calls should have low runtime ov
 
 #### Automated
 
-- [x] 4.1 `pnpm run lint` passes.
-- [x] 4.2 `pnpm run build` passes.
+- [x] 4.1 `pnpm run lint` passes. — ee9572a
+- [x] 4.2 `pnpm run build` passes. — ee9572a
 
 #### Manual
 
-- [x] 4.3 Review README and confirm it documents both server and browser Sentry setup.
-- [x] 4.4 Review the final file list and confirm no temporary smoke route/page remains.
-- [x] 4.5 Review committed config and confirm no real DSN or auth token is present.
+- [x] 4.3 Review README and confirm it documents both server and browser Sentry setup. — ee9572a
+- [x] 4.4 Review the final file list and confirm no temporary smoke route/page remains. — ee9572a
+- [x] 4.5 Review committed config and confirm no real DSN or auth token is present. — ee9572a
