@@ -356,14 +356,14 @@ Capturing only errors and warning/error console calls should have low runtime ov
 
 #### Automated
 
-- [ ] 1.1 `pnpm run lint` passes.
-- [ ] 1.2 `pnpm run build` passes with Sentry DSN values absent.
+- [x] 1.1 `pnpm run lint` passes.
+- [x] 1.2 `pnpm run build` passes with Sentry DSN values absent.
 
 #### Manual
 
-- [ ] 1.3 Review `astro.config.mjs` and confirm source maps remain disabled.
-- [ ] 1.4 Review `sentry.server.config.ts` and confirm server console capture is limited to `warn` and `error`.
-- [ ] 1.5 Review `wrangler.jsonc` and confirm the custom Sentry Worker entrypoint remains active.
+- [x] 1.3 Review `astro.config.mjs` and confirm source maps remain disabled.
+- [x] 1.4 Review `sentry.server.config.ts` and confirm server console capture is limited to `warn` and `error`.
+- [x] 1.5 Review `wrangler.jsonc` and confirm the custom Sentry Worker entrypoint remains active.
 
 ### Phase 2: Add Browser Error and Console Capture
 

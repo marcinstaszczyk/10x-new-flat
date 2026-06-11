@@ -10,7 +10,15 @@ import cloudflare from "@astrojs/cloudflare";
 // https://astro.build/config
 export default defineConfig({
   output: "server",
-  integrations: [solid(), sitemap(), sentry({ telemetry: false, sourcemaps: { disable: true } })],
+  integrations: [
+    solid(),
+    sitemap(),
+    sentry({
+      enabled: { client: true, server: false },
+      telemetry: false,
+      sourcemaps: { disable: true },
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },
@@ -23,6 +31,7 @@ export default defineConfig({
       OPENROUTER_MODEL: envField.string({ context: "server", access: "secret", optional: true }),
       E2E_OPENROUTER_MOCK: envField.string({ context: "server", access: "secret", optional: true }),
       SENTRY_DSN: envField.string({ context: "server", access: "secret", optional: true }),
+      PUBLIC_SENTRY_DSN: envField.string({ context: "client", access: "public", optional: true }),
     },
   },
 });
