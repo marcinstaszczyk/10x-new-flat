@@ -382,24 +382,24 @@ Capturing only errors and warning/error console calls should have low runtime ov
 
 #### Automated
 
-- [x] 3.1 `pnpm run lint` passes after smoke code is removed.
-- [x] 3.2 `pnpm run build` passes after smoke code is removed.
+- [x] 3.1 `pnpm run lint` passes after smoke code is removed. — 404df9e
+- [x] 3.2 `pnpm run build` passes after smoke code is removed. — 404df9e
 
 #### Manual
 
-- [x] 3.3 Confirm Sentry received at least one server-side warning or error from the smoke.
-- [x] 3.4 Confirm Sentry received at least one browser-side warning or error from the smoke.
-- [x] 3.5 Confirm the temporary smoke route/page is removed before completion.
+- [x] 3.3 Confirm Sentry received at least one server-side warning or error from the smoke. — 404df9e
+- [x] 3.4 Confirm Sentry received at least one browser-side warning or error from the smoke. — 404df9e
+- [x] 3.5 Confirm the temporary smoke route/page is removed before completion. — 404df9e
 
 ### Phase 4: Final Documentation and Handoff
 
 #### Automated
 
-- [ ] 4.1 `pnpm run lint` passes.
-- [ ] 4.2 `pnpm run build` passes.
+- [x] 4.1 `pnpm run lint` passes.
+- [x] 4.2 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 4.3 Review README and confirm it documents both server and browser Sentry setup.
-- [ ] 4.4 Review the final file list and confirm no temporary smoke route/page remains.
-- [ ] 4.5 Review committed config and confirm no real DSN or auth token is present.
+- [x] 4.3 Review README and confirm it documents both server and browser Sentry setup.
+- [x] 4.4 Review the final file list and confirm no temporary smoke route/page remains.
+- [x] 4.5 Review committed config and confirm no real DSN or auth token is present.
