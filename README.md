@@ -140,6 +140,19 @@ OPENROUTER_MODEL=openai/gpt-5.5
 
 The command validates the fixture in `scripts/fixtures/extraction-contract/` against the shared extraction schema and prints only model, latency, bucket counts, and safe failure reasons. It intentionally does not run during `pnpm run build` because it needs network access and a human-approved OpenRouter secret. For hosted or CI use, configure `OPENROUTER_API_KEY` as a Cloudflare Worker or CI secret, not as committed Wrangler plaintext.
 
+### Sentry error reporting
+
+Sentry captures server and browser production errors plus `console.warn` and `console.error`. Source map upload is intentionally disabled.
+
+Use the same Sentry project DSN value for both variables:
+
+```
+SENTRY_DSN=<sentry dsn>
+PUBLIC_SENTRY_DSN=<same sentry dsn>
+```
+
+For local checks, set both values in `.env` and `.dev.vars`. For Cloudflare Workers, configure `SENTRY_DSN` as a runtime secret or binding. `PUBLIC_SENTRY_DSN` must be available where browser assets are built, including GitHub Actions when CI builds the deploy artifact; adding it only as a Worker runtime secret is not enough. Do not commit real DSN values.
+
 ### Database content migrations
 
 `supabase/migrations/` is the canonical source for database schema and product content. The fixed Polish buyer-question list is delivered by the question-template migration so local, preview, and production environments receive the same ordered document.
@@ -231,11 +244,11 @@ pnpm run build
 npx wrangler deploy
 ```
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
+Set `SUPABASE_URL`, `SUPABASE_KEY`, and `SENTRY_DSN` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`. Provide `PUBLIC_SENTRY_DSN` to the production build environment.
 
 ## CI
 
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
+GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL`, `SUPABASE_KEY`, and `PUBLIC_SENTRY_DSN` as repository secrets in GitHub for the build step.
 
 ## License
 

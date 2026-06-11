@@ -3,7 +3,7 @@ change_id: add-sentry
 title: Add Sentry error reporting
 status: new
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-06-11
 archived_at: null
 ---
 

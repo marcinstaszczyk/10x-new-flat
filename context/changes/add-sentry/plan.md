@@ -356,27 +356,27 @@ Capturing only errors and warning/error console calls should have low runtime ov
 
 #### Automated
 
-- [x] 1.1 `pnpm run lint` passes.
-- [x] 1.2 `pnpm run build` passes with Sentry DSN values absent.
+- [x] 1.1 `pnpm run lint` passes. — ca3cd48
+- [x] 1.2 `pnpm run build` passes with Sentry DSN values absent. — ca3cd48
 
 #### Manual
 
-- [x] 1.3 Review `astro.config.mjs` and confirm source maps remain disabled.
-- [x] 1.4 Review `sentry.server.config.ts` and confirm server console capture is limited to `warn` and `error`.
-- [x] 1.5 Review `wrangler.jsonc` and confirm the custom Sentry Worker entrypoint remains active.
+- [x] 1.3 Review `astro.config.mjs` and confirm source maps remain disabled. — ca3cd48
+- [x] 1.4 Review `sentry.server.config.ts` and confirm server console capture is limited to `warn` and `error`. — ca3cd48
+- [x] 1.5 Review `wrangler.jsonc` and confirm the custom Sentry Worker entrypoint remains active. — ca3cd48
 
 ### Phase 2: Add Browser Error and Console Capture
 
 #### Automated
 
-- [ ] 2.1 `pnpm run lint` passes.
-- [ ] 2.2 `pnpm run build` passes with Sentry DSN values absent.
+- [x] 2.1 `pnpm run lint` passes.
+- [x] 2.2 `pnpm run build` passes with Sentry DSN values absent.
 
 #### Manual
 
-- [ ] 2.3 Review browser config and confirm it cannot read `SENTRY_DSN` directly.
-- [ ] 2.4 Review `.env.example` and README and confirm no real DSN or auth token is committed.
-- [ ] 2.5 Confirm source map upload is still disabled after browser config is added.
+- [x] 2.3 Review browser config and confirm it cannot read `SENTRY_DSN` directly.
+- [x] 2.4 Review `.env.example` and README and confirm no real DSN or auth token is committed.
+- [x] 2.5 Confirm source map upload is still disabled after browser config is added.
 
 ### Phase 3: Verify With Temporary Smoke Code
 
