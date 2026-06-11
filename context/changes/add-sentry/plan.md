@@ -369,27 +369,27 @@ Capturing only errors and warning/error console calls should have low runtime ov
 
 #### Automated
 
-- [x] 2.1 `pnpm run lint` passes.
-- [x] 2.2 `pnpm run build` passes with Sentry DSN values absent.
+- [x] 2.1 `pnpm run lint` passes. — ce76b11
+- [x] 2.2 `pnpm run build` passes with Sentry DSN values absent. — ce76b11
 
 #### Manual
 
-- [x] 2.3 Review browser config and confirm it cannot read `SENTRY_DSN` directly.
-- [x] 2.4 Review `.env.example` and README and confirm no real DSN or auth token is committed.
-- [x] 2.5 Confirm source map upload is still disabled after browser config is added.
+- [x] 2.3 Review browser config and confirm it cannot read `SENTRY_DSN` directly. — ce76b11
+- [x] 2.4 Review `.env.example` and README and confirm no real DSN or auth token is committed. — ce76b11
+- [x] 2.5 Confirm source map upload is still disabled after browser config is added. — ce76b11
 
 ### Phase 3: Verify With Temporary Smoke Code
 
 #### Automated
 
-- [ ] 3.1 `pnpm run lint` passes after smoke code is removed.
-- [ ] 3.2 `pnpm run build` passes after smoke code is removed.
+- [x] 3.1 `pnpm run lint` passes after smoke code is removed.
+- [x] 3.2 `pnpm run build` passes after smoke code is removed.
 
 #### Manual
 
-- [ ] 3.3 Confirm Sentry received at least one server-side warning or error from the smoke.
-- [ ] 3.4 Confirm Sentry received at least one browser-side warning or error from the smoke.
-- [ ] 3.5 Confirm the temporary smoke route/page is removed before completion.
+- [x] 3.3 Confirm Sentry received at least one server-side warning or error from the smoke.
+- [x] 3.4 Confirm Sentry received at least one browser-side warning or error from the smoke.
+- [x] 3.5 Confirm the temporary smoke route/page is removed before completion.
 
 ### Phase 4: Final Documentation and Handoff
 
