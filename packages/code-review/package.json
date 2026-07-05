@@ -2,9 +2,9 @@
   "name": "packages",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "review.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "review": "node review.ts"
   },
   "keywords": [],
   "author": "",
