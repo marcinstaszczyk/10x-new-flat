@@ -384,15 +384,15 @@ Make `main` the consistent CI target, enforce all deterministic quality gates, d
 
 #### Automated
 
-- [ ] 1.1 `npm ci --prefix packages/code-review` succeeds from the package lockfile.
-- [ ] 1.2 `npm test --prefix packages/code-review` passes without provider credentials or network access.
-- [ ] 1.3 `pnpm run lint` passes.
-- [ ] 1.4 `pnpm run build` passes.
+- [x] 1.1 `npm ci --prefix packages/code-review` succeeds from the package lockfile.
+- [x] 1.2 `npm test --prefix packages/code-review` passes without provider credentials or network access.
+- [x] 1.3 `pnpm run lint` passes.
+- [x] 1.4 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 1.5 Review the generated prompt and confirm PR content is delimited as untrusted data rather than executable instructions.
-- [ ] 1.6 Run the explicit local sample path and confirm empty CI-style input cannot select it.
+- [x] 1.5 Review the generated prompt and confirm PR content is delimited as untrusted data rather than executable instructions.
+- [x] 1.6 Run the explicit local sample path and confirm empty CI-style input cannot select it.
 
 ### Phase 2: Extract the Composite Review Action
 

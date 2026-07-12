@@ -1,38 +1,30 @@
 import { readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Codex } from "@openai/codex-sdk";
-import { REVIEWER_PROMPT, REVIEW_JSON_SCHEMA, ReviewCriteria, ReviewResult } from "./common/review-schema.ts";
+import { REVIEWER_PROMPT, REVIEW_JSON_SCHEMA, type ReviewResult } from "./common/review-schema.ts";
+import {
+  buildReviewPrompt,
+  loadSampleInput,
+  parseReview,
+  type ReviewInput,
+  validateReviewInput,
+} from "./review-contract.ts";
 
 type CodexProvider = "local" | "openai" | "openrouter";
-
-const FlatReviewResult = ReviewCriteria.extend({
-  verdict: ReviewResult.shape.verdict,
-  summary: ReviewResult.shape.summary,
-});
-
-function packageDir(): string {
-  return dirname(fileURLToPath(import.meta.url));
-}
 
 function isMainModule(): boolean {
   if (!process.argv[1]) return false;
   return resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 }
 
-function loadSampleDiff(): string {
-  const sample = process.argv[2] ?? "sample-1";
-  const path = join(packageDir(), "data", `${sample}.md`);
-  let diff = readFileSync(path, "utf8").trim();
-
-  if (diff.startsWith("```")) {
-    diff = diff.replace(/^```[a-z]*\n/, "").replace(/\n```$/, "");
-  }
-
-  return `${diff}\n`;
+function argumentValue(name: string): string | undefined {
+  const index = process.argv.indexOf(name);
+  return index === -1 ? undefined : process.argv[index + 1];
 }
 
-export async function readDiff(): Promise<string> {
+async function readDiff(path?: string): Promise<string> {
+  if (path) return readFileSync(path, "utf8");
   if (!process.stdin.isTTY) {
     const chunks: Buffer[] = [];
 
@@ -40,27 +32,22 @@ export async function readDiff(): Promise<string> {
       chunks.push(chunk as Buffer);
     }
 
-    const piped = Buffer.concat(chunks).toString("utf8").trim();
-    if (piped) return `${piped}\n`;
+    return Buffer.concat(chunks).toString("utf8");
   }
 
-  return loadSampleDiff();
+  return "";
 }
 
-function parseReview(response: string): ReviewResult {
-  const parsedJson: unknown = JSON.parse(response);
-  const parsedReview = ReviewResult.safeParse(parsedJson);
-  if (parsedReview.success) return parsedReview.data;
-
-  const parsedFlatReview = FlatReviewResult.safeParse(parsedJson);
-  if (parsedFlatReview.success) {
-    const { verdict, summary, ...criteria } = parsedFlatReview.data;
-    return { criteria, verdict, summary };
+export async function readReviewInput(): Promise<ReviewInput> {
+  if (process.argv.includes("--sample")) {
+    return loadSampleInput(argumentValue("--sample") ?? "sample-1");
   }
 
-  throw new Error(
-    `Invalid structured review output: ${parsedReview.error.message}\nResponse: ${response.slice(0, 2_000)}`,
-  );
+  return validateReviewInput({
+    title: process.env.CODEX_REVIEW_TITLE ?? "",
+    description: process.env.CODEX_REVIEW_DESCRIPTION,
+    diff: await readDiff(argumentValue("--diff-file")),
+  });
 }
 
 function codexEnvironment(): Record<string, string> {
@@ -124,7 +111,7 @@ function codexClient(): Codex {
   });
 }
 
-export async function review(diff: string): Promise<ReviewResult> {
+export async function review(input: ReviewInput): Promise<ReviewResult> {
   const codex = codexClient();
   const thread = codex.startThread({
     model: process.env.CODEX_REVIEW_MODEL,
@@ -134,7 +121,7 @@ export async function review(diff: string): Promise<ReviewResult> {
     skipGitRepoCheck: true,
   });
 
-  const turn = await thread.run(`${REVIEWER_PROMPT}\n\nReview this diff:\n\n${diff}`, {
+  const turn = await thread.run(buildReviewPrompt(input, REVIEWER_PROMPT), {
     outputSchema: REVIEW_JSON_SCHEMA,
   });
 
@@ -142,6 +129,5 @@ export async function review(diff: string): Promise<ReviewResult> {
 }
 
 if (isMainModule()) {
-  const diff = await readDiff();
-  process.stdout.write(`${JSON.stringify(await review(diff), null, 2)}\n`);
+  process.stdout.write(`${JSON.stringify(await review(await readReviewInput()), null, 2)}\n`);
 }

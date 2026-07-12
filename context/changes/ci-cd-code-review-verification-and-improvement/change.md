@@ -1,7 +1,7 @@
 ---
 change_id: ci-cd-code-review-verification-and-improvement
 title: Verify code review CI/CD and extract a composite review action
-status: planned
+status: implementing
 created: 2026-07-12
 updated: 2026-07-12
 archived_at: null
