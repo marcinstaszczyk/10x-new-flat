@@ -51,14 +51,28 @@ function parseReview(response: string): ReviewResult {
   return parsedReview.data;
 }
 
-export async function review(diff: string): Promise<ReviewResult> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is required");
-  }
+function codexEnvironment(): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(process.env).filter(
+      (entry): entry is [string, string] =>
+        entry[1] !== undefined && entry[0] !== "OPENAI_API_KEY" && entry[0] !== "CODEX_API_KEY",
+    ),
+  );
+}
 
+function apiKeyForCi(): string | undefined {
+  if (process.env.CODEX_AUTH_MODE !== "api-key") return undefined;
+
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) throw new Error("OPENAI_API_KEY is required when CODEX_AUTH_MODE=api-key");
+
+  return apiKey;
+}
+
+export async function review(diff: string): Promise<ReviewResult> {
   const codex = new Codex({
-    apiKey,
+    apiKey: apiKeyForCi(),
+    env: codexEnvironment(),
     config: {
       shell_environment_policy: {
         inherit: "core",

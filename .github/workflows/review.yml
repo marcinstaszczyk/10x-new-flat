@@ -11,10 +11,15 @@ on:
         required: true
         default: main
 
+concurrency:
+  group: ai-code-review-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   review:
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     outputs:
@@ -58,6 +63,7 @@ jobs:
       - name: Run Codex review
         run: npm run review --prefix packages/code-review < "$RUNNER_TEMP/review.diff" > "$RUNNER_TEMP/review.json"
         env:
+          CODEX_AUTH_MODE: api-key
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CODEX_REVIEW_MODEL: ${{ vars.CODEX_REVIEW_MODEL }}
 
