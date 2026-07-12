@@ -2,14 +2,14 @@ name: AI Code Review
 
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
     types: [opened, synchronize, reopened]
   workflow_dispatch:
     inputs:
       base_ref:
         description: Branch to compare the selected ref against
         required: true
-        default: master
+        default: main
 
 jobs:
   review:
