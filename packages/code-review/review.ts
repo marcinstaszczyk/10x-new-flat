@@ -52,7 +52,21 @@ function parseReview(response: string): ReviewResult {
 }
 
 export async function review(diff: string): Promise<ReviewResult> {
-  const codex = new Codex();
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY is required");
+  }
+
+  const codex = new Codex({
+    apiKey,
+    config: {
+      shell_environment_policy: {
+        inherit: "core",
+        ignore_default_excludes: false,
+        exclude: ["CODEX_API_KEY", "OPENAI_API_KEY", "GITHUB_TOKEN"],
+      },
+    },
+  });
   const thread = codex.startThread({
     model: process.env.CODEX_REVIEW_MODEL,
     sandboxMode: "read-only",
@@ -70,5 +84,5 @@ export async function review(diff: string): Promise<ReviewResult> {
 
 if (isMainModule()) {
   const diff = await readDiff();
-  console.log(JSON.stringify(await review(diff), null, 2));
+  process.stdout.write(`${JSON.stringify(await review(diff), null, 2)}\n`);
 }

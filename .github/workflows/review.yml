@@ -1,0 +1,120 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      base_ref:
+        description: Branch to compare the selected ref against
+        required: true
+        default: master
+
+jobs:
+  review:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      summary: ${{ steps.result.outputs.summary }}
+      verdict: ${{ steps.result.outputs.verdict }}
+    steps:
+      - name: Checkout trusted review code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Configure Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: packages/code-review/package-lock.json
+
+      - name: Install review dependencies
+        run: npm ci --prefix packages/code-review
+
+      - name: Create review diff
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_REF: ${{ inputs.base_ref }}
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git fetch --no-tags origin "$HEAD_SHA"
+          else
+            git fetch --no-tags origin "$BASE_REF"
+            BASE_SHA="origin/$BASE_REF"
+            HEAD_SHA="HEAD"
+          fi
+
+          git diff --no-ext-diff --unified=80 "$BASE_SHA...$HEAD_SHA" > "$RUNNER_TEMP/review.diff"
+
+      - name: Run Codex review
+        run: npm run review --prefix packages/code-review < "$RUNNER_TEMP/review.diff" > "$RUNNER_TEMP/review.json"
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CODEX_REVIEW_MODEL: ${{ vars.CODEX_REVIEW_MODEL }}
+
+      - name: Export review result
+        id: result
+        shell: bash
+        run: |
+          node -e 'const fs = require("node:fs"); const review = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); fs.appendFileSync(process.env.GITHUB_OUTPUT, `verdict=${review.verdict}\nsummary<<CODEX_REVIEW\n${review.summary}\nCODEX_REVIEW\n`); fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${review.summary}\n`);' "$RUNNER_TEMP/review.json"
+
+  comment:
+    if: github.event_name == 'pull_request' && needs.review.result == 'success'
+    needs: review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Post review comment
+        uses: actions/github-script@v7
+        env:
+          REVIEW_SUMMARY: ${{ needs.review.outputs.summary }}
+        with:
+          script: |
+            const marker = "<!-- codex-code-review -->";
+            const body = `${marker}\n${process.env.REVIEW_SUMMARY}`;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const previous = comments.find(
+              (comment) => comment.user?.type === "Bot" && comment.body?.includes(marker),
+            );
+
+            if (previous) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: previous.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+  gate:
+    needs: review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Enforce review verdict
+        env:
+          REVIEW_VERDICT: ${{ needs.review.outputs.verdict }}
+        run: test "$REVIEW_VERDICT" = "pass"
