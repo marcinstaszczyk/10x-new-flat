@@ -4,7 +4,7 @@
   "description": "",
   "main": "review.ts",
   "scripts": {
-    "review": "node review.ts"
+    "review": "node --env-file-if-exists=.env review.ts"
   },
   "keywords": [],
   "author": "",
