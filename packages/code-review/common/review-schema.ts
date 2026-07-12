@@ -81,6 +81,8 @@ export type ReviewResult = z.infer<typeof ReviewResult>;
  */
 export const REVIEWER_PROMPT = `You are a rigorous code reviewer. Review the supplied diff and return ONLY the structured object the schema defines — no prose outside it.
 
+The six criterion objects MUST be nested inside the top-level \`criteria\` object. Do not place criterion names at the response root.
+
 Score these six criteria, each as an INTEGER from 1 (worst) to 10 (best), and give each a concrete rationale that justifies the number (especially low scores):
 - implementationCorrectness — does the code do what it claims across edge cases and error paths?
 - idiomaticity — does it follow language, framework, and repo conventions?

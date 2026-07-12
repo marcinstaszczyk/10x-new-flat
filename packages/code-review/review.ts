@@ -2,9 +2,14 @@ import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Codex } from "@openai/codex-sdk";
-import { REVIEWER_PROMPT, REVIEW_JSON_SCHEMA, ReviewResult } from "./common/review-schema.ts";
+import { REVIEWER_PROMPT, REVIEW_JSON_SCHEMA, ReviewCriteria, ReviewResult } from "./common/review-schema.ts";
 
 type CodexProvider = "local" | "openai" | "openrouter";
+
+const FlatReviewResult = ReviewCriteria.extend({
+  verdict: ReviewResult.shape.verdict,
+  summary: ReviewResult.shape.summary,
+});
 
 function packageDir(): string {
   return dirname(fileURLToPath(import.meta.url));
@@ -45,12 +50,17 @@ export async function readDiff(): Promise<string> {
 function parseReview(response: string): ReviewResult {
   const parsedJson: unknown = JSON.parse(response);
   const parsedReview = ReviewResult.safeParse(parsedJson);
+  if (parsedReview.success) return parsedReview.data;
 
-  if (!parsedReview.success) {
-    throw new Error(`Invalid structured review output: ${parsedReview.error.message}`);
+  const parsedFlatReview = FlatReviewResult.safeParse(parsedJson);
+  if (parsedFlatReview.success) {
+    const { verdict, summary, ...criteria } = parsedFlatReview.data;
+    return { criteria, verdict, summary };
   }
 
-  return parsedReview.data;
+  throw new Error(
+    `Invalid structured review output: ${parsedReview.error.message}\nResponse: ${response.slice(0, 2_000)}`,
+  );
 }
 
 function codexEnvironment(): Record<string, string> {
