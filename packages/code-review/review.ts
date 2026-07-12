@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 import { Codex } from "@openai/codex-sdk";
 import { REVIEWER_PROMPT, REVIEW_JSON_SCHEMA, ReviewResult } from "./common/review-schema.ts";
 
+type CodexProvider = "local" | "openai" | "openrouter";
+
 function packageDir(): string {
   return dirname(fileURLToPath(import.meta.url));
 }
@@ -55,32 +57,65 @@ function codexEnvironment(): Record<string, string> {
   return Object.fromEntries(
     Object.entries(process.env).filter(
       (entry): entry is [string, string] =>
-        entry[1] !== undefined && entry[0] !== "OPENAI_API_KEY" && entry[0] !== "CODEX_API_KEY",
+        entry[1] !== undefined &&
+        entry[0] !== "OPENAI_API_KEY" &&
+        entry[0] !== "OPENROUTER_API_KEY" &&
+        entry[0] !== "CODEX_API_KEY",
     ),
   );
 }
 
-function apiKeyForCi(): string | undefined {
-  if (process.env.CODEX_AUTH_MODE !== "api-key") return undefined;
+function codexProvider(): CodexProvider {
+  const provider = process.env.CODEX_PROVIDER ?? "local";
+  if (provider === "local" || provider === "openai" || provider === "openrouter") return provider;
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new Error("OPENAI_API_KEY is required when CODEX_AUTH_MODE=api-key");
-
-  return apiKey;
+  throw new Error(`Unsupported CODEX_PROVIDER: ${provider}`);
 }
 
-export async function review(diff: string): Promise<ReviewResult> {
-  const codex = new Codex({
-    apiKey: apiKeyForCi(),
-    env: codexEnvironment(),
+function requiredEnvironmentVariable(name: "OPENAI_API_KEY" | "OPENROUTER_API_KEY"): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} is required`);
+
+  return value;
+}
+
+function codexClient(): Codex {
+  const provider = codexProvider();
+  const env = codexEnvironment();
+  const config = {
+    shell_environment_policy: {
+      inherit: "core",
+      ignore_default_excludes: false,
+      exclude: ["CODEX_API_KEY", "OPENAI_API_KEY", "OPENROUTER_API_KEY", "GITHUB_TOKEN"],
+    },
+  };
+
+  if (provider === "local") return new Codex({ env, config });
+
+  if (provider === "openai") {
+    return new Codex({ apiKey: requiredEnvironmentVariable("OPENAI_API_KEY"), env, config });
+  }
+
+  env.OPENROUTER_API_KEY = requiredEnvironmentVariable("OPENROUTER_API_KEY");
+
+  return new Codex({
+    env,
     config: {
-      shell_environment_policy: {
-        inherit: "core",
-        ignore_default_excludes: false,
-        exclude: ["CODEX_API_KEY", "OPENAI_API_KEY", "GITHUB_TOKEN"],
+      ...config,
+      model_provider: "openrouter",
+      model_providers: {
+        openrouter: {
+          name: "openrouter",
+          base_url: "https://openrouter.ai/api/v1",
+          env_key: "OPENROUTER_API_KEY",
+        },
       },
     },
   });
+}
+
+export async function review(diff: string): Promise<ReviewResult> {
+  const codex = codexClient();
   const thread = codex.startThread({
     model: process.env.CODEX_REVIEW_MODEL,
     sandboxMode: "read-only",

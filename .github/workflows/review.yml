@@ -60,11 +60,20 @@ jobs:
 
           git diff --no-ext-diff --unified=80 "$BASE_SHA...$HEAD_SHA" > "$RUNNER_TEMP/review.diff"
 
-      - name: Run Codex review
+      - name: Run Codex review with OpenAI
+        if: vars.CODEX_PROVIDER != 'openrouter'
         run: npm run review --prefix packages/code-review < "$RUNNER_TEMP/review.diff" > "$RUNNER_TEMP/review.json"
         env:
-          CODEX_AUTH_MODE: api-key
+          CODEX_PROVIDER: openai
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CODEX_REVIEW_MODEL: ${{ vars.CODEX_REVIEW_MODEL }}
+
+      - name: Run Codex review with OpenRouter
+        if: vars.CODEX_PROVIDER == 'openrouter'
+        run: npm run review --prefix packages/code-review < "$RUNNER_TEMP/review.diff" > "$RUNNER_TEMP/review.json"
+        env:
+          CODEX_PROVIDER: openrouter
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CODEX_REVIEW_MODEL: ${{ vars.CODEX_REVIEW_MODEL }}
 
       - name: Export review result
