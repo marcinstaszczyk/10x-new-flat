@@ -1,0 +1,61 @@
+name: Code review
+description: Run the bounded code-review package and export a validated result.
+
+inputs:
+  title:
+    description: Pull request title
+    required: true
+  description:
+    description: Pull request description
+    required: false
+  diff-path:
+    description: Path to the review diff
+    required: true
+  provider:
+    description: Review provider (openai or openrouter)
+    required: true
+  model:
+    description: Optional provider model override
+    required: false
+
+outputs:
+  verdict:
+    description: Validated review verdict
+    value: ${{ steps.result.outputs.verdict }}
+  summary:
+    description: Validated review summary
+    value: ${{ steps.result.outputs.summary }}
+  result-path:
+    description: Path to the validated review JSON for this job
+    value: ${{ steps.result.outputs.result-path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install reviewer dependencies
+      shell: bash
+      run: npm ci --prefix packages/code-review
+
+    - name: Validate provider credentials
+      shell: bash
+      env:
+        CODEX_PROVIDER: ${{ inputs.provider }}
+        OPENAI_API_KEY: ${{ env.OPENAI_API_KEY }}
+        OPENROUTER_API_KEY: ${{ env.OPENROUTER_API_KEY }}
+      run: node packages/code-review/action-contract.ts validate-provider
+
+    - name: Run code review
+      shell: bash
+      env:
+        CODEX_PROVIDER: ${{ inputs.provider }}
+        CODEX_REVIEW_TITLE: ${{ inputs.title }}
+        CODEX_REVIEW_DESCRIPTION: ${{ inputs.description }}
+        CODEX_REVIEW_MODEL: ${{ inputs.model }}
+      run: npm run review --prefix packages/code-review -- --diff-file "${{ inputs.diff-path }}" > "$RUNNER_TEMP/review.json"
+
+    - name: Export review result
+      id: result
+      shell: bash
+      env:
+        REVIEW_RESULT_PATH: ${{ runner.temp }}/review.json
+      run: node packages/code-review/action-contract.ts export-result

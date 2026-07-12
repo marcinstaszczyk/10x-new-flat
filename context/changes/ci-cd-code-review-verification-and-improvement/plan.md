@@ -384,29 +384,29 @@ Make `main` the consistent CI target, enforce all deterministic quality gates, d
 
 #### Automated
 
-- [x] 1.1 `npm ci --prefix packages/code-review` succeeds from the package lockfile.
-- [x] 1.2 `npm test --prefix packages/code-review` passes without provider credentials or network access.
-- [x] 1.3 `pnpm run lint` passes.
-- [x] 1.4 `pnpm run build` passes.
+- [x] 1.1 `npm ci --prefix packages/code-review` succeeds from the package lockfile. — 44860f1
+- [x] 1.2 `npm test --prefix packages/code-review` passes without provider credentials or network access. — 44860f1
+- [x] 1.3 `pnpm run lint` passes. — 44860f1
+- [x] 1.4 `pnpm run build` passes. — 44860f1
 
 #### Manual
 
-- [x] 1.5 Review the generated prompt and confirm PR content is delimited as untrusted data rather than executable instructions.
-- [x] 1.6 Run the explicit local sample path and confirm empty CI-style input cannot select it.
+- [x] 1.5 Review the generated prompt and confirm PR content is delimited as untrusted data rather than executable instructions. — 44860f1
+- [x] 1.6 Run the explicit local sample path and confirm empty CI-style input cannot select it. — 44860f1
 
 ### Phase 2: Extract the Composite Review Action
 
 #### Automated
 
-- [ ] 2.1 `npm test --prefix packages/code-review` passes with action-facing input/output contract coverage.
-- [ ] 2.2 `pnpm exec prettier --check ".github/**/*.{yml,yaml}"` passes.
-- [ ] 2.3 `pnpm run lint` passes.
-- [ ] 2.4 `pnpm run build` passes.
+- [x] 2.1 `npm test --prefix packages/code-review` passes with action-facing input/output contract coverage.
+- [x] 2.2 `pnpm exec prettier --check ".github/**/*.{yml,yaml}"` passes.
+- [x] 2.3 `pnpm run lint` passes.
+- [x] 2.4 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 2.5 Review `action.yml` and confirm it grants no permissions and contains no provider secret defaults.
-- [ ] 2.6 Confirm all local-action files come from the trusted base checkout in the calling workflow design.
+- [x] 2.5 Review `action.yml` and confirm it grants no permissions and contains no provider secret defaults.
+- [x] 2.6 Confirm all local-action files come from the trusted base checkout in the calling workflow design.
 
 ### Phase 3: Implement PR Publication, Retry, and Fail-Closed Gating
 

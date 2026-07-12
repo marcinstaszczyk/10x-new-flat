@@ -8,6 +8,7 @@ import {
   validateReviewInput,
 } from "./review-contract.ts";
 import { readReviewInput } from "./review.ts";
+import { serializeActionOutputs, validateProviderCredentials } from "./action-contract.ts";
 
 const criteria = {
   implementationCorrectness: { score: 8, rationale: "Works." },
@@ -75,5 +76,27 @@ describe("review output", () => {
       "rationales",
     );
     expect(() => parseReview(result({ summary: " " }))).toThrow("summary");
+  });
+});
+
+describe("composite action contract", () => {
+  it("accepts supported providers only when their credential is present", () => {
+    expect(validateProviderCredentials("openai", { OPENAI_API_KEY: "key" })).toBe("openai");
+    expect(validateProviderCredentials("openrouter", { OPENROUTER_API_KEY: "key" })).toBe("openrouter");
+    expect(() => validateProviderCredentials("local", {})).toThrow("openai or openrouter");
+    expect(() => validateProviderCredentials("openai", {})).toThrow("OPENAI_API_KEY is required");
+    expect(() => validateProviderCredentials("openrouter", {})).toThrow("OPENROUTER_API_KEY is required");
+  });
+
+  it("serializes validated multiline summaries with a collision-resistant delimiter", () => {
+    const output = serializeActionOutputs(result({ summary: "## Pass\n\nReady to merge." }), "/tmp/review.json");
+
+    expect(output).toContain("verdict=pass\nresult-path=/tmp/review.json\nsummary<<CODEX_REVIEW_");
+    expect(output).toContain("## Pass\n\nReady to merge.");
+    expect(output).toMatch(/\nCODEX_REVIEW_[\w-]+\n$/);
+  });
+
+  it("does not serialize invalid review results", () => {
+    expect(() => serializeActionOutputs(result({ summary: " " }), "/tmp/review.json")).toThrow("summary");
   });
 });
