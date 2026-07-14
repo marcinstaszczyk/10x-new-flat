@@ -3,7 +3,7 @@ name: AI Code Review
 on:
   pull_request:
     branches: [main]
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, labeled]
   workflow_dispatch:
     inputs:
       base_ref:
@@ -17,14 +17,18 @@ concurrency:
 
 jobs:
   review:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+      (github.event.action != 'labeled' || github.event.label.name == 'ai-cr:review'))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
       contents: read
     outputs:
-      summary: ${{ steps.result.outputs.summary }}
-      verdict: ${{ steps.result.outputs.verdict }}
+      execution: ${{ steps.normalize.outputs.execution }}
+      summary: ${{ steps.normalize.outputs.summary }}
+      verdict: ${{ steps.normalize.outputs.verdict }}
     steps:
       - name: Checkout trusted review code
         uses: actions/checkout@v4
@@ -40,10 +44,9 @@ jobs:
           cache: npm
           cache-dependency-path: packages/code-review/package-lock.json
 
-      - name: Install review dependencies
-        run: npm ci --prefix packages/code-review
-
-      - name: Create review diff
+      - name: Create bounded review diff
+        id: diff
+        continue-on-error: true
         shell: bash
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -58,78 +61,105 @@ jobs:
             HEAD_SHA="HEAD"
           fi
 
-          git diff --no-ext-diff --unified=80 "$BASE_SHA...$HEAD_SHA" > "$RUNNER_TEMP/review.diff"
+          git diff --no-ext-diff --unified=20 "$BASE_SHA...$HEAD_SHA" > "$RUNNER_TEMP/review.diff"
+          diff_bytes=$(wc -c < "$RUNNER_TEMP/review.diff")
+          test "$diff_bytes" -gt 0
+          test "$diff_bytes" -le 204800
 
-      - name: Run Codex review with OpenAI
-        if: vars.CODEX_PROVIDER != 'openrouter'
-        run: npm run review --prefix packages/code-review < "$RUNNER_TEMP/review.diff" > "$RUNNER_TEMP/review.json"
+      - name: Run bounded code review
+        id: action
+        if: steps.diff.outcome == 'success'
+        continue-on-error: true
+        uses: ./.github/actions/code-review
+        with:
+          title: ${{ github.event.pull_request.title || format('Manual review of {0}', github.ref_name) }}
+          description: ${{ github.event.pull_request.body }}
+          diff-path: ${{ runner.temp }}/review.diff
+          provider: ${{ vars.CODEX_PROVIDER || 'openai' }}
+          model: ${{ vars.CODEX_REVIEW_MODEL }}
         env:
-          CODEX_PROVIDER: openai
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CODEX_REVIEW_MODEL: ${{ vars.CODEX_REVIEW_MODEL }}
-
-      - name: Run Codex review with OpenRouter
-        if: vars.CODEX_PROVIDER == 'openrouter'
-        run: npm run review --prefix packages/code-review < "$RUNNER_TEMP/review.diff" > "$RUNNER_TEMP/review.json"
-        env:
-          CODEX_PROVIDER: openrouter
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          CODEX_REVIEW_MODEL: ${{ vars.CODEX_REVIEW_MODEL }}
 
-      - name: Export review result
-        id: result
+      - name: Normalize review result
+        id: normalize
+        if: always()
         shell: bash
+        env:
+          ACTION_OUTCOME: ${{ steps.action.outcome }}
+          REVIEW_SUMMARY: ${{ steps.action.outputs.summary }}
+          REVIEW_VERDICT: ${{ steps.action.outputs.verdict }}
         run: |
-          node -e 'const fs = require("node:fs"); const review = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); fs.appendFileSync(process.env.GITHUB_OUTPUT, `verdict=${review.verdict}\nsummary<<CODEX_REVIEW\n${review.summary}\nCODEX_REVIEW\n`); fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${review.summary}\n`);' "$RUNNER_TEMP/review.json"
+          if [[ "$ACTION_OUTCOME" == "success" ]]; then
+            echo "execution=success" >> "$GITHUB_OUTPUT"
+            echo "verdict=$REVIEW_VERDICT" >> "$GITHUB_OUTPUT"
+            delimiter="SUMMARY_$(uuidgen)"
+            {
+              echo "summary<<$delimiter"
+              echo "$REVIEW_SUMMARY"
+              echo "$delimiter"
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "execution=error" >> "$GITHUB_OUTPUT"
+            echo "verdict=" >> "$GITHUB_OUTPUT"
+            echo "summary=The review could not complete. Check the workflow run for details." >> "$GITHUB_OUTPUT"
+          fi
 
-  comment:
-    if: github.event_name == 'pull_request' && needs.review.result == 'success'
+  publish:
+    if: always() && github.event_name == 'pull_request' && needs.review.result != 'skipped'
     needs: review
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      issues: write
       pull-requests: write
     steps:
-      - name: Post review comment
+      - name: Checkout trusted publication helper
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - name: Publish review result
         uses: actions/github-script@v7
         env:
+          REVIEW_EXECUTION: ${{ needs.review.outputs.execution }}
           REVIEW_SUMMARY: ${{ needs.review.outputs.summary }}
+          REVIEW_VERDICT: ${{ needs.review.outputs.verdict }}
         with:
           script: |
-            const marker = "<!-- codex-code-review -->";
-            const body = `${marker}\n${process.env.REVIEW_SUMMARY}`;
-            const comments = await github.paginate(github.rest.issues.listComments, {
+            const { publishCodeReview } = require(
+              `${process.env.GITHUB_WORKSPACE}/.github/scripts/publish-code-review.cjs`,
+            );
+            await publishCodeReview({
+              github,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issueNumber: context.issue.number,
+              execution: process.env.REVIEW_EXECUTION,
+              verdict: process.env.REVIEW_VERDICT,
+              summary: process.env.REVIEW_SUMMARY,
             });
-            const previous = comments.find(
-              (comment) => comment.user?.type === "Bot" && comment.body?.includes(marker),
-            );
-
-            if (previous) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: previous.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body,
-              });
-            }
 
   gate:
-    needs: review
+    if: >-
+      always() && (github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+      (github.event.action != 'labeled' || github.event.label.name == 'ai-cr:review')))
+    needs: [review, publish]
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
-      - name: Enforce review verdict
+      - name: Enforce review and publication success
+        shell: bash
         env:
+          PUBLICATION_RESULT: ${{ needs.publish.result }}
+          REVIEW_EXECUTION: ${{ needs.review.outputs.execution }}
           REVIEW_VERDICT: ${{ needs.review.outputs.verdict }}
-        run: test "$REVIEW_VERDICT" = "pass"
+        run: |
+          test "$REVIEW_EXECUTION" = "success"
+          test "$REVIEW_VERDICT" = "pass"
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            test "$PUBLICATION_RESULT" = "success"
+          fi

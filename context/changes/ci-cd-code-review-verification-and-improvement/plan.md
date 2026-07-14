@@ -398,31 +398,31 @@ Make `main` the consistent CI target, enforce all deterministic quality gates, d
 
 #### Automated
 
-- [x] 2.1 `npm test --prefix packages/code-review` passes with action-facing input/output contract coverage.
-- [x] 2.2 `pnpm exec prettier --check ".github/**/*.{yml,yaml}"` passes.
-- [x] 2.3 `pnpm run lint` passes.
-- [x] 2.4 `pnpm run build` passes.
+- [x] 2.1 `npm test --prefix packages/code-review` passes with action-facing input/output contract coverage. — 18c06d8
+- [x] 2.2 `pnpm exec prettier --check ".github/**/*.{yml,yaml}"` passes. — 18c06d8
+- [x] 2.3 `pnpm run lint` passes. — 18c06d8
+- [x] 2.4 `pnpm run build` passes. — 18c06d8
 
 #### Manual
 
-- [x] 2.5 Review `action.yml` and confirm it grants no permissions and contains no provider secret defaults.
-- [x] 2.6 Confirm all local-action files come from the trusted base checkout in the calling workflow design.
+- [x] 2.5 Review `action.yml` and confirm it grants no permissions and contains no provider secret defaults. — 18c06d8
+- [x] 2.6 Confirm all local-action files come from the trusted base checkout in the calling workflow design. — 18c06d8
 
 ### Phase 3: Implement PR Publication, Retry, and Fail-Closed Gating
 
 #### Automated
 
-- [ ] 3.1 `npm test --prefix packages/code-review` passes with publication-helper coverage.
-- [ ] 3.2 A pinned `actionlint` check passes for `.github/workflows/ci.yml` and `.github/workflows/review.yml`.
-- [ ] 3.3 `pnpm exec prettier --check ".github/**/*.{yml,yaml}"` passes.
-- [ ] 3.4 `pnpm run lint` passes.
-- [ ] 3.5 `pnpm run build` passes.
+- [x] 3.1 `npm test --prefix packages/code-review` passes with publication-helper coverage.
+- [x] 3.2 A pinned `actionlint` check passes for `.github/workflows/ci.yml` and `.github/workflows/review.yml`.
+- [x] 3.3 `pnpm exec prettier --check ".github/**/*.{yml,yaml}"` passes.
+- [x] 3.4 `pnpm run lint` passes.
+- [x] 3.5 `pnpm run build` passes.
 
 #### Manual
 
-- [ ] 3.6 Review job permissions and confirm only publication has PR/Issues write access.
-- [ ] 3.7 Review event predicates and confirm unrelated labels and fork PRs cannot access provider secrets.
-- [ ] 3.8 Confirm the gate truth table covers pass, model fail, execution error, and publication error.
+- [x] 3.6 Review job permissions and confirm only publication has PR/Issues write access.
+- [x] 3.7 Review event predicates and confirm unrelated labels and fork PRs cannot access provider secrets.
+- [x] 3.8 Confirm the gate truth table covers pass, model fail, execution error, and publication error.
 
 ### Phase 4: Align CI, Documentation, and Real GitHub Verification
 
