@@ -99,6 +99,7 @@ but it already has five Supabase pgTAP database contract tests under
 | Gate | Where | Required? | Catches |
 |---|---|---|---|
 | lint + typecheck/build | local + CI | required | syntax, type, Astro SSR, and Cloudflare build drift |
+| reviewer unit tests + workflow validation | local + CI | required | code-review contract regressions and GitHub Actions syntax drift |
 | database contracts | local; CI after Phase 4 if wired | required after 2 Phase 2 | RLS, ownership, lifecycle, cascade regressions |
 | app integration | local; CI after Phase 4 if wired | required after 2 Phase 1 | primary flow and route/service regressions |
 | critical browser/manual smoke | local; CI-ready after Supabase env is provided | required after 2 Phase 1 | broken user-facing prepare-viewing and duplicate-submit paths |
@@ -178,6 +179,13 @@ verification, or CI quality gates unless the team explicitly accepts live
 LLM cost and network flake.
 
 ### 6.5 Per-rollout-phase notes
+
+Phase 4, Quality gates and cookbook:
+
+- Run deterministic application checks with `npm run test:app`.
+- Run standalone reviewer checks with `npm ci --prefix packages/code-review` followed by `npm test --prefix packages/code-review`.
+- CI validates `.github/workflows/ci.yml` and `.github/workflows/review.yml` with pinned actionlint 1.7.12.
+- AI-review behavior that needs GitHub events, repository secrets, comments, labels, or permissions is verified with a controlled same-repository PR smoke; it is not part of deterministic CI.
 
 Phase 1, Critical prepare-viewing flow:
 

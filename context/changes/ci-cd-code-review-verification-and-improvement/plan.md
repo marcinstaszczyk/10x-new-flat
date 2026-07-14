@@ -412,27 +412,27 @@ Make `main` the consistent CI target, enforce all deterministic quality gates, d
 
 #### Automated
 
-- [x] 3.1 `npm test --prefix packages/code-review` passes with publication-helper coverage.
-- [x] 3.2 A pinned `actionlint` check passes for `.github/workflows/ci.yml` and `.github/workflows/review.yml`.
-- [x] 3.3 `pnpm exec prettier --check ".github/**/*.{yml,yaml}"` passes.
-- [x] 3.4 `pnpm run lint` passes.
-- [x] 3.5 `pnpm run build` passes.
+- [x] 3.1 `npm test --prefix packages/code-review` passes with publication-helper coverage. â€” 8b6df59
+- [x] 3.2 A pinned `actionlint` check passes for `.github/workflows/ci.yml` and `.github/workflows/review.yml`. â€” 8b6df59
+- [x] 3.3 `pnpm exec prettier --check ".github/**/*.{yml,yaml}"` passes. â€” 8b6df59
+- [x] 3.4 `pnpm run lint` passes. â€” 8b6df59
+- [x] 3.5 `pnpm run build` passes. â€” 8b6df59
 
 #### Manual
 
-- [x] 3.6 Review job permissions and confirm only publication has PR/Issues write access.
-- [x] 3.7 Review event predicates and confirm unrelated labels and fork PRs cannot access provider secrets.
-- [x] 3.8 Confirm the gate truth table covers pass, model fail, execution error, and publication error.
+- [x] 3.6 Review job permissions and confirm only publication has PR/Issues write access. â€” 8b6df59
+- [x] 3.7 Review event predicates and confirm unrelated labels and fork PRs cannot access provider secrets. â€” 8b6df59
+- [x] 3.8 Confirm the gate truth table covers pass, model fail, execution error, and publication error. â€” 8b6df59
 
 ### Phase 4: Align CI, Documentation, and Real GitHub Verification
 
 #### Automated
 
-- [ ] 4.1 `npm run test:app` passes without provider credentials or network calls.
-- [ ] 4.2 `npm test --prefix packages/code-review` passes without provider credentials or network calls.
-- [ ] 4.3 Pinned actionlint and GitHub YAML formatting checks pass.
-- [ ] 4.4 `pnpm run lint` passes.
-- [ ] 4.5 `pnpm run build` passes.
+- [x] 4.1 `npm run test:app` passes without provider credentials or network calls.
+- [x] 4.2 `npm test --prefix packages/code-review` passes without provider credentials or network calls.
+- [x] 4.3 Pinned actionlint and GitHub YAML formatting checks pass.
+- [x] 4.4 `pnpm run lint` passes.
+- [x] 4.5 `pnpm run build` passes.
 - [ ] 4.6 The ordinary CI workflow succeeds on a same-repository PR to `main`.
 
 #### Manual

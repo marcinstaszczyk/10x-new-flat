@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   ci:
@@ -17,6 +17,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx astro sync
+      - run: npm run test:app
+      - run: npm ci --prefix packages/code-review
+      - run: npm test --prefix packages/code-review
+      - name: Validate GitHub Actions workflows
+        uses: docker://rhysd/actionlint:1.7.12
+        with:
+          args: .github/workflows/ci.yml .github/workflows/review.yml
       - run: npm run lint
       - run: npm run build
         env:
