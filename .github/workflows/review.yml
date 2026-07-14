@@ -99,12 +99,15 @@ jobs:
               echo "$REVIEW_SUMMARY"
               echo "$delimiter"
             } >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$REVIEW_SUMMARY" >> "$GITHUB_STEP_SUMMARY"
           else
             {
               echo "execution=error"
               echo "verdict="
               echo "summary=The review could not complete. Check the workflow run for details."
             } >> "$GITHUB_OUTPUT"
+            echo "## AI code review error" >> "$GITHUB_STEP_SUMMARY"
+            echo "The review could not complete. Check the workflow run for details." >> "$GITHUB_STEP_SUMMARY"
           fi
 
   publish:
