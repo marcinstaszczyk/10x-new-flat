@@ -91,18 +91,20 @@ jobs:
           REVIEW_VERDICT: ${{ steps.action.outputs.verdict }}
         run: |
           if [[ "$ACTION_OUTCOME" == "success" ]]; then
-            echo "execution=success" >> "$GITHUB_OUTPUT"
-            echo "verdict=$REVIEW_VERDICT" >> "$GITHUB_OUTPUT"
             delimiter="SUMMARY_$(uuidgen)"
             {
+              echo "execution=success"
+              echo "verdict=$REVIEW_VERDICT"
               echo "summary<<$delimiter"
               echo "$REVIEW_SUMMARY"
               echo "$delimiter"
             } >> "$GITHUB_OUTPUT"
           else
-            echo "execution=error" >> "$GITHUB_OUTPUT"
-            echo "verdict=" >> "$GITHUB_OUTPUT"
-            echo "summary=The review could not complete. Check the workflow run for details." >> "$GITHUB_OUTPUT"
+            {
+              echo "execution=error"
+              echo "verdict="
+              echo "summary=The review could not complete. Check the workflow run for details."
+            } >> "$GITHUB_OUTPUT"
           fi
 
   publish:
