@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { REVIEWER_PROMPT } from "./common/review-schema.ts";
 import {
@@ -80,6 +81,13 @@ describe("review output", () => {
 });
 
 describe("composite action contract", () => {
+  it("writes only reviewer JSON to the result file", () => {
+    const action = readFileSync("../../.github/actions/code-review/action.yml", "utf8");
+
+    expect(action).toContain("node --env-file-if-exists=packages/code-review/.env packages/code-review/review.ts");
+    expect(action).not.toContain("npm run review");
+  });
+
   it("accepts supported providers only when their credential is present", () => {
     expect(validateProviderCredentials("openai", { OPENAI_API_KEY: "key" })).toBe("openai");
     expect(validateProviderCredentials("openrouter", { OPENROUTER_API_KEY: "key" })).toBe("openrouter");

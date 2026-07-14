@@ -51,7 +51,7 @@ runs:
         CODEX_REVIEW_TITLE: ${{ inputs.title }}
         CODEX_REVIEW_DESCRIPTION: ${{ inputs.description }}
         CODEX_REVIEW_MODEL: ${{ inputs.model }}
-      run: npm run review --prefix packages/code-review -- --diff-file "${{ inputs.diff-path }}" > "$RUNNER_TEMP/review.json"
+      run: node --env-file-if-exists=packages/code-review/.env packages/code-review/review.ts --diff-file "${{ inputs.diff-path }}" > "$RUNNER_TEMP/review.json"
 
     - name: Export review result
       id: result
