@@ -52,6 +52,7 @@ pnpm run dev
 - `pnpm run dev` - Start development server (Cloudflare workerd runtime)
 - `pnpm run build` - Build for production
 - `pnpm run preview` - Preview production build
+- `pnpm run test:app` - Run deterministic application tests
 - `pnpm run check:extraction-contract` - Run the live OpenRouter extraction contract check
 - `pnpm run lint` - Run ESLint with type-checked rules
 - `pnpm run lint:fix` - Auto-fix ESLint issues
@@ -248,7 +249,18 @@ Set `SUPABASE_URL`, `SUPABASE_KEY`, and `SENTRY_DSN` as secrets in your Cloudfla
 
 ## CI
 
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL`, `SUPABASE_KEY`, and `PUBLIC_SENTRY_DSN` as repository secrets in GitHub for the build step.
+GitHub Actions runs Astro sync, deterministic application tests, package-local AI-review tests, workflow validation, lint, and build on every push and PR to `main`. It does not call an AI provider.
+
+Run the reviewer tests locally with:
+
+```bash
+npm ci --prefix packages/code-review
+npm test --prefix packages/code-review
+```
+
+AI code review runs only for same-repository pull requests. Fork PRs intentionally skip it because provider credentials are not exposed to untrusted repositories. A completed review has one terminal label: `ai-cr:passed`, `ai-cr:failed`, or `ai-cr:error`. The error label covers review execution, validation, or input-context failures; a publication failure is surfaced by the required review gate.
+
+Configure `SUPABASE_URL`, `SUPABASE_KEY`, and `PUBLIC_SENTRY_DSN` as repository secrets in GitHub for the build step.
 
 ## License
 
