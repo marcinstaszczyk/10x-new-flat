@@ -109,11 +109,11 @@ describe("composite action contract", () => {
   it("formats scorecard rationales safely for Markdown tables", () => {
     const scorecard = formatReviewScorecard(
       parseReview(
-        result({ criteria: { ...criteria, complexity: { score: 7, rationale: "Clear | but\nmultiline." } } }),
+        result({ criteria: { ...criteria, complexity: { score: 7, rationale: "Clear \\| but\nmultiline." } } }),
       ),
     );
 
-    expect(scorecard).toContain("| Complexity | 7/10 | Clear \\| but multiline. |");
+    expect(scorecard).toContain(String.raw`| Complexity | 7/10 | Clear \\\| but multiline. |`);
   });
 
   it("does not serialize invalid review results", () => {

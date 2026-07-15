@@ -29,7 +29,7 @@ const criterionLabels = {
 } as const;
 
 function tableCell(value: string): string {
-  return value.replace(/\s+/g, " ").replace(/\|/g, "\\|").trim();
+  return value.replace(/\s+/g, " ").replace(/\\/g, "\\\\").replace(/\|/g, "\\|").trim();
 }
 
 export function formatReviewScorecard(review: ReviewResult): string {
