@@ -9,7 +9,7 @@ import {
   validateReviewInput,
 } from "./review-contract.ts";
 import { readReviewInput } from "./review.ts";
-import { serializeActionOutputs, validateProviderCredentials } from "./action-contract.ts";
+import { formatReviewScorecard, serializeActionOutputs, validateProviderCredentials } from "./action-contract.ts";
 
 const criteria = {
   implementationCorrectness: { score: 8, rationale: "Works." },
@@ -101,7 +101,19 @@ describe("composite action contract", () => {
 
     expect(output).toContain("verdict=pass\nresult-path=/tmp/review.json\nsummary<<CODEX_REVIEW_");
     expect(output).toContain("## Pass\n\nReady to merge.");
+    expect(output).toContain("## Review scorecard");
+    expect(output).toContain("| Implementation correctness | 8/10 | Works. |");
     expect(output).toMatch(/\nCODEX_REVIEW_[\w-]+\n$/);
+  });
+
+  it("formats scorecard rationales safely for Markdown tables", () => {
+    const scorecard = formatReviewScorecard(
+      parseReview(
+        result({ criteria: { ...criteria, complexity: { score: 7, rationale: "Clear \\| but\nmultiline." } } }),
+      ),
+    );
+
+    expect(scorecard).toContain(String.raw`| Complexity | 7/10 | Clear \\\| but multiline. |`);
   });
 
   it("does not serialize invalid review results", () => {

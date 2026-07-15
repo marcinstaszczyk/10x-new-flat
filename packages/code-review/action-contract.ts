@@ -1,6 +1,7 @@
 import { appendFileSync, readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { parseReview } from "./review-contract.ts";
+import type { ReviewResult } from "./common/review-schema.ts";
 
 type Provider = "openai" | "openrouter";
 
@@ -18,11 +19,34 @@ export function validateProviderCredentials(
   return provider;
 }
 
+const criterionLabels = {
+  implementationCorrectness: "Implementation correctness",
+  idiomaticity: "Idiomaticity",
+  complexity: "Complexity",
+  testRiskCoverage: "Test-risk coverage",
+  documentation: "Documentation",
+  securitySafety: "Security and safety",
+} as const;
+
+function tableCell(value: string): string {
+  return value.replace(/\s+/g, " ").replace(/\\/g, "\\\\").replace(/\|/g, "\\|").trim();
+}
+
+export function formatReviewScorecard(review: ReviewResult): string {
+  const rows = Object.entries(criterionLabels).map(([key, label]) => {
+    const criterion = review.criteria[key as keyof ReviewResult["criteria"]];
+    return `| ${label} | ${criterion.score}/10 | ${tableCell(criterion.rationale)} |`;
+  });
+
+  return ["## Review scorecard", "", "| Criterion | Score | Rationale |", "| --- | ---: | --- |", ...rows].join("\n");
+}
+
 export function serializeActionOutputs(resultJson: string, resultPath: string): string {
   const review = parseReview(resultJson);
+  const summary = `${review.summary}\n\n${formatReviewScorecard(review)}`;
   let delimiter = `CODEX_REVIEW_${randomUUID()}`;
 
-  while (review.summary.includes(delimiter)) {
+  while (summary.includes(delimiter)) {
     delimiter = `CODEX_REVIEW_${randomUUID()}`;
   }
 
@@ -30,7 +54,7 @@ export function serializeActionOutputs(resultJson: string, resultPath: string): 
     `verdict=${review.verdict}`,
     `result-path=${resultPath}`,
     `summary<<${delimiter}`,
-    review.summary,
+    summary,
     delimiter,
     "",
   ].join("\n");
