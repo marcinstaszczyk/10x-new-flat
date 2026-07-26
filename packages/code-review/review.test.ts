@@ -100,6 +100,18 @@ describe("review output", () => {
   });
 });
 
+describe("local evaluation boundary", () => {
+  it("keeps paid evaluations out of package tests and GitHub workflows", () => {
+    const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { scripts: Record<string, string> };
+    const ciWorkflow = readFileSync("../../.github/workflows/ci.yml", "utf8");
+    const reviewWorkflow = readFileSync("../../.github/workflows/review.yml", "utf8");
+
+    expect(packageJson.scripts.test).not.toContain("eval:review");
+    expect(ciWorkflow).not.toContain("eval:review");
+    expect(reviewWorkflow).not.toContain("eval:review");
+  });
+});
+
 describe("composite action contract", () => {
   it("writes only reviewer JSON to the result file", () => {
     const action = readFileSync("../../.github/actions/code-review/action.yml", "utf8");

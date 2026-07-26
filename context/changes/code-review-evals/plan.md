@@ -253,26 +253,26 @@ No production migration is required. Adding Promptfoo changes only `packages/cod
 
 #### Automated
 
-- [x] 2.1 Package installation succeeds from the updated package lockfile.
-- [x] 2.2 Package tests pass without OpenRouter credentials or network access.
-- [x] 2.3 With a local key, the evaluation produces three model rows with static and Luna-judge results.
-- [x] 2.4 Without a local key, the evaluation fails before a provider call and exposes no secret.
+- [x] 2.1 Package installation succeeds from the updated package lockfile. â€” 1b40999
+- [x] 2.2 Package tests pass without OpenRouter credentials or network access. â€” 1b40999
+- [x] 2.3 With a local key, the evaluation produces three model rows with static and Luna-judge results. â€” 1b40999
+- [x] 2.4 Without a local key, the evaluation fails before a provider call and exposes no secret. â€” 1b40999
 
 #### Manual
 
-- [x] 2.5 The report shows all three requested models used the same prompt and fixture.
-- [x] 2.6 The report clearly identifies Luna's self-judged row.
+- [x] 2.5 The report shows all three requested models used the same prompt and fixture. â€” 1b40999
+- [x] 2.6 The report clearly identifies Luna's self-judged row. â€” 1b40999
 
 ### Phase 3: Document local operation and protect existing automation boundaries
 
 #### Automated
 
-- [ ] 3.1 Package tests pass without network credentials.
-- [ ] 3.2 Root lint passes.
-- [ ] 3.3 Root build passes.
-- [ ] 3.4 Neither existing GitHub workflow invokes the local evaluation command.
+- [x] 3.1 Package tests pass without network credentials.
+- [x] 3.2 Root lint passes.
+- [x] 3.3 Root build passes.
+- [x] 3.4 Neither existing GitHub workflow invokes the local evaluation command.
 
 #### Manual
 
-- [ ] 3.5 The documented clean-install workflow produces the three-model comparison with a local key.
-- [ ] 3.6 A normal pull request remains governed only by the existing code-review workflow.
+- [x] 3.5 The documented clean-install workflow produces the three-model comparison with a local key.
+- [x] 3.6 A normal pull request remains governed only by the existing code-review workflow.

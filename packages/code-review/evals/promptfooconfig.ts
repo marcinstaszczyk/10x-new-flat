@@ -8,12 +8,17 @@ const judgeProvider = {
   config: { temperature: 0 },
 };
 
+const jsonReviewProviderConfig = {
+  response_format: { type: "json_object" },
+  temperature: 0,
+};
+
 export default {
   description: "Critical transfer code-review regression evaluation",
   prompts: [renderReviewPrompt(criticalTransferFixture)],
   providers: [
-    { id: "openrouter:z-ai/glm-5.1", config: { temperature: 0 } },
-    { id: "openrouter:deepseek/deepseek-v4-flash", config: { temperature: 0 } },
+    { id: "openrouter:z-ai/glm-5.1", config: jsonReviewProviderConfig },
+    { id: "openrouter:deepseek/deepseek-v4-flash", config: jsonReviewProviderConfig },
     judgeProvider,
   ],
   tests: [
