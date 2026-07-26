@@ -25,7 +25,7 @@ Add a complex, project-based evaluation diff for `packages/code-review` that con
 
 ## Summary
 
-Add a second fixture for a plausible feature: allow a buyer to edit a saved offer and regenerate its viewing preparation. The diff should span an Astro UI, API route, service, Supabase migration, and narrow happy-path tests. Seed these three required findings:
+Add a second fixture for a plausible feature: allow a buyer to edit a saved offer and regenerate its viewing preparation. The source-only diff should span an Astro UI, API route, service, and Supabase migration. Seed these three required findings:
 
 1. A broken RLS `UPDATE` policy permits authenticated users to modify another buyer's offer.
 2. Regeneration deletes the existing preparation before the replacement succeeds, losing valid data on an extractor failure.
@@ -59,7 +59,7 @@ The chosen feature extends genuine ownership, preparation, and rendering flows:
 2. **Destructive regeneration order.** The service should delete the current extraction result, then call the external extractor, then insert its replacement. Any timeout, provider error, validation error, or insert failure irreversibly removes the previously valid preparation.
 3. **Stored XSS from extractor output.** The UI should replace safe interpolation for evidence text with `set:html={item.evidenceText}` under a plausible rich-evidence rendering change. Offer text and model output are persisted and untrusted; malicious HTML then executes in a signed-in buyer's origin.
 
-The supporting test diff should exercise only owner edit, successful regeneration, and normal evidence display. It must omit a cross-user update attempt, failed regeneration preservation, and HTML payload coverage so each defect remains reviewable rather than contradicted by tests.
+The embedded diff must contain no application test changes. Its absent risk coverage is deliberate evaluation evidence: the fixture rubric and expected test-risk score should recognize that there is no cross-user update, failed-regeneration preservation, or HTML-payload coverage.
 
 ## Architecture Insights
 

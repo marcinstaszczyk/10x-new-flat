@@ -1,27 +1,12 @@
-import type { ReviewInput } from "../../review-contract.ts";
+import type { ReviewFixture } from "./types.ts";
 
 export const REQUIRED_FINDING_IDS = ["authorization", "positive-amount-validation", "atomic-balance-mutation"] as const;
 
-export interface ExpectedFinding {
-  id: (typeof REQUIRED_FINDING_IDS)[number];
-  description: string;
-}
-
-export interface CriticalTransferFixture extends ReviewInput {
-  expected: {
-    verdict: "fail";
-    scoreCeilings: {
-      implementationCorrectness: number;
-      testRiskCoverage: number;
-      securitySafety: number;
-    };
-    findings: readonly ExpectedFinding[];
-  };
-}
-
-export const criticalTransferFixture: CriticalTransferFixture = {
+export const criticalTransferFixture: ReviewFixture = {
+  id: "critical-transfer",
   title: "Add account transfers",
   description: "Allow authenticated users to transfer funds between accounts.",
+  rubricPath: "rubrics/critical-transfer.md",
   diff: `diff --git a/src/routes/transfers.ts b/src/routes/transfers.ts
 new file mode 100644
 index 0000000..f00dbad

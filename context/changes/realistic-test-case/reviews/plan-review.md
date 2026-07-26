@@ -2,7 +2,7 @@
 
 # Plan review: realistic-test-case
 
-Status: needs revision
+Status: resolved
 
 ## Findings
 
@@ -27,3 +27,9 @@ Add `packages/code-review/evals/promptfooconfig.test.ts` to the phase and specif
 ## Review basis
 
 The plan is otherwise internally coherent: the fixture registry, assertion factory, single templated prompt, aggregate report name, and local-only live evaluation fit the current `packages/code-review` structure. No project code or database changes were made during this review.
+
+## Triage
+
+- [x] **[P1] Executable permission changes** — fixed in `plan.md`: the fixture migration now explicitly replaces the deny policies and grants the constrained update/delete privileges while remaining fixture-only.
+- [x] **[P1] Embedded-test contradiction** — fixed in `research.md` and reinforced in `plan.md`: the embedded diff is source-only, and missing risk coverage is evaluated from the absence of application tests.
+- [x] **[P2] Configuration-test contract** — fixed in `plan.md`: `evals/promptfooconfig.test.ts` is named and its import-only, no-provider assertions are specified.

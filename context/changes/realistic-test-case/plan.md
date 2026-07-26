@@ -42,6 +42,8 @@ Move the shared fixture result contract into a small fixture-types module and re
 
 Use one template prompt with fixture variables, not one rendered prompt per fixture. Promptfoo cross-products prompts and tests; multiple rendered prompts would apply each fixture's rubric to unrelated diffs. The source-only requirement applies to the embedded review diff, not to the package's deterministic fixture-contract tests.
 
+The embedded migration must make the two intentionally flawed paths executable. It must drop the existing deny-update policy on `flat_offers`, grant the required `UPDATE` columns to `authenticated`, and create the weak `FOR UPDATE USING (true) WITH CHECK ((select auth.uid()) = buyer_id)` policy. It must also drop the deny-delete policy on `offer_extraction_results`, grant `DELETE` to `authenticated`, and create an owner-scoped delete policy. These are fixture-only migration changes: they deliberately model the regression and do not alter production schema or policies.
+
 ## Phase 1: Define the realistic fixture contract
 
 ### Overview
@@ -70,7 +72,7 @@ Create shared types and a stable registry, retain the transfer baseline unchange
 - regeneration deletes the existing extraction before calling the extractor and persisting a replacement, losing a valid result on failure;
 - rich evidence uses Astro `set:html` on persisted extractor output, enabling stored XSS.
 
-The source diff must plausibly touch an offer edit route/service, preparation service/result service, RLS migration, and `OfferPreparationResult.astro`. It must not contain application test-file changes.
+The source diff must plausibly touch an offer edit route/service, preparation service/result service, RLS migration, and `OfferPreparationResult.astro`. Its fixture-only migration must replace the existing deny-update and deny-delete policies and grant the update/delete privileges described above, so the two seeded database defects are executable. It must not contain application test-file changes; the expected test-risk score and rubric must treat missing risk coverage as evidence inferred from that absence.
 
 #### 3. Fixture contract coverage
 
@@ -102,7 +104,7 @@ Refactor static assertions and Promptfoo configuration so the default local run 
 
 #### 1. Parameterized structural assertion
 
-**Files**: `packages/code-review/evals/assertions/review-result.ts`, `packages/code-review/evals/assertions/review-result.test.ts`
+**Files**: `packages/code-review/evals/assertions/review-result.ts`, `packages/code-review/evals/assertions/review-result.test.ts`, `packages/code-review/evals/promptfooconfig.test.ts`
 
 **Intent**: Reuse the canonical review parser and failure-severity checks for every fixture while preserving fixture-specific thresholds.
 
@@ -118,11 +120,11 @@ Refactor static assertions and Promptfoo configuration so the default local run 
 
 #### 3. Variableized two-fixture Promptfoo configuration
 
-**Files**: `packages/code-review/evals/promptfooconfig.ts`
+**Files**: `packages/code-review/evals/promptfooconfig.ts`, `packages/code-review/evals/promptfooconfig.test.ts`
 
 **Intent**: Run both fixtures in one local command while ensuring each row uses matching review input and grading rules.
 
-**Contract**: Render one shared review-prompt template with title, description, and diff variables. Map the fixture registry into tests that set fixture-specific variables, description/ID, structural assertion factory result, and rubric content. Retain the existing fixed providers, judge, JSON response format, and temperature `0`.
+**Contract**: Render one shared review-prompt template with title, description, and diff variables. Map the fixture registry into tests that set fixture-specific variables, description/ID, structural assertion factory result, and rubric content. Retain the existing fixed providers, judge, JSON response format, and temperature `0`. Add an import-only configuration test that makes no provider calls and asserts one shared variableized prompt, exactly one test per registry fixture, fixture ID/title/diff variables on every test, and each test's matching fixture-specific JavaScript assertion and rubric content.
 
 ### Success Criteria
 
@@ -220,13 +222,13 @@ No application or database migration will run. The SQL migration is text embedde
 
 #### Automated
 
-- [ ] 1.1 Package tests pass with both fixture contracts.
-- [ ] 1.2 The registry contains the preserved transfer fixture and stable offer-regeneration fixture.
-- [ ] 1.3 The new fixture has a source-only diff and exactly three required findings.
+- [x] 1.1 Package tests pass with both fixture contracts.
+- [x] 1.2 The registry contains the preserved transfer fixture and stable offer-regeneration fixture.
+- [x] 1.3 The new fixture has a source-only diff and exactly three required findings.
 
 #### Manual
 
-- [ ] 1.4 Each seeded flaw is independently understandable from the embedded diff.
+- [x] 1.4 Each seeded flaw is independently understandable from the embedded diff.
 
 ### Phase 2: Evaluate each fixture against its own grading contract
 

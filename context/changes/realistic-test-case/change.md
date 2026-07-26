@@ -1,7 +1,7 @@
 ---
 change_id: realistic-test-case
 title: Add a realistic code-review evaluation case
-status: planned
+status: implementing
 created: 2026-07-26
 updated: 2026-07-26
 archived_at: null
