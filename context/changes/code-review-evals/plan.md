@@ -242,26 +242,26 @@ No production migration is required. Adding Promptfoo changes only `packages/cod
 
 #### Automated
 
-- [x] 1.1 Package tests pass, including prompt-rendering equivalence and fixture-contract tests.
-- [x] 1.2 The fixture has exactly three required findings, a failing verdict, and required score ceilings.
+- [x] 1.1 Package tests pass, including prompt-rendering equivalence and fixture-contract tests. â€” 8b6d64b
+- [x] 1.2 The fixture has exactly three required findings, a failing verdict, and required score ceilings. â€” 8b6d64b
 
 #### Manual
 
-- [x] 1.3 The complex diff makes each seeded flaw independently actionable without repository context.
+- [x] 1.3 The complex diff makes each seeded flaw independently actionable without repository context. â€” 8b6d64b
 
 ### Phase 2: Add the local Promptfoo comparison suite
 
 #### Automated
 
-- [ ] 2.1 Package installation succeeds from the updated package lockfile.
-- [ ] 2.2 Package tests pass without OpenRouter credentials or network access.
-- [ ] 2.3 With a local key, the evaluation produces three model rows with static and Luna-judge results.
-- [ ] 2.4 Without a local key, the evaluation fails before a provider call and exposes no secret.
+- [x] 2.1 Package installation succeeds from the updated package lockfile.
+- [x] 2.2 Package tests pass without OpenRouter credentials or network access.
+- [x] 2.3 With a local key, the evaluation produces three model rows with static and Luna-judge results.
+- [x] 2.4 Without a local key, the evaluation fails before a provider call and exposes no secret.
 
 #### Manual
 
-- [ ] 2.5 The report shows all three requested models used the same prompt and fixture.
-- [ ] 2.6 The report clearly identifies Luna's self-judged row.
+- [x] 2.5 The report shows all three requested models used the same prompt and fixture.
+- [x] 2.6 The report clearly identifies Luna's self-judged row.
 
 ### Phase 3: Document local operation and protect existing automation boundaries
 

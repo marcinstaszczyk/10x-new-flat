@@ -4,6 +4,7 @@
   "description": "",
   "main": "review.ts",
   "scripts": {
+    "eval:review": "node --env-file-if-exists=.env --import tsx evals/run.ts",
     "review": "node --env-file-if-exists=.env review.ts",
     "test": "vitest run --config vitest.config.ts"
   },
@@ -16,6 +17,8 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
+    "promptfoo": "^0.121.19",
+    "tsx": "^4.23.1",
     "vitest": "^4.1.6"
   }
 }
