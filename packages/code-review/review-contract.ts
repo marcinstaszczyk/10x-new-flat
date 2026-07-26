@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { ReviewCriteria, ReviewResult } from "./common/review-schema.ts";
+import { REVIEWER_PROMPT, ReviewCriteria, ReviewResult } from "./common/review-schema.ts";
 
 const MAX_DESCRIPTION_LENGTH = 10_000;
 const MAX_DIFF_BYTES = 200 * 1024;
@@ -56,6 +56,10 @@ ${review.description ?? "(no description provided)"}
 
 <pr-diff>
 ${review.diff}</pr-diff>`;
+}
+
+export function renderReviewPrompt(input: ReviewInput): string {
+  return buildReviewPrompt(input, REVIEWER_PROMPT);
 }
 
 function hasText(value: string): boolean {
