@@ -2,4 +2,4 @@
 
 Temporary same-repository pull-request fixture for confirming that the AI review publishes its validated six-criterion scorecard.
 
-Synchronize-cancellation probe: first update.
+Synchronize-cancellation probe: latest update.
