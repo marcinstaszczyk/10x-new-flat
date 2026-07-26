@@ -1,7 +1,7 @@
 ---
 change_id: code-review-evals
 title: Code review evals
-status: implemented
+status: impl_reviewed
 created: 2026-07-26
 updated: 2026-07-26
 archived_at: null

@@ -1,8 +1,10 @@
 import { parseReview } from "../../review-contract.ts";
+import { ReviewResult } from "../../common/review-schema.ts";
 import { criticalTransferFixture } from "../fixtures/critical-transfer.ts";
 
 export function hasFailingCriticalReview(output: string) {
   try {
+    ReviewResult.parse(JSON.parse(output));
     const review = parseReview(output);
     const ceilings = criticalTransferFixture.expected.scoreCeilings;
     const meetsCeilings =
