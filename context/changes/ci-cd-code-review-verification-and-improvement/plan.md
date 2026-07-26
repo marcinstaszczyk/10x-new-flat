@@ -428,15 +428,15 @@ Make `main` the consistent CI target, enforce all deterministic quality gates, d
 
 #### Automated
 
-- [x] 4.1 `npm run test:app` passes without provider credentials or network calls.
-- [x] 4.2 `npm test --prefix packages/code-review` passes without provider credentials or network calls.
-- [x] 4.3 Pinned actionlint and GitHub YAML formatting checks pass.
-- [x] 4.4 `pnpm run lint` passes.
-- [x] 4.5 `pnpm run build` passes.
+- [x] 4.1 `npm run test:app` passes without provider credentials or network calls. — d4bd45e
+- [x] 4.2 `npm test --prefix packages/code-review` passes without provider credentials or network calls. — d4bd45e
+- [x] 4.3 Pinned actionlint and GitHub YAML formatting checks pass. — d4bd45e
+- [x] 4.4 `pnpm run lint` passes. — d4bd45e
+- [x] 4.5 `pnpm run build` passes. — d4bd45e
 - [x] 4.6 The ordinary CI workflow succeeds on a same-repository PR to `main`. — ada1983e
 
 #### Manual
 
 - [x] 4.7 Complete and record the controlled GitHub smoke matrix for pass, fail, error, retry, synchronize, manual dispatch, unrelated-label, and fork cases. — 37095d1
 - [x] 4.8 Confirm one marker comment and exactly one terminal outcome label remain after every completed PR review. — ada1983e
-- [x] 4.9 Confirm no secret value, raw provider response, or untrusted PR content appears in error diagnostics or workflow logs beyond the intended review summary.
+- [x] 4.9 Confirm no secret value, raw provider response, or untrusted PR content appears in error diagnostics or workflow logs beyond the intended review summary. — d4bd45e
