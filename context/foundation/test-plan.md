@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see 8).
 >
-> Last updated: 2026-06-09
+> Last updated: 2026-07-26
 
 ## 1. Strategy
 
@@ -69,7 +69,7 @@ orchestrator updates Status as artifacts appear on disk.
 | 1 | Critical prepare-viewing flow | Prove the primary long-offer preparation path still works without live LLM on every change. | #1, #4 | integration + e2e/manual smoke + on-demand contract check | complete | testing-critical-prepare-viewing-flow |
 | 2 | Ownership and destructive actions | Prove question lifecycle and offer deletion stay owner-scoped. | #2, #3, #6 | database contract + API/route integration | not started | - |
 | 3 | Duplicate-submit protection | Prove slow or repeated saved-offer submission cannot create duplicate entries. | #5 | integration + focused browser/manual check | not started | - |
-| 4 | Quality gates and cookbook | Make the shipped test commands discoverable and enforceable without adding live provider cost to CI. | cross-cutting | gates + cookbook | not started | - |
+| 4 | Quality gates and cookbook | Make the shipped test commands discoverable and enforceable without adding live provider cost to CI. | cross-cutting | gates + cookbook | complete | ci-cd-code-review-verification-and-improvement |
 
 **Status vocabulary**: `not started`, `change opened`, `researched`,
 `planned`, `implementing`, `complete`.

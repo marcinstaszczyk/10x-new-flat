@@ -433,10 +433,10 @@ Make `main` the consistent CI target, enforce all deterministic quality gates, d
 - [x] 4.3 Pinned actionlint and GitHub YAML formatting checks pass.
 - [x] 4.4 `pnpm run lint` passes.
 - [x] 4.5 `pnpm run build` passes.
-- [ ] 4.6 The ordinary CI workflow succeeds on a same-repository PR to `main`.
+- [x] 4.6 The ordinary CI workflow succeeds on a same-repository PR to `main`. — ada1983e
 
 #### Manual
 
-- [ ] 4.7 Complete and record the controlled GitHub smoke matrix for pass, fail, error, retry, synchronize, manual dispatch, unrelated-label, and fork cases.
-- [ ] 4.8 Confirm one marker comment and exactly one terminal outcome label remain after every completed PR review.
-- [ ] 4.9 Confirm no secret value, raw provider response, or untrusted PR content appears in error diagnostics or workflow logs beyond the intended review summary.
+- [x] 4.7 Complete and record the controlled GitHub smoke matrix for pass, fail, error, retry, synchronize, manual dispatch, unrelated-label, and fork cases. — 37095d1
+- [x] 4.8 Confirm one marker comment and exactly one terminal outcome label remain after every completed PR review. — ada1983e
+- [x] 4.9 Confirm no secret value, raw provider response, or untrusted PR content appears in error diagnostics or workflow logs beyond the intended review summary.
