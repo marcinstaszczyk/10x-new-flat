@@ -72,8 +72,6 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/code-review
         with:
-          title: ${{ github.event.pull_request.title || format('Manual review of {0}', github.ref_name) }}
-          description: ${{ github.event.pull_request.body }}
           diff-path: ${{ runner.temp }}/review.diff
           provider: ${{ vars.CODEX_PROVIDER || 'openai' }}
           model: ${{ vars.CODEX_REVIEW_MODEL }}

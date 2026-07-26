@@ -13,6 +13,13 @@ import {
 
 type CodexProvider = "local" | "openai" | "openrouter";
 
+interface PullRequestEvent {
+  pull_request?: {
+    title?: unknown;
+    body?: unknown;
+  };
+}
+
 function isMainModule(): boolean {
   if (!process.argv[1]) return false;
   return resolve(process.argv[1]) === fileURLToPath(import.meta.url);
@@ -43,11 +50,37 @@ export async function readReviewInput(): Promise<ReviewInput> {
     return loadSampleInput(argumentValue("--sample") ?? "sample-1");
   }
 
+  const metadata = readReviewMetadata();
   return validateReviewInput({
-    title: process.env.CODEX_REVIEW_TITLE ?? "",
-    description: process.env.CODEX_REVIEW_DESCRIPTION,
+    title: metadata.title,
+    description: metadata.description,
     diff: await readDiff(argumentValue("--diff-file")),
   });
+}
+
+export function metadataFromEvent(
+  event: PullRequestEvent,
+  refName = "selected ref",
+): Pick<ReviewInput, "title" | "description"> {
+  const pullRequest = event.pull_request;
+  if (typeof pullRequest?.title === "string") {
+    return {
+      title: pullRequest.title,
+      description: typeof pullRequest.body === "string" ? pullRequest.body : undefined,
+    };
+  }
+
+  return { title: `Manual review of ${refName}` };
+}
+
+function readReviewMetadata(): Pick<ReviewInput, "title" | "description"> {
+  const eventPath = process.env.GITHUB_EVENT_PATH;
+  if (!eventPath) return { title: `Manual review of ${process.env.GITHUB_REF_NAME ?? "selected ref"}` };
+
+  return metadataFromEvent(
+    JSON.parse(readFileSync(eventPath, "utf8")) as PullRequestEvent,
+    process.env.GITHUB_REF_NAME,
+  );
 }
 
 function codexEnvironment(): Record<string, string> {

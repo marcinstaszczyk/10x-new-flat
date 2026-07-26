@@ -8,7 +8,7 @@ import {
   parseReview,
   validateReviewInput,
 } from "./review-contract.ts";
-import { readReviewInput } from "./review.ts";
+import { metadataFromEvent, readReviewInput } from "./review.ts";
 import { formatReviewScorecard, serializeActionOutputs, validateProviderCredentials } from "./action-contract.ts";
 
 const criteria = {
@@ -35,6 +35,14 @@ describe("review input", () => {
 
     await expect(readReviewInput()).resolves.toMatchObject({ title: "Local sample review" });
     process.argv = args;
+  });
+
+  it("reads PR metadata from the event payload and uses a safe manual fallback", () => {
+    expect(metadataFromEvent({ pull_request: { title: "Add feature", body: "Details" } })).toEqual({
+      title: "Add feature",
+      description: "Details",
+    });
+    expect(metadataFromEvent({}, "main")).toEqual({ title: "Manual review of main" });
   });
 
   it("builds a prompt with explicitly untrusted PR data", () => {
@@ -86,6 +94,9 @@ describe("composite action contract", () => {
 
     expect(action).toContain("node --env-file-if-exists=packages/code-review/.env packages/code-review/review.ts");
     expect(action).not.toContain("npm run review");
+    expect(action).not.toMatch(/^ {2}(title|description):/m);
+    expect(action).not.toContain("CODEX_REVIEW_TITLE");
+    expect(action).not.toContain("CODEX_REVIEW_DESCRIPTION");
   });
 
   it("accepts supported providers only when their credential is present", () => {

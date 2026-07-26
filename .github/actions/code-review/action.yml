@@ -2,12 +2,6 @@ name: Code review
 description: Run the bounded code-review package and export a validated result.
 
 inputs:
-  title:
-    description: Pull request title
-    required: true
-  description:
-    description: Pull request description
-    required: false
   diff-path:
     description: Path to the review diff
     required: true
@@ -48,8 +42,6 @@ runs:
       shell: bash
       env:
         CODEX_PROVIDER: ${{ inputs.provider }}
-        CODEX_REVIEW_TITLE: ${{ inputs.title }}
-        CODEX_REVIEW_DESCRIPTION: ${{ inputs.description }}
         CODEX_REVIEW_MODEL: ${{ inputs.model }}
       run: node --env-file-if-exists=packages/code-review/.env packages/code-review/review.ts --diff-file "${{ inputs.diff-path }}" > "$RUNNER_TEMP/review.json"
 
