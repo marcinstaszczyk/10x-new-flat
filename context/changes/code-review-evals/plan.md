@@ -267,12 +267,12 @@ No production migration is required. Adding Promptfoo changes only `packages/cod
 
 #### Automated
 
-- [x] 3.1 Package tests pass without network credentials.
-- [x] 3.2 Root lint passes.
-- [x] 3.3 Root build passes.
-- [x] 3.4 Neither existing GitHub workflow invokes the local evaluation command.
+- [x] 3.1 Package tests pass without network credentials. â€” 29ae9a2
+- [x] 3.2 Root lint passes. â€” 29ae9a2
+- [x] 3.3 Root build passes. â€” 29ae9a2
+- [x] 3.4 Neither existing GitHub workflow invokes the local evaluation command. â€” 29ae9a2
 
 #### Manual
 
-- [x] 3.5 The documented clean-install workflow produces the three-model comparison with a local key.
-- [x] 3.6 A normal pull request remains governed only by the existing code-review workflow.
+- [x] 3.5 The documented clean-install workflow produces the three-model comparison with a local key. â€” 29ae9a2
+- [x] 3.6 A normal pull request remains governed only by the existing code-review workflow. â€” 29ae9a2
