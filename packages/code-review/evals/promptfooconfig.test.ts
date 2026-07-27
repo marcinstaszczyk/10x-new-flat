@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { REVIEW_JSON_SCHEMA } from "../common/review-schema.ts";
 import { reviewFixtures } from "./fixtures/index.ts";
 import config from "./promptfooconfig.ts";
 
@@ -17,6 +18,22 @@ describe("Promptfoo configuration", () => {
         fixtureId: fixture.id,
         title: fixture.title,
         diff: fixture.diff,
+      });
+    }
+  });
+
+  it("requires strict schema output with enough completion budget", () => {
+    for (const provider of config.providers.slice(0, 2)) {
+      expect(provider.config).toMatchObject({
+        max_tokens: 4096,
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "code_review",
+            strict: true,
+            schema: REVIEW_JSON_SCHEMA,
+          },
+        },
       });
     }
   });

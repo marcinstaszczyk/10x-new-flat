@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { createFailingReviewAssertion } from "./assertions/review-result.ts";
 import { reviewFixtures } from "./fixtures/index.ts";
+import { REVIEW_JSON_SCHEMA } from "../common/review-schema.ts";
 import { renderReviewPrompt } from "../review-contract.ts";
 
 const judgeProvider = {
@@ -9,7 +10,15 @@ const judgeProvider = {
 };
 
 const jsonReviewProviderConfig = {
-  response_format: { type: "json_object" },
+  max_tokens: 4096,
+  response_format: {
+    type: "json_schema",
+    json_schema: {
+      name: "code_review",
+      strict: true,
+      schema: REVIEW_JSON_SCHEMA,
+    },
+  },
   temperature: 0,
 };
 
