@@ -3,7 +3,7 @@ import { ReviewResult } from "../../common/review-schema.ts";
 import type { ReviewFixture } from "../fixtures/types.ts";
 
 export function createFailingReviewAssertion(expected: ReviewFixture["expected"]) {
-  return (output: string) => {
+  const assertion = (output: string) => {
     try {
       ReviewResult.parse(JSON.parse(output));
       const review = parseReview(output);
@@ -23,4 +23,6 @@ export function createFailingReviewAssertion(expected: ReviewFixture["expected"]
       return { pass: false, score: 0, reason: error instanceof Error ? error.message : "Invalid review JSON." };
     }
   };
+
+  return Object.assign(assertion, { expected });
 }

@@ -19,7 +19,8 @@ describe("offer edit and regeneration fixture", () => {
   });
 
   it("contains the three intentional flaws without application test changes", () => {
-    expect(offerEditRegenerationFixture.diff).toContain("using (true)");
+    expect(offerEditRegenerationFixture.diff).toContain('create policy "Authenticated buyers can read any flat offer"');
+    expect(offerEditRegenerationFixture.diff).toContain("with check (true)");
     expect(offerEditRegenerationFixture.diff).toContain("deleteOfferExtractionResult(client, offerId)");
     expect(offerEditRegenerationFixture.diff).toContain("set:html={item.evidenceText}");
     expect(offerEditRegenerationFixture.diff).not.toMatch(/^diff --git a\/.*\.test\.(?:ts|tsx|astro)/m);

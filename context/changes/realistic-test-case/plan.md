@@ -42,7 +42,7 @@ Move the shared fixture result contract into a small fixture-types module and re
 
 Use one template prompt with fixture variables, not one rendered prompt per fixture. Promptfoo cross-products prompts and tests; multiple rendered prompts would apply each fixture's rubric to unrelated diffs. The source-only requirement applies to the embedded review diff, not to the package's deterministic fixture-contract tests.
 
-The embedded migration must make the two intentionally flawed paths executable. It must drop the existing deny-update policy on `flat_offers`, grant the required `UPDATE` columns to `authenticated`, and create the weak `FOR UPDATE USING (true) WITH CHECK ((select auth.uid()) = buyer_id)` policy. It must also drop the deny-delete policy on `offer_extraction_results`, grant `DELETE` to `authenticated`, and create an owner-scoped delete policy. These are fixture-only migration changes: they deliberately model the regression and do not alter production schema or policies.
+The embedded migration must make the two intentionally flawed paths executable. It must replace the owner-scoped `SELECT` policy on `flat_offers` with a permissive policy, grant the required `UPDATE` columns to `authenticated`, and create a permissive `FOR UPDATE USING (true) WITH CHECK (true)` policy. It must also drop the deny-delete policy on `offer_extraction_results`, grant `DELETE` to `authenticated`, and create an owner-scoped delete policy. These are fixture-only migration changes: they deliberately model the regression and do not alter production schema or policies.
 
 ## Phase 1: Define the realistic fixture contract
 
@@ -68,7 +68,7 @@ Create shared types and a stable registry, retain the transfer baseline unchange
 
 **Contract**: Export a stable fixture ID, PR title/description, source-only unified diff, expected `fail` verdict, score ceilings for implementation correctness, test-risk coverage, and security/safety, plus exactly three ordered findings:
 
-- an update policy with `USING (true)` permits cross-buyer updates despite a buyer-constrained `WITH CHECK`;
+- permissive `SELECT` and `UPDATE` policies permit cross-buyer updates;
 - regeneration deletes the existing extraction before calling the extractor and persisting a replacement, losing a valid result on failure;
 - rich evidence uses Astro `set:html` on persisted extractor output, enabling stored XSS.
 

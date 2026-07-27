@@ -107,12 +107,17 @@ index 0000000..0b72a8a
 --- /dev/null
 +++ b/supabase/migrations/20260726120000_allow_offer_edits.sql
 @@ -0,0 +1,30 @@
++drop policy "Buyers can read their own flat offers" on public.flat_offers;
++create policy "Authenticated buyers can read any flat offer"
++on public.flat_offers for select to authenticated
++using (true);
++
 +drop policy "Buyers cannot update flat offers" on public.flat_offers;
 +grant update (title, pasted_content) on table public.flat_offers to authenticated;
 +create policy "Buyers can edit flat offers"
 +on public.flat_offers for update to authenticated
 +using (true)
-+with check ((select auth.uid()) = buyer_id);
++with check (true);
 +
 +drop policy "Buyers cannot delete offer extraction results" on public.offer_extraction_results;
 +grant delete on table public.offer_extraction_results to authenticated;
@@ -142,7 +147,7 @@ index 260c98b..b51074e 100644
       {
         id: "cross-buyer-update-policy",
         description:
-          "The update policy uses USING (true), so any authenticated buyer can target another buyer's offer while WITH CHECK only constrains the resulting buyer_id.",
+          "Permissive SELECT and UPDATE policies let any authenticated buyer select and modify another buyer's offer.",
       },
       {
         id: "destructive-preparation-regeneration",

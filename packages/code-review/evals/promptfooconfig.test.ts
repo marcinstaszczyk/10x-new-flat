@@ -26,9 +26,12 @@ describe("Promptfoo configuration", () => {
       const test = config.tests.find((candidate) => candidate.description === fixture.id);
       const assertion = test?.assert[0];
       const rubric = test?.assert[1];
+      const assertionValue = assertion?.value;
 
       expect(assertion?.type).toBe("javascript");
-      expect(typeof assertion?.value).toBe("function");
+      expect(typeof assertionValue).toBe("function");
+      if (typeof assertionValue !== "function") throw new Error("Missing JavaScript assertion.");
+      expect(assertionValue.expected).toBe(fixture.expected);
       expect(rubric?.type).toBe("llm-rubric");
       expect(rubric?.value).toBe(readFileSync(new URL(`./${fixture.rubricPath}`, import.meta.url), "utf8"));
     }
