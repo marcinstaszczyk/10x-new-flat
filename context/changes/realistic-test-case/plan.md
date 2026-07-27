@@ -234,23 +234,23 @@ No application or database migration will run. The SQL migration is text embedde
 
 #### Automated
 
-- [x] 2.1 Package tests pass generalized assertion coverage without credentials or network access.
-- [x] 2.2 Configuration source tests prove two fixture-labelled tests use matching assertions and rubrics.
-- [x] 2.3 The standard package test command excludes the paid evaluation.
+- [x] 2.1 Package tests pass generalized assertion coverage without credentials or network access. — b93aa51
+- [x] 2.2 Configuration source tests prove two fixture-labelled tests use matching assertions and rubrics. — b93aa51
+- [x] 2.3 The standard package test command excludes the paid evaluation. — b93aa51
 
 #### Manual
 
-- [x] 2.4 A local paid evaluation produces labelled rows for every fixture/model combination.
+- [x] 2.4 A local paid evaluation produces labelled rows for every fixture/model combination. — b93aa51
 
 ### Phase 3: Stabilize local results and document the expanded baseline
 
 #### Automated
 
-- [ ] 3.1 Package tests pass.
-- [ ] 3.2 Root lint passes.
-- [ ] 3.3 Root build passes.
-- [ ] 3.4 Source-level checks confirm the aggregate result path and two-fixture documentation.
+- [x] 3.1 Package tests pass.
+- [x] 3.2 Root lint passes.
+- [x] 3.3 Root build passes.
+- [x] 3.4 Source-level checks confirm the aggregate result path and two-fixture documentation.
 
 #### Manual
 
-- [ ] 3.5 The local report distinguishes rows by fixture, model, and judge outcome.
+- [x] 3.5 The local report distinguishes rows by fixture, model, and judge outcome.

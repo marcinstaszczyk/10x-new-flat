@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 
-const resultPath = resolve(".promptfoo/critical-transfer-results.json");
+const resultPath = resolve(".promptfoo/code-review-results.json");
 
 if (!process.env.OPENROUTER_API_KEY) {
   throw new Error("OPENROUTER_API_KEY is required for the local code-review evaluation.");
