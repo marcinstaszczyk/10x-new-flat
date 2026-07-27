@@ -246,11 +246,11 @@ No application or database migration will run. The SQL migration is text embedde
 
 #### Automated
 
-- [x] 3.1 Package tests pass.
-- [x] 3.2 Root lint passes.
-- [x] 3.3 Root build passes.
-- [x] 3.4 Source-level checks confirm the aggregate result path and two-fixture documentation.
+- [x] 3.1 Package tests pass. — 947c184
+- [x] 3.2 Root lint passes. — 947c184
+- [x] 3.3 Root build passes. — 947c184
+- [x] 3.4 Source-level checks confirm the aggregate result path and two-fixture documentation. — 947c184
 
 #### Manual
 
-- [x] 3.5 The local report distinguishes rows by fixture, model, and judge outcome.
+- [x] 3.5 The local report distinguishes rows by fixture, model, and judge outcome. — 947c184
