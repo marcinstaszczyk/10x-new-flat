@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { hasFailingCriticalReview } from "./review-result.ts";
+import { criticalTransferFixture } from "../fixtures/critical-transfer.ts";
+import { offerEditRegenerationFixture } from "../fixtures/offer-edit-regeneration.ts";
+import { createFailingReviewAssertion } from "./review-result.ts";
 
 const criteria = {
   implementationCorrectness: { score: 4, rationale: "The transfer handler has an authorization flaw." },
@@ -19,14 +21,23 @@ function reviewResult(overrides = {}) {
   });
 }
 
-describe("critical review assertion", () => {
-  it("accepts a canonical failing review within the required score ceilings", () => {
-    expect(hasFailingCriticalReview(reviewResult())).toMatchObject({ pass: true, score: 1 });
+describe("failing review assertion", () => {
+  it("accepts canonical failing reviews for both fixture contracts", () => {
+    expect(createFailingReviewAssertion(criticalTransferFixture.expected)(reviewResult())).toMatchObject({
+      pass: true,
+      score: 1,
+    });
+    expect(createFailingReviewAssertion(offerEditRegenerationFixture.expected)(reviewResult())).toMatchObject({
+      pass: true,
+      score: 1,
+    });
   });
 
   it("rejects a legacy flat review", () => {
     expect(
-      hasFailingCriticalReview(JSON.stringify({ ...criteria, verdict: "fail", summary: "## Fail" })),
+      createFailingReviewAssertion(criticalTransferFixture.expected)(
+        JSON.stringify({ ...criteria, verdict: "fail", summary: "## Fail" }),
+      ),
     ).toMatchObject({
       pass: false,
       score: 0,
@@ -34,10 +45,12 @@ describe("critical review assertion", () => {
   });
 
   it("rejects malformed JSON, a passing verdict, and scores above a ceiling", () => {
-    expect(hasFailingCriticalReview("not json")).toMatchObject({ pass: false, score: 0 });
-    expect(hasFailingCriticalReview(reviewResult({ verdict: "pass" }))).toMatchObject({ pass: false, score: 0 });
+    const assert = createFailingReviewAssertion(offerEditRegenerationFixture.expected);
+
+    expect(assert("not json")).toMatchObject({ pass: false, score: 0 });
+    expect(assert(reviewResult({ verdict: "pass" }))).toMatchObject({ pass: false, score: 0 });
     expect(
-      hasFailingCriticalReview(
+      assert(
         reviewResult({
           criteria: { ...criteria, securitySafety: { score: 5, rationale: "Unsafe transfer behavior." } },
         }),

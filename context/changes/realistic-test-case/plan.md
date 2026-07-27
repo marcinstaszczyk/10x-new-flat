@@ -222,25 +222,25 @@ No application or database migration will run. The SQL migration is text embedde
 
 #### Automated
 
-- [x] 1.1 Package tests pass with both fixture contracts.
-- [x] 1.2 The registry contains the preserved transfer fixture and stable offer-regeneration fixture.
-- [x] 1.3 The new fixture has a source-only diff and exactly three required findings.
+- [x] 1.1 Package tests pass with both fixture contracts. — b6345a3
+- [x] 1.2 The registry contains the preserved transfer fixture and stable offer-regeneration fixture. — b6345a3
+- [x] 1.3 The new fixture has a source-only diff and exactly three required findings. — b6345a3
 
 #### Manual
 
-- [x] 1.4 Each seeded flaw is independently understandable from the embedded diff.
+- [x] 1.4 Each seeded flaw is independently understandable from the embedded diff. — b6345a3
 
 ### Phase 2: Evaluate each fixture against its own grading contract
 
 #### Automated
 
-- [ ] 2.1 Package tests pass generalized assertion coverage without credentials or network access.
-- [ ] 2.2 Configuration source tests prove two fixture-labelled tests use matching assertions and rubrics.
-- [ ] 2.3 The standard package test command excludes the paid evaluation.
+- [x] 2.1 Package tests pass generalized assertion coverage without credentials or network access.
+- [x] 2.2 Configuration source tests prove two fixture-labelled tests use matching assertions and rubrics.
+- [x] 2.3 The standard package test command excludes the paid evaluation.
 
 #### Manual
 
-- [ ] 2.4 A local paid evaluation produces labelled rows for every fixture/model combination.
+- [x] 2.4 A local paid evaluation produces labelled rows for every fixture/model combination.
 
 ### Phase 3: Stabilize local results and document the expanded baseline
 

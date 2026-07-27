@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
-import { hasFailingCriticalReview } from "./assertions/review-result.ts";
-import { criticalTransferFixture } from "./fixtures/critical-transfer.ts";
+import { createFailingReviewAssertion } from "./assertions/review-result.ts";
+import { reviewFixtures } from "./fixtures/index.ts";
 import { renderReviewPrompt } from "../review-contract.ts";
 
 const judgeProvider = {
@@ -14,23 +14,34 @@ const jsonReviewProviderConfig = {
 };
 
 export default {
-  description: "Critical transfer code-review regression evaluation",
-  prompts: [renderReviewPrompt(criticalTransferFixture)],
+  description: "Code-review regression evaluation fixtures",
+  prompts: [
+    renderReviewPrompt({
+      title: "{{title}}",
+      description: "{{description}}",
+      diff: "{{diff}}",
+    }),
+  ],
   providers: [
     { id: "openrouter:z-ai/glm-5.1", config: jsonReviewProviderConfig },
     { id: "openrouter:deepseek/deepseek-v4-flash", config: jsonReviewProviderConfig },
     judgeProvider,
   ],
-  tests: [
-    {
-      assert: [
-        { type: "javascript", value: hasFailingCriticalReview },
-        {
-          type: "llm-rubric",
-          value: readFileSync(new URL("./rubrics/critical-transfer.md", import.meta.url), "utf8"),
-          provider: judgeProvider,
-        },
-      ],
+  tests: reviewFixtures.map((fixture) => ({
+    description: fixture.id,
+    vars: {
+      fixtureId: fixture.id,
+      title: fixture.title,
+      description: fixture.description,
+      diff: fixture.diff,
     },
-  ],
+    assert: [
+      { type: "javascript", value: createFailingReviewAssertion(fixture.expected) },
+      {
+        type: "llm-rubric",
+        value: readFileSync(new URL(`./${fixture.rubricPath}`, import.meta.url), "utf8"),
+        provider: judgeProvider,
+      },
+    ],
+  })),
 };
