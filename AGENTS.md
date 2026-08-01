@@ -60,6 +60,12 @@ This is an Astro 6 server-rendered app with SolidJS islands, Tailwind CSS v4, Su
 - Env template: @.env.example.
 - CI workflow: @.github/workflows/ci.yml.
 
+## 10xWorkflow
+
+If you already know what your company needs, you can go straight through the classic flow /10x-new → /10x-research → /10x-plan → /10x-implement.
+If you are not sure which distribution model makes sense, first gather requirements through /10x-shape, /10x-prd, and /10x-roadmap. 
+Solid context before building saves you from silly compromises later. Yes, those from the category "we built the platform because it sounds cool".
+
 <!-- BEGIN @przeprogramowani/10x-cli -->
 
 ## 10xDevs AI Toolkit - Module 3, Lesson 4 (E2E Tests)
